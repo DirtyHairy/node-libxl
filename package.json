@@ -1,0 +1,13 @@
+{
+    "name": "libxl",
+    "author": "Christian Speckner <cnspeckn@googlemail.com>
+    "license": "MIT",
+    "version": "0.0.1",
+    "description": "libxl bindings for node",
+    "main": "./lib/libxl.js",
+    "gypfile": true,
+    "scripts": {
+        "preinstall": "node install-libxl.js",
+        "install": "node-gyp rebuild"
+    }
+}
