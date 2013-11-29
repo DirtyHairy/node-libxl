@@ -7,7 +7,6 @@
     "main": "./lib/libxl.js",
     "gypfile": true,
     "scripts": {
-        "preinstall": "node install-libxl.js",
         "install": "node-gyp rebuild"
     }
 }

@@ -3,7 +3,10 @@
     {
       'target_name': 'libxl_bindings',
       'sources': [
-        'src/libxl.cc'
+        'src/bindings.cc',
+        'src/book.cc',
+        'src/argument_helper.cc',
+        'src/util.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp'
