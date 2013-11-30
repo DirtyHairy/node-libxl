@@ -165,6 +165,7 @@ Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     ASSERT_ARGUMENTS(args);
 
     Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
     }
@@ -191,6 +192,7 @@ Handle<Value> Sheet::SetRow(const Arguments& arguments) {
     ASSERT_ARGUMENTS(args);
 
     Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
     }
@@ -201,6 +203,28 @@ Handle<Value> Sheet::SetRow(const Arguments& arguments) {
         return util::ThrowLibxlError(that->bookHandle);
     }
 
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::SetMerge(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t rowFirst = args.GetInt(0);
+    int32_t rowLast = args.GetInt(1);
+    int32_t colFirst = args.GetInt(2);
+    int32_t colLast = args.GetInt(3);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
+        return util::ThrowLibxlError(that->bookHandle);
+    }
+    
     return scope.Close(arguments.This());
 }
 
@@ -220,6 +244,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
+    NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());

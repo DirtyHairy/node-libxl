@@ -55,6 +55,12 @@ class Format : public Wrapper<libxl::Format> {
 
         static v8::Handle<v8::Value> SetNumFormat(const v8::Arguments& arguments);
         static v8::Handle<v8::Value> NumFormat(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetWrap(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetShrinkToFit(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetAlignH(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetFillPattern(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetPatternBackgroundColor(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> SetPatternForegroundColor(const v8::Arguments& arguments);     
 
     private:
 
