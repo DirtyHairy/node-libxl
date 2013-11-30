@@ -28,6 +28,7 @@
 #include "util.h"
 #include "sheet.h"
 #include "format.h"
+#include "api_key.h"
 
 using namespace v8;
 
@@ -78,6 +79,11 @@ Handle<Value> Book::New(const Arguments& arguments) {
     }
 
     libxlBook->setLocale("UTF-8");
+    #ifdef INCLUDE_API_KEY
+        libxlBook->setKey(API_KEY_NAME, API_KEY_KEY);
+    #endif
+
+
     Book* book = new Book(libxlBook);
     book->Wrap(arguments.This());
 
@@ -196,6 +202,14 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
+
+    #ifdef INCLUDE_API_KEY
+        exports->Set(String::New("apiKeyCompiledIn"), True(),
+            static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+    #else
+        exports->Set(String::New("apiKeyCompiledIn"), False(),
+            static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+    #endif
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());
