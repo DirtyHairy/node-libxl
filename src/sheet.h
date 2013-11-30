@@ -22,10 +22,7 @@
  * THE SOFTWARE.
  */
 
-#include <v8.h>
-#include <node.h>
-#include <libxl.h>
-
+#include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {

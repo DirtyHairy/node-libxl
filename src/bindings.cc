@@ -22,11 +22,7 @@
  * THE SOFTWARE.
  */
 
-#define BUILDING_NODE_EXTENSION
-
-#include <node.h>
-#include <v8.h>
-
+#include "common.h"
 #include "book.h"
 #include "sheet.h"
 

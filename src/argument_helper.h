@@ -25,10 +25,9 @@
 #ifndef BINDINGS_ARGUMENT_HELPER_H
 #define BINDINGS_ARGUMENT_HELPER_H
 
-#define BUILDING_NODE_EXTENSION
-
-#include <v8.h>
 #include <string>
+
+#include "common.h"
 
 namespace node_libxl {
 

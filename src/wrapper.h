@@ -25,10 +25,7 @@
 #ifndef BINDINGS_WRAPPER_H
 #define BINDINGS_WRAPPER_H
 
-#define BUILDING_NODE_EXTENSION
-
-#include <node.h>
-#include <v8.h>
+#include "common.h"
 
 namespace node_libxl {
 

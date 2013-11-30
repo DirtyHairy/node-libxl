@@ -25,9 +25,7 @@
 #ifndef BINDINGS_UTIL
 #define BINDINGS_UTIL
 
-#include <v8.h>
-#include <libxl.h>
-
+#include "common.h"
 #include "book.h"
 
 namespace node_libxl {

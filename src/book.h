@@ -25,12 +25,7 @@
 #ifndef BINDINGS_BOOK
 #define BINDINGS_BOOK
 
-#define BUILDING_NODE_EXTENSION
-
-#include <node.h>
-#include <v8.h>
-#include <libxl.h>
-
+#include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
