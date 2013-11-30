@@ -27,6 +27,7 @@
 #include "assert.h"
 #include "util.h"
 #include "sheet.h"
+#include "format.h"
 
 using namespace v8;
 
@@ -135,6 +136,29 @@ Handle<Value> Book::AddSheet(const Arguments& arguments) {
 }
 
 
+Handle<Value> Book::AddFormat(const Arguments& arguments) {
+    HandleScope scope;
+
+    Format* parentFormat = Format::Unwrap(arguments[0]);
+
+    Book* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (parentFormat) {
+        ASSERT_SAME_BOOK(parentFormat->GetBookHandle(), that);
+    }
+
+    libxl::Book* libxlBook = that->GetWrapped();
+    libxl::Format* libxlFormat = libxlBook->addFormat(
+        parentFormat ? parentFormat->GetWrapped() : NULL);
+
+    if (!libxlFormat) {
+        return util::ThrowLibxlError(libxlBook);
+    }
+
+    return scope.Close(Format::NewInstance(libxlFormat, arguments.This()));
+}
+
 
 // Init
 
@@ -148,6 +172,7 @@ void Book::Initialize(Handle<Object> exports) {
 
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());

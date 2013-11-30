@@ -25,6 +25,7 @@
 #include "common.h"
 #include "book.h"
 #include "sheet.h"
+#include "format.h"
 
 using namespace v8;
 using namespace node_libxl;
@@ -32,6 +33,7 @@ using namespace node_libxl;
 void Initialize(Handle<Object> exports) {
     Book::Initialize(exports);
     Sheet::Initialize(exports);
+    Format::Initialize(exports);
 }
 
 NODE_MODULE(libxl, Initialize)

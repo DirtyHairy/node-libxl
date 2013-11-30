@@ -56,6 +56,7 @@ Handle<Value> ProxyConstructor(
 
 Handle<Value> StubConstructor(const Arguments& arguments) {
     Handle<Value> sentry = arguments[0];
+
     if (!(  arguments.IsConstructCall() &&
             arguments.Length() == 1 &&
             sentry->IsExternal() &&
@@ -75,6 +76,7 @@ Handle<Value> CallStubConstructor(Handle<Function> constructor) {
     HandleScope scope;
 
     Handle<Value> args[1] = {External::New(NULL)};
+
     return constructor->NewInstance(1, args);
 }
 

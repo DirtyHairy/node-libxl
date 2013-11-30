@@ -22,52 +22,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_BOOK
-#define BINDINGS_BOOK
+#ifndef BINDINGS_COMMON_H
 
-#include "common.h"
-#include "wrapper.h"
+#include <v8.h>
+#include <node.h>
+#include <libxl.h>
 
-namespace node_libxl {
-
-
-enum {
-    BOOK_TYPE_XLS,
-    BOOK_TYPE_XLSX
-};
-
-
-class Book : public Wrapper<libxl::Book> {
-    public:
-
-        Book(libxl::Book* libxlBook);
-        ~Book();
-
-        static void Initialize(v8::Handle<v8::Object> exports);
-
-        static Book* Unwrap(v8::Handle<v8::Value> object) {
-            return Wrapper<libxl::Book>::Unwrap<Book>(object);
-        }
-
-    protected:
-
-        static v8::Handle<v8::Value> New(const v8::Arguments& arguments);
-
-        static v8::Handle<v8::Value> WriteSync(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddSheet(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddFormat(const v8::Arguments& arguments);
-
-
-    private:
-
-        Book(const Book&);
-        const Book& operator=(const Book&);
-
-};
-
-
-}
-
-#include "libxl.h"
-
-#endif // BINDINGS_BOOK
+#define BINDINGS_COMMON_H
+#endif // BINDINGS_COMMON_H

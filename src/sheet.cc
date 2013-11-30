@@ -27,6 +27,7 @@
 #include "assert.h"
 #include "util.h"
 #include "argument_helper.h"
+#include "format.h"
 
 using namespace v8;
 
@@ -75,10 +76,17 @@ Handle<Value> Sheet::WriteString(const Arguments& arguments) {
     String::Utf8Value value(args.GetString(2));
     ASSERT_ARGUMENTS(args);
 
+    Format* format = Format::Unwrap(arguments[3]);
+
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
+    if (format) {
+        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+    }
 
-    if (!that->GetWrapped()->writeStr(row, col, *value, NULL)) {
+    if (!that->GetWrapped()->
+            writeStr(row, col, *value, format ? format->GetWrapped() : NULL))
+    {
         return util::ThrowLibxlError(that->bookHandle);
     }
 
@@ -96,10 +104,17 @@ Handle<Value> Sheet::WriteNum(const Arguments& arguments) {
     double value = args.GetDouble(2);
     ASSERT_ARGUMENTS(args);
 
+    Format* format = Format::Unwrap(arguments[3]);
+
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
+    if (format) {
+        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+    }
 
-    if (!that->GetWrapped()->writeNum(row, col, value, NULL)) {
+    if (!that->GetWrapped()->
+            writeNum(row, col, value, format ? format->GetWrapped() : NULL))
+    {
         return util::ThrowLibxlError(that->bookHandle);
     }
 
@@ -117,10 +132,17 @@ Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
     String::Utf8Value value(args.GetString(2));
     ASSERT_ARGUMENTS(args);
 
+    Format* format = Format::Unwrap(arguments[3]);
+
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
+    if (format) {
+        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+    }
 
-    if (!that->GetWrapped()->writeFormula(row, col, *value, NULL)) {
+    if (!that->GetWrapped()->
+            writeFormula(row, col, *value, format? format->GetWrapped() : NULL))
+    {
         return util::ThrowLibxlError(that->bookHandle);
     }
 
@@ -135,7 +157,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     HandleScope scope;
 
     Local<FunctionTemplate> t = FunctionTemplate::New(util::StubConstructor);
-    t->SetClassName(String::NewSymbol("sheet"));
+    t->SetClassName(String::NewSymbol("Sheet"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);

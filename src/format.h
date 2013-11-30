@@ -1,4 +1,4 @@
-/**
+/*
  * The MIT License (MIT)
  * 
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
@@ -22,52 +22,44 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_BOOK
-#define BINDINGS_BOOK
-
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
 
 
-enum {
-    BOOK_TYPE_XLS,
-    BOOK_TYPE_XLSX
-};
-
-
-class Book : public Wrapper<libxl::Book> {
+class Format : public Wrapper<libxl::Format> {
     public:
 
-        Book(libxl::Book* libxlBook);
-        ~Book();
+        Format(libxl::Format* format, v8::Handle<v8::Value> book);
+        ~Format();
 
         static void Initialize(v8::Handle<v8::Object> exports);
+        
+        static Format* Unwrap(v8::Handle<v8::Value> object) {
+            return Wrapper<libxl::Format>::Unwrap<Format>(object);
+        }
 
-        static Book* Unwrap(v8::Handle<v8::Value> object) {
-            return Wrapper<libxl::Book>::Unwrap<Book>(object);
+        static v8::Handle<v8::Object> NewInstance(
+            libxl::Format* format,
+            v8::Handle<v8::Value> book
+        );
+
+        v8::Handle<v8::Value> GetBookHandle() const {
+            return bookHandle;
         }
 
     protected:
 
-        static v8::Handle<v8::Value> New(const v8::Arguments& arguments);
+        v8::Persistent<v8::Value> bookHandle;
 
-        static v8::Handle<v8::Value> WriteSync(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddSheet(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddFormat(const v8::Arguments& arguments);
-
+        static v8::Handle<v8::Value> SetNumFormat(const v8::Arguments& arguments);
 
     private:
 
-        Book(const Book&);
-        const Book& operator=(const Book&);
-
+        Format(const Format&);
+        const Format& operator=(const Format&);
 };
 
 
 }
-
-#include "libxl.h"
-
-#endif // BINDINGS_BOOK

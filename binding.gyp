@@ -7,7 +7,8 @@
         'src/book.cc',
         'src/argument_helper.cc',
         'src/util.cc',
-        'src/sheet.cc'
+        'src/sheet.cc',
+        'src/format.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp'
