@@ -1,7 +1,7 @@
 {
   'targets': [
     {
-      'target_name': 'libxl_bindings',
+      'target_name': 'libxl',
       'sources': [
         'src/bindings.cc',
         'src/book.cc',
