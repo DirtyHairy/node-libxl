@@ -22,6 +22,9 @@
  * THE SOFTWARE.
  */
 
+#ifndef BINDINGS_FORMAT_H
+#define BINDINGS_FORMAT_H
+
 #include "common.h"
 #include "wrapper.h"
 
@@ -70,3 +73,5 @@ class Format : public Wrapper<libxl::Format> {
 
 
 }
+
+#endif // BINDINGS_FORMAT_H

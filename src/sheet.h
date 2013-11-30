@@ -22,6 +22,9 @@
  * THE SOFTWARE.
  */
 
+#ifndef BINDINGS_SHEET_H
+#define BINDINGS_SHEET_H
+
 #include "common.h"
 #include "wrapper.h"
 
@@ -68,3 +71,5 @@ class Sheet : public Wrapper<libxl::Sheet> {
 
 
 }
+
+#endif // BINDINGS_SHEET_H
