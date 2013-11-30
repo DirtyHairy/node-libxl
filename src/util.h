@@ -59,6 +59,10 @@ inline libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
     return book ? book->GetWrapped() : NULL;
 }
 
+inline libxl::Book* UnwrapBook(Book* book) {
+    return book ? book->GetWrapped() : NULL;
+}
+
 template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
     libxl::Book* book = UnwrapBook(wrappedBook);
 

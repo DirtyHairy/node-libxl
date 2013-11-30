@@ -119,6 +119,9 @@ Handle<Value> Book::AddSheet(const Arguments& arguments) {
 
     Book* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
+    if (parentSheet) {
+        ASSERT_SAME_BOOK(parentSheet->GetBookHandle(), that);
+    }
 
     libxl::Book* libxlBook = that->GetWrapped();
     libxl::Sheet* libxlSheet = libxlBook->addSheet(*name,

@@ -48,6 +48,10 @@ class Sheet : public Wrapper<libxl::Sheet> {
             v8::Handle<v8::Value> book
         );
 
+        v8::Handle<v8::Value> GetBookHandle() const {
+            return bookHandle;
+        }
+
     protected:
 
         v8::Persistent<v8::Value> bookHandle;
