@@ -27,3 +27,7 @@
 
 #define ASSERT_THIS(THIS) if (!THIS) return (ThrowException( \
     Exception::TypeError(String::New("invalid scope"))))
+
+#define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
+    !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) return (ThrowException( \
+        Exception::TypeError(String::New("parent books differ"))))   

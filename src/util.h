@@ -59,12 +59,20 @@ inline libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
     return book ? book->GetWrapped() : NULL;
 }
 
-template <typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
+template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
     libxl::Book* book = UnwrapBook(wrappedBook);
 
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
         book ? book->errorMessage() : NULL)));
 }
+
+
+template<typename T, typename U> bool IsSameBook(T book1, U book2) {
+    libxl::Book *libxlBook1 = UnwrapBook(book1), *libxlBook2 = UnwrapBook(book2);
+
+    return !libxlBook1 || !libxlBook2 || libxlBook1 == libxlBook2;
+}
+
 
 }
 }
