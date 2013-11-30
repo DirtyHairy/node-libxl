@@ -24,6 +24,8 @@
 
 #include "sheet.h"
 
+#include <iostream>
+
 #include "assert.h"
 #include "util.h"
 #include "argument_helper.h"
@@ -150,6 +152,59 @@ Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::SetCol(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t first = args.GetInt(0);
+    int32_t last = args.GetInt(1);
+    double width = args.GetDouble(2);
+    Format* format = Format::Unwrap(arguments[3]);
+    bool hidden = args.GetBoolean(4, false);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    if (format) {
+        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+    }
+
+    if (!that->GetWrapped()->setCol(first, last, width,
+            format ? format->GetWrapped() : NULL, hidden))
+    {
+        return util::ThrowLibxlError(that->bookHandle);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::SetRow(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    double height = args.GetDouble(1);
+    Format* format = Format::Unwrap(arguments[2]);
+    bool hidden = args.GetBoolean(3, false);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    if (format) {
+        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+    }
+
+    if (!that->GetWrapped()->setRow(row, height,
+        format ? format->GetWrapped() : NULL, hidden))
+    {
+        return util::ThrowLibxlError(that->bookHandle);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
 // Init
 
 
@@ -163,6 +218,8 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
+    NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
+    NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());

@@ -56,6 +56,8 @@ class Sheet : public Wrapper<libxl::Sheet> {
         static v8::Handle<v8::Value> WriteString(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
+        static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
+        static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
 
     private:
 

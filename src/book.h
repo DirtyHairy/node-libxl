@@ -56,7 +56,7 @@ class Book : public Wrapper<libxl::Book> {
         static v8::Handle<v8::Value> WriteSync(const v8::Arguments& arguments);
         static v8::Handle<v8::Value> AddSheet(const v8::Arguments& arguments);
         static v8::Handle<v8::Value> AddFormat(const v8::Arguments& arguments);
-
+        static v8::Handle<v8::Value> AddCustomNumFormat(const v8::Arguments& arguments);
 
     private:
 

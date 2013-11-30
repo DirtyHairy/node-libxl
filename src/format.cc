@@ -82,6 +82,16 @@ Handle<Value> Format::SetNumFormat(const Arguments& arguments) {
 }
 
 
+Handle<Value> Format::NumFormat(const Arguments& arguments) {
+    HandleScope scope;
+
+    Format* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Integer::New(that->GetWrapped()->numFormat()));
+}
+
+
 // Init
 
 
@@ -95,6 +105,7 @@ void Format::Initialize(Handle<Object> exports) {
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());

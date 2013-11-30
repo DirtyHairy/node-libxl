@@ -136,6 +136,28 @@ Handle<Value> Book::AddSheet(const Arguments& arguments) {
 }
 
 
+Handle<Value> Book::AddCustomNumFormat(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    String::Utf8Value description(args.GetString(0));
+    ASSERT_ARGUMENTS(args);
+
+    Book* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+    
+    libxl::Book* libxlBook = that->GetWrapped();
+    int32_t format = libxlBook->addCustomNumFormat(*description);
+
+    if (!format) {
+        return util::ThrowLibxlError(libxlBook);
+    }
+
+    return scope.Close(v8::Integer::New(format));
+}
+
+
 Handle<Value> Book::AddFormat(const Arguments& arguments) {
     HandleScope scope;
 
@@ -173,6 +195,7 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());
