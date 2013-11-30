@@ -28,6 +28,8 @@
 #include <v8.h>
 #include <libxl.h>
 
+#include "book.h"
+
 namespace node_libxl {
 namespace util {
 
@@ -38,10 +40,7 @@ v8::Handle<v8::Value> ProxyConstructor(
 );
 
 
-v8::Handle<v8::Value> ThrowLibxlError(const libxl::Book* book);
-
-
-v8::Handle<v8::Value> ThrowLibxlError(v8::Handle<v8::Value> book);
+template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T book);
 
 
 v8::Handle<v8::Value> StubConstructor(const v8::Arguments& arguments);
@@ -50,7 +49,25 @@ v8::Handle<v8::Value> StubConstructor(const v8::Arguments& arguments);
 v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
 
 
+inline libxl::Book* UnwrapBook(libxl::Book* book) {
+    return book;
+}
+
+inline libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
+    Book* book = Book::Unwrap(bookHandle);
+
+    return book ? book->GetWrapped() : NULL;
+}
+
+template <typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
+    libxl::Book* book = UnwrapBook(wrappedBook);
+
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+        book ? book->errorMessage() : NULL)));
+}
+
 }
 }
+
 
 #endif // BINDINGS_UTIL
