@@ -22,35 +22,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_UTIL
-#define BINDINGS_UTIL
-
 #include <v8.h>
+#include <node.h>
 #include <libxl.h>
 
+#include "wrapper.h"
+
 namespace node_libxl {
-namespace util {
 
 
-v8::Handle<v8::Value> ProxyConstructor(
-    v8::Handle<v8::Function> constructor,
-    const v8::Arguments& arguments
-);
+class Sheet : public Wrapper<libxl::Sheet> {
+    public:
 
+        Sheet(libxl::Sheet* sheet, v8::Handle<v8::Value> book);
+        ~Sheet();
 
-v8::Handle<v8::Value> ThrowLibxlError(const libxl::Book* book);
+        static void Initialize(v8::Handle<v8::Object> exports);
+        
+        static Sheet* Unwrap(v8::Handle<v8::Value> object) {
+            return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
+        }
 
+        static v8::Handle<v8::Object> NewInstance(
+            libxl::Sheet* sheet,
+            v8::Handle<v8::Value> book
+        );
 
-v8::Handle<v8::Value> ThrowLibxlError(v8::Handle<v8::Value> book);
+    protected:
 
+        v8::Persistent<v8::Value> bookHandle;
 
-v8::Handle<v8::Value> StubConstructor(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> WriteString(const v8::Arguments&);
+        static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
+        static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
 
+    private:
 
-v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
+        Sheet(const Sheet&);
+        const Sheet& operator=(const Sheet&);
+};
 
 
 }
-}
-
-#endif // BINDINGS_UTIL

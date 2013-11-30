@@ -50,7 +50,7 @@ class Book : public Wrapper<libxl::Book> {
 
         static void Initialize(v8::Handle<v8::Object> exports);
 
-        static Book* Unwrap(v8::Handle<v8::Object> object) {
+        static Book* Unwrap(v8::Handle<v8::Value> object) {
             return Wrapper<libxl::Book>::Unwrap<Book>(object);
         }
 
@@ -59,6 +59,7 @@ class Book : public Wrapper<libxl::Book> {
         static v8::Handle<v8::Value> New(const v8::Arguments& arguments);
 
         static v8::Handle<v8::Value> WriteSync(const v8::Arguments& arguments);
+        static v8::Handle<v8::Value> AddSheet(const v8::Arguments& arguments);
 
     private:
 

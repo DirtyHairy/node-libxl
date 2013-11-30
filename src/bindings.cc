@@ -28,12 +28,14 @@
 #include <v8.h>
 
 #include "book.h"
+#include "sheet.h"
 
 using namespace v8;
 using namespace node_libxl;
 
 void Initialize(Handle<Object> exports) {
     Book::Initialize(exports);
+    Sheet::Initialize(exports);
 }
 
 NODE_MODULE(libxl, Initialize)

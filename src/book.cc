@@ -26,6 +26,7 @@
 #include "argument_helper.h"
 #include "assert.h"
 #include "util.h"
+#include "sheet.h"
 
 using namespace v8;
 
@@ -35,9 +36,9 @@ namespace node_libxl {
 // Lifecycle
 
 
-Book::Book(libxl::Book* libxlBook) {
-    wrapped = libxlBook;
-}
+Book::Book(libxl::Book* libxlBook) :
+    Wrapper<libxl::Book>(libxlBook)
+{}
 
 
 Book::~Book() {
@@ -75,6 +76,7 @@ Handle<Value> Book::New(const Arguments& arguments) {
         return ThrowException(Exception::Error(String::New("unknown error")));
     }
 
+    libxlBook->setLocale("UTF-8");
     Book* book = new Book(libxlBook);
     book->Wrap(arguments.This());
 
@@ -101,8 +103,34 @@ Handle<Value> Book::WriteSync(const Arguments& arguments) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    return scope.Close(True());
+    return scope.Close(arguments.This());
 }
+
+
+Handle<Value> Book::AddSheet(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    String::Utf8Value name(args.GetString(0));
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* parentSheet = Sheet::Unwrap(arguments[1]);
+
+    Book* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    libxl::Book* libxlBook = that->GetWrapped();
+    libxl::Sheet* libxlSheet = libxlBook->addSheet(*name,
+        parentSheet ? parentSheet->GetWrapped() : NULL);
+
+    if (!libxlSheet) {
+        return util::ThrowLibxlError(libxlBook);
+    }
+
+    return scope.Close(Sheet::NewInstance(libxlSheet, arguments.This()));
+}
+
 
 
 // Init
@@ -116,6 +144,7 @@ void Book::Initialize(Handle<Object> exports) {
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());

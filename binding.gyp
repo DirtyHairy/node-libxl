@@ -6,7 +6,8 @@
         'src/bindings.cc',
         'src/book.cc',
         'src/argument_helper.cc',
-        'src/util.cc'
+        'src/util.cc',
+        'src/sheet.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp'

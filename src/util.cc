@@ -23,6 +23,7 @@
  */
 
 #include "util.h"
+#include "book.h"
 
 using namespace v8;
 
@@ -48,8 +49,46 @@ v8::Handle<v8::Value> ProxyConstructor(
     return scope.Close(newInstance);
 }
 
+
+Handle<Value> StubConstructor(const v8::Arguments& arguments) {
+    Handle<Value> sentry = arguments[0];
+    if (!(  arguments.IsConstructCall() &&
+            arguments.Length() == 1 &&
+            sentry->IsExternal() &&
+            sentry.As<External>()->Value() == NULL
+    )) {
+        return ThrowException(Exception::TypeError(String::New(
+            "You are not supposed to call this constructor directly")));
+    }
+
+    arguments.This()->SetPointerInInternalField(0, NULL);
+
+    return arguments.This();
+}
+
+
+Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor) {
+    HandleScope scope;
+
+    Handle<Value> args[1] = {External::New(NULL)};
+    return constructor->NewInstance(1, args);
+}
+
+
+
 v8::Handle<v8::Value> ThrowLibxlError(const libxl::Book* book) {
     return ThrowException(Exception::Error(String::New(book->errorMessage())));
+}
+
+
+Handle<v8::Value> ThrowLibxlError(v8::Handle<v8::Value> bookHandle) {
+    Book* book = Book::Unwrap(bookHandle);
+
+    if (book) {
+        return ThrowLibxlError(book->GetWrapped());
+    } else {
+        return ThrowException(Exception::Error(String::New("internal")));
+    }
 }
 
 

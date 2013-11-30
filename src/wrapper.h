@@ -37,6 +37,7 @@ template<typename T> class Wrapper : public node::ObjectWrap {
     public:
 
         Wrapper() : wrapped(NULL) {}
+        Wrapper(T* wrapped) : wrapped(wrapped) {}
 
         T* GetWrapped() {
             return wrapped;
@@ -46,8 +47,8 @@ template<typename T> class Wrapper : public node::ObjectWrap {
             return constructor;
         }
 
-        static bool InstanceOf(v8::Handle<v8::Object> object);
-        template<typename U> static U* Unwrap(v8::Handle<v8::Object> object);
+        static bool InstanceOf(v8::Handle<v8::Value> object);
+        template<typename U> static U* Unwrap(v8::Handle<v8::Value> object);
 
     protected:
 
@@ -67,17 +68,18 @@ template<typename T> class Wrapper : public node::ObjectWrap {
 template<typename T> v8::Persistent<v8::Function> Wrapper<T>::constructor;
 
 
-template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Object> object) {
-    return object->GetPrototype()->StrictEquals(
-        constructor->Get(v8::String::NewSymbol("prototype")));
+template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
+    return object->IsObject() &&
+        object.As<v8::Object>()->GetPrototype()->StrictEquals(
+            constructor->Get(v8::String::NewSymbol("prototype")));
 }
 
 
 template <typename T> template<typename U>
-    U* Wrapper<T>::Unwrap(v8::Handle<v8::Object> object)
+    U* Wrapper<T>::Unwrap(v8::Handle<v8::Value> object)
 {
     if (InstanceOf(object)) {
-        return node::ObjectWrap::Unwrap<U>(object);
+        return node::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
     } else {
         return NULL;
     }
