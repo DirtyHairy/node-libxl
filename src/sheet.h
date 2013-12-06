@@ -58,7 +58,10 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static v8::Handle<v8::Value> SetCellFormat(const v8::Arguments&);
         static v8::Handle<v8::Value> ReadStr(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteStr(const v8::Arguments&);
+        static v8::Handle<v8::Value> ReadNum(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
+        static v8::Handle<v8::Value> ReadBool(const v8::Arguments&);
+        static v8::Handle<v8::Value> WriteBool(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
         static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
         static v8::Handle<v8::Value> SetRow(const v8::Arguments&);

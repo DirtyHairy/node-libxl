@@ -8,6 +8,7 @@ function fillSheet(sheet) {
     sheet
         .writeStr(row, 0, 'Some string')
         .writeStr(row, 0, 'Unicode - فارسی - Қазақша');
+
     row++;
 
     format = book.addFormat();
@@ -17,6 +18,24 @@ function fillSheet(sheet) {
         .setFillPattern(xl.FILLPATTERN_SOLID)
         .setPatternForegroundColor(xl.COLOR_GREEN);
     sheet.setCellFormat(row, 1, format);
+
+    format = {};
+    sheet.readStr(row, 0, format);
+    sheet.setCellFormat(row, 2, format.format);
+
+    row++;
+
+    sheet
+        .writeStr(row, 0, 'Ten')
+        .writeNum(row, 1, 10);
+
+    row++;
+
+    sheet
+        .writeStr(row, 0, 'True')
+        .writeBool(row, 1, true);
+
+    row++;
 }
 
 function fillBook(book) {

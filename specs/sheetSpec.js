@@ -51,16 +51,21 @@ describe('The sheet class', function() {
         expect(function() {sheet.setCellFormat.call({}, row, 0, format);}).toThrow();
 
         expect(function() {sheet.setCellFormat(row, 0, wrongFormat);}).toThrow();
-        expect(function() {sheet.setCellFormat(row, 0, format);}).not.toThrow();
+        expect(sheet.setCellFormat(row, 0, format)).toBe(sheet);
     });
 
     it('sheet.readStr reads a string', function() {
         sheet.writeStr(row, 0, 'foo');
+        sheet.writeNum(row, 1, 10);
 
         expect(function() {sheet.readStr();}).toThrow();
         expect(function() {sheet.readStr.call({}, row, 0);}).toThrow();
 
+        var formatRef = {};
+        expect(function() {sheet.readStr(row, 1);}).toThrow();
         expect(sheet.readStr(row, 0)).toBe('foo');
+        expect(sheet.readStr(row, 0, formatRef)).toBe('foo');
+        expect(formatRef.format instanceof format.constructor).toBe(true);
 
         row++;
     });
@@ -70,8 +75,58 @@ describe('The sheet class', function() {
         expect(function() {sheet.writeStr.call({}, row, 0, 'foo');}).toThrow();
 
         expect(function() {sheet.writeStr(row, 0, 'foo', wrongFormat);}).toThrow();
-        expect(function() {sheet.writeStr(row, 0, 'foo');}).not.toThrow();
-        expect(function() {sheet.writeStr(row, 0, 'foo', format);}).not.toThrow();
+        expect(sheet.writeStr(row, 0, 'foo')).toBe(sheet);
+        expect(sheet.writeStr(row, 0, 'foo', format)).toBe(sheet);
+
+        row++;
+    });
+
+    it('sheet.readNum reads a number', function() {
+        sheet.writeNum(row, 0, 10);
+
+        expect(function() {sheet.readNum();}).toThrow();
+        expect(function() {sheet.readNum.call({}, row, 0);}).toThrow();
+
+        var formatRef = {};
+        expect(sheet.readNum(row, 0)).toEqual(10);
+        expect(sheet.readNum(row, 0, formatRef)).toEqual(10);
+        expect(formatRef.format instanceof format.constructor).toBe(true);
+
+        row++;
+    });
+
+    it('sheet.writeNum writes a Number', function() {
+        expect(function() {sheet.writeNum();}).toThrow();
+        expect(function() {sheet.writeNum.call({}, row, 0, 10);}).toThrow();
+
+        expect(function() {sheet.writeNum(row, 0, 10, wrongFormat);}).toThrow();
+        expect(sheet.writeNum(row, 0, 10)).toBe(sheet);
+        expect(sheet.writeNum(row, 0, 10, format)).toBe(sheet);
+
+        row++;
+    });
+
+    it('sheet.readBool reads a bool', function() {
+        sheet.writeBool(row, 0, true);
+
+        expect(function() {sheet.readBool();}).toThrow();
+        expect(function() {sheet.readBool.call({}, row, true);}).toThrow();
+
+        var formatRef = {};
+        expect(sheet.readBool(row, 0)).toEqual(true);
+        expect(sheet.readBool(row, 0, formatRef)).toEqual(true);
+        expect(formatRef.format instanceof format.constructor).toBe(true);
+
+        row++;
+    });
+
+    it('sheet.writeBool writes a bool', function() {
+        expect(function() {sheet.writeBool();}).toThrow();
+        expect(function() {sheet.writeBool.call({}, row, 0, true);}).toThrow();
+
+        expect(function() {sheet.writeBool(row, 0, true, wrongFormat);}).toThrow();
+        expect(sheet.writeBool(row, 0, true)).toBe(sheet);
+        expect(sheet.writeBool(row, 0, true, format)).toBe(sheet);
 
         row++;
     });
