@@ -84,6 +84,43 @@ Handle<Value> Sheet::CellType(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::IsFormula(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Boolean::New(that->GetWrapped()->isFormula(row, col)));
+}
+
+
+Handle<Value> Sheet::CellFormat(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    libxl::Format* libxlFormat = that->GetWrapped()->cellFormat(row, col);
+    if (!libxlFormat) {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(Format::NewInstance(libxlFormat, that->GetBookHandle()));
+}
+
+
 Handle<Value> Sheet::WriteString(const Arguments& arguments) {
     HandleScope scope;
 
@@ -260,6 +297,8 @@ void Sheet::Initialize(Handle<Object> exports) {
     BookWrapper::Initialize<Sheet>(t);
 
     NODE_SET_PROTOTYPE_METHOD(t, "cellType", CellType);
+    NODE_SET_PROTOTYPE_METHOD(t, "isFormula", IsFormula);
+    NODE_SET_PROTOTYPE_METHOD(t, "cellFormat", CellFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);

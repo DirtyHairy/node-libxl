@@ -1,11 +1,21 @@
 var xl = require('./lib/libxl');
 
 function fillSheet(sheet) {
-    var currentRow = 1;
+    var book = sheet.book,
+        row = 1,
+        format;
 
     sheet
-        .writeString(currentRow++, 0, 'Some string')
-        .writeString(currentRow++, 0, 'Unicode - فارسی - Қазақша');
+        .writeString(row, 0, 'Some string')
+        .writeString(row, 0, 'Unicode - فارسی - Қазақша');
+    row++;
+
+    format = book.addFormat();
+    sheet
+        .writeString(row, 0, 'green', format);
+    sheet.cellFormat(row, 0)
+        .setFillPattern(xl.FILLPATTERN_SOLID)
+        .setPatternForegroundColor(xl.COLOR_GREEN);
 }
 
 function fillBook(book) {
