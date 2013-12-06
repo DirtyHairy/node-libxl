@@ -8,7 +8,8 @@
         'src/argument_helper.cc',
         'src/util.cc',
         'src/sheet.cc',
-        'src/format.cc'
+        'src/format.cc',
+        'src/book_wrapper.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp'

@@ -27,6 +27,7 @@
 
 #include "common.h"
 #include "book.h"
+#include "book_wrapper.h"
 
 namespace node_libxl {
 namespace util {
@@ -51,15 +52,24 @@ inline libxl::Book* UnwrapBook(libxl::Book* book) {
     return book;
 }
 
+
 inline libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
     Book* book = Book::Unwrap(bookHandle);
 
     return book ? book->GetWrapped() : NULL;
 }
 
+
 inline libxl::Book* UnwrapBook(Book* book) {
     return book ? book->GetWrapped() : NULL;
 }
+
+
+inline libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
+    Book* book = bookWrapper->GetBook();
+    return book ? book->GetWrapped() : NULL;
+}
+
 
 template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
     libxl::Book* book = UnwrapBook(wrappedBook);

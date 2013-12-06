@@ -127,7 +127,7 @@ Handle<Value> Book::AddSheet(const Arguments& arguments) {
     Book* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (parentSheet) {
-        ASSERT_SAME_BOOK(parentSheet->GetBookHandle(), that);
+        ASSERT_SAME_BOOK(parentSheet, that);
     }
 
     libxl::Book* libxlBook = that->GetWrapped();
@@ -173,7 +173,7 @@ Handle<Value> Book::AddFormat(const Arguments& arguments) {
     ASSERT_THIS(that);
 
     if (parentFormat) {
-        ASSERT_SAME_BOOK(parentFormat->GetBookHandle(), that);
+        ASSERT_SAME_BOOK(parentFormat, that);
     }
 
     libxl::Book* libxlBook = that->GetWrapped();

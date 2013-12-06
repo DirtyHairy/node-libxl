@@ -37,13 +37,8 @@ namespace node_libxl {
 
 Format::Format(libxl::Format* format, Handle<Value> book) :
     Wrapper<libxl::Format>(format),
-    bookHandle(Persistent<Value>::New(book))
+    BookWrapper(book)
 {}
-
-
-Format::~Format() {
-    bookHandle.Dispose();
-}
 
 
 Handle<Object> Format::NewInstance(

@@ -40,13 +40,8 @@ namespace node_libxl {
 
 Sheet::Sheet(libxl::Sheet* sheet, Handle<Value> book) :
     Wrapper<libxl::Sheet>(sheet),
-    bookHandle(Persistent<Value>::New(book))
+    BookWrapper(book)
 {}
-
-
-Sheet::~Sheet() {
-    bookHandle.Dispose();
-}
 
 
 Handle<Object> Sheet::NewInstance(
@@ -83,13 +78,13 @@ Handle<Value> Sheet::WriteString(const Arguments& arguments) {
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (format) {
-        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+        ASSERT_SAME_BOOK(that, format);
     }
 
     if (!that->GetWrapped()->
             writeStr(row, col, *value, format ? format->GetWrapped() : NULL))
     {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
 
     return scope.Close(arguments.This());
@@ -111,13 +106,13 @@ Handle<Value> Sheet::WriteNum(const Arguments& arguments) {
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (format) {
-        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+        ASSERT_SAME_BOOK(that, format);
     }
 
     if (!that->GetWrapped()->
             writeNum(row, col, value, format ? format->GetWrapped() : NULL))
     {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
 
     return scope.Close(arguments.This());
@@ -139,13 +134,13 @@ Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (format) {
-        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+        ASSERT_SAME_BOOK(that, format);
     }
 
     if (!that->GetWrapped()->
             writeFormula(row, col, *value, format? format->GetWrapped() : NULL))
     {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
 
     return scope.Close(arguments.This());
@@ -167,13 +162,13 @@ Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (format) {
-        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+        ASSERT_SAME_BOOK(that, format);
     }
 
     if (!that->GetWrapped()->setCol(first, last, width,
             format ? format->GetWrapped() : NULL, hidden))
     {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
 
     return scope.Close(arguments.This());
@@ -194,13 +189,13 @@ Handle<Value> Sheet::SetRow(const Arguments& arguments) {
     Sheet* that = Unwrap(arguments.This());
     ASSERT_THIS(that);
     if (format) {
-        ASSERT_SAME_BOOK(that->GetBookHandle(), format->GetBookHandle());
+        ASSERT_SAME_BOOK(that, format);
     }
 
     if (!that->GetWrapped()->setRow(row, height,
         format ? format->GetWrapped() : NULL, hidden))
     {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
 
     return scope.Close(arguments.This());
@@ -222,7 +217,7 @@ Handle<Value> Sheet::SetMerge(const Arguments& arguments) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
-        return util::ThrowLibxlError(that->bookHandle);
+        return util::ThrowLibxlError(that);
     }
     
     return scope.Close(arguments.This());

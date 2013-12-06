@@ -27,15 +27,16 @@
 
 #include "common.h"
 #include "wrapper.h"
+#include "book_wrapper.h"
 
 namespace node_libxl {
 
 
-class Format : public Wrapper<libxl::Format> {
+class Format : public Wrapper<libxl::Format>, public BookWrapper
+{
     public:
 
         Format(libxl::Format* format, v8::Handle<v8::Value> book);
-        ~Format();
 
         static void Initialize(v8::Handle<v8::Object> exports);
         
@@ -48,13 +49,7 @@ class Format : public Wrapper<libxl::Format> {
             v8::Handle<v8::Value> book
         );
 
-        v8::Handle<v8::Value> GetBookHandle() const {
-            return bookHandle;
-        }
-
     protected:
-
-        v8::Persistent<v8::Value> bookHandle;
 
         static v8::Handle<v8::Value> SetNumFormat(const v8::Arguments& arguments);
         static v8::Handle<v8::Value> NumFormat(const v8::Arguments& arguments);

@@ -22,50 +22,21 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_SHEET_H
-#define BINDINGS_SHEET_H
-
-#include "common.h"
-#include "wrapper.h"
 #include "book_wrapper.h"
+
+using namespace v8;
 
 namespace node_libxl {
 
 
-class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
+BookWrapper::BookWrapper(Handle<Value> bookHandle) :
+    bookHandle(Persistent<Value>::New(bookHandle))
+{}
 
-{
-    public:
 
-        Sheet(libxl::Sheet* sheet, v8::Handle<v8::Value> book);
-
-        static void Initialize(v8::Handle<v8::Object> exports);
-        
-        static Sheet* Unwrap(v8::Handle<v8::Value> object) {
-            return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
-        }
-
-        static v8::Handle<v8::Object> NewInstance(
-            libxl::Sheet* sheet,
-            v8::Handle<v8::Value> book
-        );
-
-    protected:
-
-        static v8::Handle<v8::Value> WriteString(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetMerge(const v8::Arguments&);
-
-    private:
-
-        Sheet(const Sheet&);
-        const Sheet& operator=(const Sheet&);
-};
+BookWrapper::~BookWrapper() {
+    bookHandle.Dispose();
+}
 
 
 }
-
-#endif // BINDINGS_SHEET_H
