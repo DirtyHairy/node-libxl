@@ -71,6 +71,7 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         // TODO IsDate
         static v8::Handle<v8::Value> ReadError(const v8::Arguments&);
         static v8::Handle<v8::Value> ColWidth(const v8::Arguments&);
+        static v8::Handle<v8::Value> RowHeight(const v8::Arguments&);
         static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
         static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
         static v8::Handle<v8::Value> SetMerge(const v8::Arguments&);

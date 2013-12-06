@@ -492,6 +492,21 @@ Handle<Value> Sheet::ColWidth(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::RowHeight(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Number::New(that->GetWrapped()->rowHeight(row)));
+}
+
+
 Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     HandleScope scope;
 
@@ -603,6 +618,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeComment", WriteComment);
     NODE_SET_PROTOTYPE_METHOD(t, "readError", ReadError);
     NODE_SET_PROTOTYPE_METHOD(t, "colWidth", ColWidth);
+    NODE_SET_PROTOTYPE_METHOD(t, "rowHeight", RowHeight);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);

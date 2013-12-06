@@ -217,4 +217,13 @@ describe('The sheet class', function() {
 
         expect(sheet.colWidth(0)).toEqual(42);
     });
+
+    it('sheet.rowHeight reads row Height', function() {
+        sheet.setRow(1, 42);
+
+        expect(function() {sheet.rowHeight();}).toThrow();
+        expect(function() {sheet.rowHeight.call({}, 1);}).toThrow();
+
+        expect(sheet.rowHeight(1)).toEqual(42);
+    });
 });
