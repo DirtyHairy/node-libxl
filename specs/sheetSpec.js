@@ -183,7 +183,7 @@ describe('The sheet class', function() {
         row++;
     });
 
-    it('sheet.writeComment writes a comment', function() {
+    it('sheet.readComment reads a comment', function() {
         sheet.writeString(row, 0, 'foo');
         sheet.writeComment(row, 0,'comment');
 
