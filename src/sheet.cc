@@ -63,6 +63,27 @@ Handle<Object> Sheet::NewInstance(
 // Wrappers
 
 
+Handle<Value> Sheet::CellType(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    libxl::CellType cellType = that->GetWrapped()->cellType(row, col);
+    if (cellType == libxl::CELLTYPE_ERROR) {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(Integer::New(cellType));
+}
+
+
 Handle<Value> Sheet::WriteString(const Arguments& arguments) {
     HandleScope scope;
 
@@ -228,6 +249,8 @@ Handle<Value> Sheet::SetMerge(const Arguments& arguments) {
 
 
 void Sheet::Initialize(Handle<Object> exports) {
+    using namespace libxl;
+
     HandleScope scope;
 
     Local<FunctionTemplate> t = FunctionTemplate::New(util::StubConstructor);
@@ -236,6 +259,7 @@ void Sheet::Initialize(Handle<Object> exports) {
 
     BookWrapper::Initialize<Sheet>(t);
 
+    NODE_SET_PROTOTYPE_METHOD(t, "cellType", CellType);
     NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
@@ -245,6 +269,13 @@ void Sheet::Initialize(Handle<Object> exports) {
 
     t->ReadOnlyPrototype();
     constructor = Persistent<Function>::New(t->GetFunction());
+
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_EMPTY);
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_NUMBER);
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_STRING);
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_BOOLEAN);
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_BLANK);
+    NODE_DEFINE_CONSTANT(exports, CELLTYPE_ERROR);
 }
 
 
