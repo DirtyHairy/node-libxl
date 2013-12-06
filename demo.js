@@ -6,16 +6,17 @@ function fillSheet(sheet) {
         format;
 
     sheet
-        .writeString(row, 0, 'Some string')
-        .writeString(row, 0, 'Unicode - فارسی - Қазақша');
+        .writeStr(row, 0, 'Some string')
+        .writeStr(row, 0, 'Unicode - فارسی - Қазақша');
     row++;
 
     format = book.addFormat();
     sheet
-        .writeString(row, 0, 'green', format);
+        .writeStr(row, 0, 'green', format);
     sheet.cellFormat(row, 0)
         .setFillPattern(xl.FILLPATTERN_SOLID)
         .setPatternForegroundColor(xl.COLOR_GREEN);
+    sheet.setCellFormat(row, 1, format);
 }
 
 function fillBook(book) {

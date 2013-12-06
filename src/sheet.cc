@@ -121,7 +121,52 @@ Handle<Value> Sheet::CellFormat(const Arguments& arguments) {
 }
 
 
-Handle<Value> Sheet::WriteString(const Arguments& arguments) {
+Handle<Value> Sheet::SetCellFormat(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    Format* format = Format::Unwrap(arguments[2]);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (!format) {
+        return ThrowException(Exception::TypeError(String::New(
+            "format required at position 2")));
+    }
+    ASSERT_SAME_BOOK(that, format);
+
+    that->GetWrapped()->setCellFormat(row, col, format->GetWrapped());
+
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::ReadStr(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    const char* value = that->GetWrapped()->readStr(row, col);
+    if (!value) {
+        util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(String::New(value));
+}
+
+
+Handle<Value> Sheet::WriteStr(const Arguments& arguments) {
     HandleScope scope;
 
     ArgumentHelper args(arguments);
@@ -299,7 +344,11 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "cellType", CellType);
     NODE_SET_PROTOTYPE_METHOD(t, "isFormula", IsFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "cellFormat", CellFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);
+    NODE_SET_PROTOTYPE_METHOD(t, "setCellFormat", SetCellFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "readStr", ReadStr);
+    NODE_SET_PROTOTYPE_METHOD(t, "readString", ReadStr);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteStr);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeStr", WriteStr);
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);

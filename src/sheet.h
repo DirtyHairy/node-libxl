@@ -53,14 +53,16 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
     protected:
 
         static v8::Handle<v8::Value> CellType(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteString(const v8::Arguments&);
+        static v8::Handle<v8::Value> IsFormula(const v8::Arguments&);
         static v8::Handle<v8::Value> CellFormat(const v8::Arguments&);
+        static v8::Handle<v8::Value> SetCellFormat(const v8::Arguments&);
+        static v8::Handle<v8::Value> ReadStr(const v8::Arguments&);
+        static v8::Handle<v8::Value> WriteStr(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
         static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
         static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
         static v8::Handle<v8::Value> SetMerge(const v8::Arguments&);
-        static v8::Handle<v8::Value> IsFormula(const v8::Arguments&);
 
     private:
 
