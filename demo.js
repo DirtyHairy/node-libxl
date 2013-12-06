@@ -8,7 +8,6 @@ function fillSheet(sheet) {
     sheet
         .writeStr(row, 0, 'Some string')
         .writeStr(row, 0, 'Unicode - فارسی - Қазақша');
-
     row++;
 
     format = book.addFormat();
@@ -28,13 +27,17 @@ function fillSheet(sheet) {
     sheet
         .writeStr(row, 0, 'Ten')
         .writeNum(row, 1, 10);
-
     row++;
 
     sheet
         .writeStr(row, 0, 'True')
         .writeBool(row, 1, true);
+    row++;
 
+    sheet
+        .writeStr(row, 0, 'a blank cell')
+        .writeStr(row, 1, 'foo')
+        .writeBlank(row, 1, sheet.cellFormat(row, 0));
     row++;
 }
 

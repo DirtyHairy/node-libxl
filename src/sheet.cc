@@ -304,6 +304,89 @@ Handle<Value> Sheet::WriteBool(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::ReadBlank(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    Handle<Value> formatRef = arguments[2];
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    libxl::Format* libxlFormat = NULL;
+    if (!that->GetWrapped()->readBlank(row, col, &libxlFormat) || !libxlFormat) {
+        return util::ThrowLibxlError(that);
+    }
+
+    Handle<Value> formatHandle = Format::NewInstance(libxlFormat,
+        that->GetBookHandle());
+    
+    if (formatRef->IsObject() && libxlFormat) {
+        formatRef.As<Object>()->Set(String::NewSymbol("format"), formatHandle);
+    }
+
+    return scope.Close(formatHandle);
+}
+
+
+Handle<Value> Sheet::WriteBlank(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    Format* format = Format::Unwrap(arguments[2]);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+    if (!format) {
+        return ThrowException(Exception::TypeError(String::New(
+            "format expected at position 2")));
+    }
+    ASSERT_SAME_BOOK(that, format);
+
+    if (!that->GetWrapped()->
+            writeBlank(row, col, format ? format->GetWrapped() : NULL))
+    {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::ReadFormula(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    Handle<Value> formatRef = arguments[2];
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    libxl::Format* libxlFormat = NULL;
+    const char* value = that->GetWrapped()->readFormula(row, col, &libxlFormat);
+    if (!value) {
+        return util::ThrowLibxlError(that);
+    }
+
+    if (formatRef->IsObject() && libxlFormat) {
+        formatRef.As<Object>()->Set(String::NewSymbol("format"),
+            Format::NewInstance(libxlFormat, that->GetBookHandle()));
+    }
+
+    return scope.Close(String::New(value));
+}
+
+
 Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
     HandleScope scope;
 
@@ -435,6 +518,9 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "readBool", ReadBool);
     NODE_SET_PROTOTYPE_METHOD(t, "writeBool", WriteBool);
+    NODE_SET_PROTOTYPE_METHOD(t, "readBlank", ReadBlank);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeBlank", WriteBlank);
+    NODE_SET_PROTOTYPE_METHOD(t, "readFormula", ReadFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);

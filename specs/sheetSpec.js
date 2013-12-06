@@ -110,7 +110,7 @@ describe('The sheet class', function() {
         sheet.writeBool(row, 0, true);
 
         expect(function() {sheet.readBool();}).toThrow();
-        expect(function() {sheet.readBool.call({}, row, true);}).toThrow();
+        expect(function() {sheet.readBool.call({}, row, 0);}).toThrow();
 
         var formatRef = {};
         expect(sheet.readBool(row, 0)).toEqual(true);
@@ -127,6 +127,60 @@ describe('The sheet class', function() {
         expect(function() {sheet.writeBool(row, 0, true, wrongFormat);}).toThrow();
         expect(sheet.writeBool(row, 0, true)).toBe(sheet);
         expect(sheet.writeBool(row, 0, true, format)).toBe(sheet);
+
+        row++;
+    });
+
+    it('sheet.readBlank reads a blank cell', function() {
+        sheet.writeBlank(row, 0, format);
+        sheet.writeNum(row, 1, 10);
+
+        expect(function() {sheet.readBlank();}).toThrow();
+        expect(function() {sheet.readBlank.call({}, row, 0);}).toThrow();
+
+        var formatRef = {};
+        expect(sheet.readBlank(row, 0) instanceof format.constructor).toBe(true);
+        expect(sheet.readBlank(row, 0, formatRef) instanceof format.constructor).toBe(true);
+        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(function() {sheet.readBlank(row, 1);}).toThrow();
+
+        row++;
+    });
+
+    it('sheet.writeBlank writes a blank cell', function() {
+        expect(function() {sheet.writeBlank();}).toThrow();
+        expect(function() {sheet.writeBlank.call({}, row, 0, format);}).toThrow();
+
+        expect(function() {sheet.writeBlank(row, 0, wrongFormat);}).toThrow();
+        expect(function() {sheet.writeBlank(row, 0);}).toThrow();
+        expect(sheet.writeBlank(row, 0, format)).toBe(sheet);
+
+        row++;
+    });
+
+    it('sheet.readFormula reads a formula', function() {
+        sheet.writeFormula(row, 0,'=SUM(A1:A10)');
+        sheet.writeNum(row, 1, 10);
+
+        expect(function() {sheet.readFormula();}).toThrow();
+        expect(function() {sheet.readFormula.call({}, row, 0);}).toThrow();
+
+        var formatRef = {};
+        expect(function() {sheet.readFormula(row, 1);}).toThrow();
+        expect(sheet.readFormula(row, 0)).toBe('SUM(A1:A10)');
+        expect(sheet.readFormula(row, 0, formatRef)).toBe('SUM(A1:A10)');
+        expect(formatRef.format instanceof format.constructor).toBe(true);
+
+        row++;
+    });
+
+    it('sheet.writeFormula writes a formula', function() {
+        expect(function() {sheet.writeFormula();}).toThrow();
+        expect(function() {sheet.writeFormula.call({}, row, 0, '=1');}).toThrow();
+
+        expect(function() {sheet.writeFormula(row, 0, '=1', wrongFormat);}).toThrow();
+        expect(sheet.writeFormula(row, 0, '=1')).toBe(sheet);
+        expect(sheet.writeFormula(row, 0, '=1', format)).toBe(sheet);
 
         row++;
     });
