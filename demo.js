@@ -39,6 +39,11 @@ function fillSheet(sheet) {
         .writeStr(row, 1, 'foo')
         .writeBlank(row, 1, sheet.cellFormat(row, 0));
     row++;
+
+    sheet
+        .writeString(row, 0, 'Comment')
+        .writeComment(row, 0, 'This a comment', 'from me', 200, 200);
+    row++;
 }
 
 function fillBook(book) {

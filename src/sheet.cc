@@ -24,8 +24,6 @@
 
 #include "sheet.h"
 
-#include <iostream>
-
 #include "assert.h"
 #include "util.h"
 #include "argument_helper.h"
@@ -415,6 +413,54 @@ Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::ReadComment(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    const char* value = that->GetWrapped()->readComment(row, col);
+    if (!value) {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(String::New(value));
+}
+
+
+Handle<Value> Sheet::WriteComment(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    String::Utf8Value value(args.GetString(2));
+    String::Utf8Value author(args.GetString(3, ""));
+    int32_t width = args.GetInt(4, 129);
+    int32_t height = args.GetInt(5, 75);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (arguments[3]->IsString()) {
+        that->GetWrapped()->writeComment(row, col, *value, *author,
+            width, height);
+    } else {
+        that->GetWrapped()->writeComment(row, col, *value, NULL,
+            width, height);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
 Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     HandleScope scope;
 
@@ -522,6 +568,8 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeBlank", WriteBlank);
     NODE_SET_PROTOTYPE_METHOD(t, "readFormula", ReadFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
+    NODE_SET_PROTOTYPE_METHOD(t, "readComment", ReadComment);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeComment", WriteComment);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);

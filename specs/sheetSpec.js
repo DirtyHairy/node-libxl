@@ -2,7 +2,7 @@ var xl = require('../lib/libxl');
 
 describe('The sheet class', function() {
 
-    var book = new xl.Book(xl.BOOK_TYPE_XLSX),
+    var book = new xl.Book(xl.BOOK_TYPE_XLS),
         sheet = book.addSheet('foo'),
         format = book.addFormat(),
         wrongBook = new xl.Book(xl.BOOK_TYPE_XLS),
@@ -174,13 +174,25 @@ describe('The sheet class', function() {
         row++;
     });
 
-    it('sheet.writeFormula writes a formula', function() {
-        expect(function() {sheet.writeFormula();}).toThrow();
-        expect(function() {sheet.writeFormula.call({}, row, 0, '=1');}).toThrow();
+    it('sheet.writeComment writes a comment', function() {
+        expect(function() {sheet.writeComment();}).toThrow();
+        expect(function() {sheet.writeComment.call({}, row, 0, 'comment');}).toThrow();
 
-        expect(function() {sheet.writeFormula(row, 0, '=1', wrongFormat);}).toThrow();
-        expect(sheet.writeFormula(row, 0, '=1')).toBe(sheet);
-        expect(sheet.writeFormula(row, 0, '=1', format)).toBe(sheet);
+        expect(sheet.writeComment(row, 0, 'comment')).toBe(sheet);
+
+        row++;
+    });
+
+    it('sheet.writeComment writes a comment', function() {
+        sheet.writeString(row, 0, 'foo');
+        sheet.writeComment(row, 0,'comment');
+
+        expect(function() {sheet.readComment();}).toThrow();
+        expect(function() {sheet.readComment.call({}, row, 0);}).toThrow();
+
+        var formatRef = {};
+        expect(function() {sheet.readComment(row, 1);}).toThrow();
+        expect(sheet.readComment(row, 0)).toBe('comment');
 
         row++;
     });
