@@ -234,6 +234,8 @@ void Sheet::Initialize(Handle<Object> exports) {
     t->SetClassName(String::NewSymbol("Sheet"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
+    BookWrapper::Initialize<Sheet>(t);
+
     NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteString);
     NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);

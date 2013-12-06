@@ -198,6 +198,8 @@ void Format::Initialize(Handle<Object> exports) {
     t->SetClassName(String::NewSymbol("Format"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
+    BookWrapper::Initialize<Format>(t);
+
     NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);

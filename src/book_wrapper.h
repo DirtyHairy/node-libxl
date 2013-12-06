@@ -49,12 +49,62 @@ class BookWrapper{
 
         v8::Persistent<v8::Value> bookHandle;
 
+        // We need to template this in order to unwrap the correct object
+        // pointer
+        template<typename T> static void Initialize (
+            v8::Handle<v8::FunctionTemplate> constructor
+        );
+
     private:
+
+        // We need to template this in order to unwrap the correct object
+        // pointer
+        template<typename T> static v8::Handle<v8::Value> BookAccessor(
+            v8::Local<v8::String> property,
+            const v8::AccessorInfo& info
+        );
 
         BookWrapper();
         BookWrapper(const BookWrapper&);
         const BookWrapper& operator=(const BookWrapper&);
 };
+
+
+// Implementation
+
+
+template<typename T> void BookWrapper::Initialize(
+    v8::Handle<v8::FunctionTemplate> constructor)
+{
+    v8::Handle<v8::ObjectTemplate> instanceTemplate =
+        constructor->InstanceTemplate();
+    
+    instanceTemplate->SetAccessor(
+        v8::String::New("book"),
+        BookAccessor<T>, 
+        NULL,
+        v8::Handle<v8::Value>(),
+        v8::DEFAULT,
+        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)
+    );
+}
+
+
+template<typename T> v8::Handle<v8::Value> BookWrapper::BookAccessor(
+    v8::Local<v8::String> property,
+    const v8::AccessorInfo& info)
+{
+    v8::HandleScope scope;
+
+    BookWrapper* bookWrapper = dynamic_cast<BookWrapper*>(
+        node::ObjectWrap::Unwrap<T>(info.This()));
+   
+    if (bookWrapper) {
+        return scope.Close(bookWrapper->bookHandle);
+    } else {
+        return scope.Close(v8::Undefined());
+    }
+}
 
 
 }
