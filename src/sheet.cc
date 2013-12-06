@@ -461,6 +461,37 @@ Handle<Value> Sheet::WriteComment(const Arguments& arguments) {
 }
 
 
+Handle<Value> Sheet::ReadError(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    int32_t col = args.GetInt(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Integer::New(that->GetWrapped()->readError(row, col)));
+}
+
+
+Handle<Value> Sheet::ColWidth(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t col = args.GetInt(0);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Number::New(that->GetWrapped()->colWidth(col)));
+}
+
+
 Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     HandleScope scope;
 
@@ -570,6 +601,8 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "readComment", ReadComment);
     NODE_SET_PROTOTYPE_METHOD(t, "writeComment", WriteComment);
+    NODE_SET_PROTOTYPE_METHOD(t, "readError", ReadError);
+    NODE_SET_PROTOTYPE_METHOD(t, "colWidth", ColWidth);
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
@@ -583,6 +616,15 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_BOOLEAN);
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_BLANK);
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_ERROR);
+
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_NULL);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_DIV_0);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_VALUE);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_REF);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_NAME);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_NUM);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_NA);
+    NODE_DEFINE_CONSTANT(exports, ERRORTYPE_NOERROR);
 }
 
 

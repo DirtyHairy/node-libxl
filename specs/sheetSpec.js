@@ -197,4 +197,24 @@ describe('The sheet class', function() {
         row++;
     });
 
+    it('sheet.readError reads an error', function() {
+        sheet.writeStr(row, 0, '');
+
+        expect(function() {sheet.readError();}).toThrow();
+        expect(function() {sheet.readError.call({}, row, 0);}).toThrow();
+
+        expect(sheet.readError(row, 0)).toBe(xl.ERRORTYPE_NOERROR);
+
+        row++;
+    });
+
+
+    it('sheet.colWidth reads colum width', function() {
+        sheet.setCol(0, 0, 42);
+
+        expect(function() {sheet.colWidth();}).toThrow();
+        expect(function() {sheet.colWidth.call({}, 0);}).toThrow();
+
+        expect(sheet.colWidth(0)).toEqual(42);
+    });
 });

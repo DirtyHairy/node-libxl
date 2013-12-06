@@ -68,6 +68,9 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
         static v8::Handle<v8::Value> ReadComment(const v8::Arguments&);
         static v8::Handle<v8::Value> WriteComment(const v8::Arguments&);
+        // TODO IsDate
+        static v8::Handle<v8::Value> ReadError(const v8::Arguments&);
+        static v8::Handle<v8::Value> ColWidth(const v8::Arguments&);
         static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
         static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
         static v8::Handle<v8::Value> SetMerge(const v8::Arguments&);
