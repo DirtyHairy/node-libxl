@@ -226,4 +226,24 @@ describe('The sheet class', function() {
 
         expect(sheet.rowHeight(1)).toEqual(42);
     });
+
+    it('sheet.setCol configures columns', function() {
+        expect(function() {sheet.setCol();}).toThrow();
+        expect(function() {sheet.setCol.call({}, 0, 0, 42);}).toThrow();
+      
+        expect(function() {sheet.setCol(0, 0, 42, wrongFormat);}).toThrow();
+
+        expect(sheet.setCol(0, 0, 42)).toBe(sheet);
+        expect(sheet.setCol(0, 0, 42, format, false)).toBe(sheet);
+    });
+
+    it('sheet.setRow configures rows', function() {
+        expect(function() {sheet.setRow();}).toThrow();
+        expect(function() {sheet.setRow.call({}, 1, 42);}).toThrow();
+      
+        expect(function() {sheet.setRow(1, 42, wrongFormat);}).toThrow();
+
+        expect(sheet.setRow(1, 42)).toBe(sheet);
+        expect(sheet.setRow(1, 42, format, false)).toBe(sheet);
+    });
 });
