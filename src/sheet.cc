@@ -506,20 +506,6 @@ Handle<Value> Sheet::RowHeight(const Arguments& arguments) {
     return scope.Close(Number::New(that->GetWrapped()->rowHeight(row)));
 }
 
-Handle<Value> Sheet::RowHidden(const Arguments& arguments) {
-    HandleScope scope;
-
-    ArgumentHelper args(arguments);
-
-    int32_t row = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
-
-    Sheet* that = Unwrap(arguments.This());
-    ASSERT_THIS(that);
-
-    return scope.Close(Boolean::New(that->GetWrapped()->rowHidden(row)));
-}
-
 
 Handle<Value> Sheet::SetCol(const Arguments& arguments) {
     HandleScope scope;
@@ -569,6 +555,76 @@ Handle<Value> Sheet::SetRow(const Arguments& arguments) {
     if (!that->GetWrapped()->setRow(row, height,
         format ? format->GetWrapped() : NULL, hidden))
     {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::RowHidden(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Boolean::New(that->GetWrapped()->rowHidden(row)));
+}
+
+
+Handle<Value> Sheet::SetRowHidden(const Arguments &arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t row = args.GetInt(0);
+    bool hidden = args.GetBoolean(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setRowHidden(row, hidden)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    return scope.Close(arguments.This());
+}
+
+
+Handle<Value> Sheet::ColHidden(const Arguments& arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t col = args.GetInt(0);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    return scope.Close(Boolean::New(that->GetWrapped()->colHidden(col)));
+}
+
+
+Handle<Value> Sheet::SetColHidden(const Arguments &arguments) {
+    HandleScope scope;
+
+    ArgumentHelper args(arguments);
+
+    int32_t col = args.GetInt(0);
+    bool hidden = args.GetBoolean(1);
+    ASSERT_ARGUMENTS(args);
+
+    Sheet* that = Unwrap(arguments.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setColHidden(col, hidden)) {
         return util::ThrowLibxlError(that);
     }
 
@@ -636,6 +692,9 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
     NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
     NODE_SET_PROTOTYPE_METHOD(t, "rowHidden", RowHidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "setRowHidden", SetRowHidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "colHidden", ColHidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "setColHidden", SetColHidden);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
 
     t->ReadOnlyPrototype();

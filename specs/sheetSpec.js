@@ -246,4 +246,39 @@ describe('The sheet class', function() {
         expect(sheet.setRow(1, 42)).toBe(sheet);
         expect(sheet.setRow(1, 42, format, false)).toBe(sheet);
     });
+
+    it('sheet.rowHidden checks whether a row is hidden', function() {
+        expect(function() {sheet.rowHidden();}).toThrow();
+        expect(function() {sheet.rowHidden.call({}, row);}).toThrow();
+
+        expect(sheet.rowHidden(row)).toBe(false);
+    });
+
+    it('sheet.setRowHidden hides or shows a row', function() {
+        expect(function() {sheet.setRowHidden();}).toThrow();
+        expect(function() {sheet.setRowHidden.call({}, row, true)}).toThrow();
+
+        expect(sheet.setRowHidden(row, true)).toBe(sheet);
+        expect(sheet.rowHidden(row)).toBe(true);
+        expect(sheet.setRowHidden(row, false)).toBe(sheet);
+        expect(sheet.rowHidden(row)).toBe(false);
+    });
+
+    it('sheet.colHidden checks whether a column is hidden', function() {
+        expect(function() {sheet.colHidden();}).toThrow();
+        expect(function() {sheet.colHidden.call({}, 0);}).toThrow();
+
+        expect(sheet.colHidden(0)).toBe(false);
+    });
+
+    it('sheet.setColHidden hides or shows a column', function() {
+        expect(function() {sheet.setColHidden();}).toThrow();
+        expect(function() {sheet.setColHidden.call({}, 0, true)}).toThrow();
+
+        expect(sheet.setColHidden(0, true)).toBe(sheet);
+        expect(sheet.colHidden(0)).toBe(true);
+        expect(sheet.setColHidden(0, false)).toBe(sheet);
+        expect(sheet.colHidden(0)).toBe(false);
+    })
+
 });
