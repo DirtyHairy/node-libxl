@@ -55,13 +55,7 @@ flags = [
 '-I',
 '.',
 '-I',
-'./deps/libxl/include_cpp',
-'-I',
-'/home/pestix/.node-gyp/0.10.20/src',
-'-I',
-'/home/pestix/.node-gyp/0.10.20/deps/uv/include',
-'-I',
-'/home/pestix/.node-gyp/0.10.20/deps/v8/include'
+'./deps/libxl/include_cpp'
 ]
 
 SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.c', '.m', '.mm' ]
