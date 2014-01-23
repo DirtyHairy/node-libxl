@@ -73,6 +73,7 @@ jasmine specs and a call to demo.js (if applicable).
 
 * Torben Fitschen wrote the install script which pulls the
   necessary libxl SDK before building.
+* Martin Schröder for adding Mac support.
 * Alexander Makarenko wrote
   [node-excel-libxl](https://github.com/7eggs/node-excel-libxl)
   Though node-libxl is rewritten from scratch, this
