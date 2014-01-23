@@ -31,10 +31,10 @@ var fs = require('fs'),
     spawn = require('child_process').spawn;
 
 var isWin = !!os.platform().match(/^win/),
-    isX64 = !!os.arch().match(/64$/),
+    isMac = !!os.platform().match(/^darwin/),
     dependencyDir = 'deps',
     libxlDir = path.join(dependencyDir, 'libxl'),
-    archiveUrl = 'http://www.libxl.com/download/libxl' + (isWin ? '.zip' : '.tar.gz'),
+    archiveUrl = 'http://www.libxl.com/download/libxl' + (isMac ? '-mac' : '') + (isWin ? '.zip' : '.tar.gz'),
     archiveFile = path.join(dependencyDir, path.basename(archiveUrl));
 
 var download = function(url, file, callback) {
