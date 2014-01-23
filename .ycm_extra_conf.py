@@ -128,7 +128,7 @@ def FindNodeGypPath():
     for candidate in candidates:
       best = GetLarger(best, candidate)
 
-    return best
+    return os.path.expanduser(os.path.join('~', '.node-gyp', best))
 
   return FindBest(os.listdir(basepath))
 
