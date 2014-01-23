@@ -61,9 +61,7 @@ future, too.
 
 ## Platform support
 
-The package currently supports Linux and Windows. Mac support
-should be trivial to add, feel free to make a pull request
-if you need it before I find time and a mac ;)
+The package currently supports Linux, Windows and Mac.
 
 # How to contribute
 

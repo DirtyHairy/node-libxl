@@ -37,6 +37,16 @@
           'libraries': [
             '../deps/libxl/lib/libxl.lib'
           ]
+        }],
+        ['OS=="mac"', {
+          'target_name': 'liblibxl',
+          'link_settings': {
+            'libraries': [
+              '-I../deps/libxl/include_cpp',
+              '-L../deps/libxl/lib',
+              '-lxl'
+            ]
+          }
         }]
       ]
     }
