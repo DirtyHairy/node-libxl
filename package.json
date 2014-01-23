@@ -2,7 +2,7 @@
     "name": "libxl",
     "author": "Christian Speckner <cnspeckn@googlemail.com>",
     "license": "MIT",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "libxl bindings for node",
     "keywords": ["excel", "libxl", "spreadsheet"],
     "homepage": "https://github.com/DirtyHairy/node-libxl",
@@ -13,9 +13,9 @@
     "bugs": {
         "url": "https://github.com/DirtyHairy/node-libxl/issues"
     },
-    "engines": [
-        "node >= 0.10"
-    ],
+    "engines":{
+        "node": ">=0.10"
+    },
     "main": "./lib/libxl.js",
     "gypfile": true,
     "scripts": {
