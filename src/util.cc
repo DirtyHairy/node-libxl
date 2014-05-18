@@ -25,6 +25,7 @@
 #include "util.h"
 
 #include <libxl.h>
+#include <nan.h>
 
 #include "book.h"
 
@@ -36,9 +37,9 @@ namespace util {
 
 Handle<Value> ProxyConstructor(
     Handle<Function> constructor,
-    const Arguments& arguments
+    _NAN_METHOD_ARGS_TYPE arguments
 ) {
-    HandleScope scope;
+    NanEscapableScope();
 
     uint32_t argc = arguments.Length();
     Handle<Value>* argv = new Handle<Value>[argc];
@@ -47,37 +48,40 @@ Handle<Value> ProxyConstructor(
         argv[i] = arguments[i];
     }
 
-    Handle<Value> newInstance = constructor->NewInstance(argc, argv);
+    Local<Value> newInstance = constructor->NewInstance(argc, argv);
     
     delete[] argv;
-    return scope.Close(newInstance);
+    return NanEscapeScope(newInstance);
 }
 
 
-Handle<Value> StubConstructor(const Arguments& arguments) {
-    Handle<Value> sentry = arguments[0];
+NAN_METHOD(StubConstructor) {
+    NanScope();
 
-    if (!(  arguments.IsConstructCall() &&
-            arguments.Length() == 1 &&
+    Handle<Value> sentry = args[0];
+
+    if (!(  args.IsConstructCall() &&
+            args.Length() == 1 &&
             sentry->IsExternal() &&
             sentry.As<External>()->Value() == NULL
     )) {
-        return ThrowException(Exception::TypeError(String::New(
-            "You are not supposed to call this constructor directly")));
+        CSNanThrow(Exception::TypeError(NanNew<String>(
+            "You are not supposed to call this constructor directly"
+        )));
     }
 
-    arguments.This()->SetPointerInInternalField(0, NULL);
+    NanSetInternalFieldPointer(args.This(), 0, NULL);
 
-    return arguments.This();
+    NanReturnValue(args.This());
 }
 
 
 Handle<Value> CallStubConstructor(Handle<Function> constructor) {
-    HandleScope scope;
+    NanEscapableScope();
 
-    Handle<Value> args[1] = {External::New(NULL)};
+    Handle<Value> args[1] = {CSNanNewExternal(NULL)};
 
-    return constructor->NewInstance(1, args);
+    return NanEscapeScope(constructor->NewInstance(1, args));
 }
 
 

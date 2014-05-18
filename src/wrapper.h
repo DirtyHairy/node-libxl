@@ -41,7 +41,9 @@ template<typename T> class Wrapper : public node::ObjectWrap {
         }
 
         static v8::Handle<v8::Function> GetConstructor() {
-            return constructor;
+            NanScope();
+
+            return NanNew(constructor);
         }
 
         static bool InstanceOf(v8::Handle<v8::Value> object);
@@ -66,9 +68,11 @@ template<typename T> v8::Persistent<v8::Function> Wrapper<T>::constructor;
 
 
 template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
+    NanScope();
+
     return object->IsObject() &&
         object.As<v8::Object>()->GetPrototype()->StrictEquals(
-            constructor->Get(v8::String::NewSymbol("prototype")));
+            NanNew(constructor)->Get(NanSymbol("prototype")));
 }
 
 

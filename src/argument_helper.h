@@ -35,7 +35,7 @@ namespace node_libxl {
 class ArgumentHelper {
     public:
 
-        ArgumentHelper(const v8::Arguments& args);
+        ArgumentHelper(_NAN_METHOD_ARGS_TYPE args);
 
         int32_t GetInt(uint8_t pos);
         int32_t GetInt(uint8_t pos, int32_t def);
@@ -50,11 +50,11 @@ class ArgumentHelper {
         v8::Handle<v8::Value> GetString(uint8_t pos, const char* def);
 
         bool HasException() const;
-        const v8::Handle<v8::Value> ThrowException() const;
+        _NAN_METHOD_RETURN_TYPE ThrowException() const;
 
     private:
 
-        const v8::Arguments& arguments;
+        _NAN_METHOD_ARGS_TYPE arguments;
         v8::Handle<v8::Value> exception;
 
         void RaiseException(const std::string& message, int32_t pos = -1);

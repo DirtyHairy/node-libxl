@@ -12,7 +12,8 @@
         'src/book_wrapper.cc'
       ],
       'include_dirs': [
-        'deps/libxl/include_cpp'
+        'deps/libxl/include_cpp',
+        "<!(node -e \"require('nan')\")"
       ],
       'conditions': [
         ['OS=="linux"', {

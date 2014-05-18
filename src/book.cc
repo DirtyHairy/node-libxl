@@ -48,17 +48,18 @@ Book::~Book() {
 }
 
 
-Handle<Value> Book::New(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Book::New) {
+    NanScope();
 
-    if (!arguments.IsConstructCall()) {
-        return scope.Close(util::ProxyConstructor(constructor, arguments));
+    if (!args.IsConstructCall()) {
+        NanReturnValue(NanNew(
+            util::ProxyConstructor(NanNew(constructor), args)));
     }
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t type = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t type = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
     libxl::Book* libxlBook;
 
@@ -70,12 +71,14 @@ Handle<Value> Book::New(const Arguments& arguments) {
             libxlBook = xlCreateXMLBook();
             break;
         default:
-            return ThrowException(Exception::TypeError(String::New(
-                "invalid book type")));
+            CSNanThrow(Exception::TypeError(
+                NanNew<String>("invalid book type")
+            ));
     }
 
     if (!libxlBook) {
-        return ThrowException(Exception::Error(String::New("unknown error")));
+        CSNanThrow(Exception::Error(
+            NanNew<String>("unknown error")));
     }
 
     libxlBook->setLocale("UTF-8");
@@ -85,24 +88,24 @@ Handle<Value> Book::New(const Arguments& arguments) {
 
 
     Book* book = new Book(libxlBook);
-    book->Wrap(arguments.This());
+    book->Wrap(args.This());
 
-    return arguments.This();
+    NanReturnValue(args.This());
 }
 
 
 // Wrappers
 
 
-Handle<Value> Book::WriteSync(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Book::WriteSync) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    String::Utf8Value filename(args.GetString(0));
-    ASSERT_ARGUMENTS(args);
+    String::Utf8Value filename(arguments.GetString(0));
+    ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(arguments.This());
+    Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     libxl::Book* libxlBook = that->GetWrapped();
@@ -110,21 +113,21 @@ Handle<Value> Book::WriteSync(const Arguments& arguments) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Book::AddSheet(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Book::AddSheet) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    String::Utf8Value name(args.GetString(0));
-    ASSERT_ARGUMENTS(args);
+    String::Utf8Value name(arguments.GetString(0));
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* parentSheet = Sheet::Unwrap(arguments[1]);
+    Sheet* parentSheet = Sheet::Unwrap(args[1]);
 
-    Book* that = Unwrap(arguments.This());
+    Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (parentSheet) {
         ASSERT_SAME_BOOK(parentSheet, that);
@@ -138,19 +141,20 @@ Handle<Value> Book::AddSheet(const Arguments& arguments) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    return scope.Close(Sheet::NewInstance(libxlSheet, arguments.This()));
+    NanReturnValue(Sheet::NewInstance(
+        libxlSheet, args.This()));
 }
 
 
-Handle<Value> Book::AddCustomNumFormat(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Book::AddCustomNumFormat) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    String::Utf8Value description(args.GetString(0));
-    ASSERT_ARGUMENTS(args);
+    String::Utf8Value description(arguments.GetString(0));
+    ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(arguments.This());
+    Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
     
     libxl::Book* libxlBook = that->GetWrapped();
@@ -160,16 +164,16 @@ Handle<Value> Book::AddCustomNumFormat(const Arguments& arguments) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    return scope.Close(v8::Integer::New(format));
+    NanReturnValue(NanNew<Number>(format));
 }
 
 
-Handle<Value> Book::AddFormat(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Book::AddFormat) {
+    NanScope();
 
-    Format* parentFormat = Format::Unwrap(arguments[0]);
+    Format* parentFormat = Format::Unwrap(args[0]);
 
-    Book* that = Unwrap(arguments.This());
+    Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     if (parentFormat) {
@@ -184,7 +188,8 @@ Handle<Value> Book::AddFormat(const Arguments& arguments) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    return scope.Close(Format::NewInstance(libxlFormat, arguments.This()));
+    NanReturnValue(NanNew(
+        Format::NewInstance(libxlFormat, args.This())));
 }
 
 
@@ -192,10 +197,10 @@ Handle<Value> Book::AddFormat(const Arguments& arguments) {
 
 
 void Book::Initialize(Handle<Object> exports) {
-    HandleScope scope;
+    NanScope();
 
-    Local<FunctionTemplate> t = FunctionTemplate::New(New);
-    t->SetClassName(String::NewSymbol("Book"));
+    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
+    t->SetClassName(NanNew<String>("Book"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
@@ -204,16 +209,16 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
 
     #ifdef INCLUDE_API_KEY
-        exports->Set(String::New("apiKeyCompiledIn"), True(),
+        exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #else
-        exports->Set(String::New("apiKeyCompiledIn"), False(),
+        exports->Set(NanNew<String>("apiKeyCompiledIn"), NanFalse(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #endif
 
     t->ReadOnlyPrototype();
-    constructor = Persistent<Function>::New(t->GetFunction());
-    exports->Set(String::NewSymbol("Book"), constructor);
+    NanAssignPersistent(constructor, t->GetFunction());
+    exports->Set(NanSymbol("Book"), NanNew(constructor));
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);

@@ -51,12 +51,12 @@ class Book : public Wrapper<libxl::Book> {
 
     protected:
 
-        static v8::Handle<v8::Value> New(const v8::Arguments& arguments);
+        static NAN_METHOD(New);
 
-        static v8::Handle<v8::Value> WriteSync(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddSheet(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddFormat(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> AddCustomNumFormat(const v8::Arguments& arguments);
+        static NAN_METHOD(WriteSync);
+        static NAN_METHOD(AddSheet);
+        static NAN_METHOD(AddFormat);
+        static NAN_METHOD(AddCustomNumFormat);
 
     private:
 

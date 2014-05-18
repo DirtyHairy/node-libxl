@@ -27,6 +27,8 @@
 #include <v8.h>
 #include <node.h>
 #include <libxl.h>
+#include <nan.h>
+#include "csnan.h"
 
 #define BINDINGS_COMMON_H
 #endif // BINDINGS_COMMON_H

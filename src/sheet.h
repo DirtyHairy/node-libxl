@@ -52,33 +52,33 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
 
     protected:
 
-        static v8::Handle<v8::Value> CellType(const v8::Arguments&);
-        static v8::Handle<v8::Value> IsFormula(const v8::Arguments&);
-        static v8::Handle<v8::Value> CellFormat(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetCellFormat(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadStr(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteStr(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadNum(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteNum(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadBool(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteBool(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadBlank(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteBlank(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadFormula(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteFormula(const v8::Arguments&);
-        static v8::Handle<v8::Value> ReadComment(const v8::Arguments&);
-        static v8::Handle<v8::Value> WriteComment(const v8::Arguments&);
+        static NAN_METHOD(CellType);
+        static NAN_METHOD(IsFormula);
+        static NAN_METHOD(CellFormat);
+        static NAN_METHOD(SetCellFormat);
+        static NAN_METHOD(ReadStr);
+        static NAN_METHOD(WriteStr);
+        static NAN_METHOD(ReadNum);
+        static NAN_METHOD(WriteNum);
+        static NAN_METHOD(ReadBool);
+        static NAN_METHOD(WriteBool);
+        static NAN_METHOD(ReadBlank);
+        static NAN_METHOD(WriteBlank);
+        static NAN_METHOD(ReadFormula);
+        static NAN_METHOD(WriteFormula);
+        static NAN_METHOD(ReadComment);
+        static NAN_METHOD(WriteComment);
         // TODO IsDate
-        static v8::Handle<v8::Value> ReadError(const v8::Arguments&);
-        static v8::Handle<v8::Value> ColWidth(const v8::Arguments&);
-        static v8::Handle<v8::Value> RowHeight(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetCol(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetRow(const v8::Arguments&);
-        static v8::Handle<v8::Value> RowHidden(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetRowHidden(const v8::Arguments&);
-        static v8::Handle<v8::Value> ColHidden(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetColHidden(const v8::Arguments&);
-        static v8::Handle<v8::Value> SetMerge(const v8::Arguments&);
+        static NAN_METHOD(ReadError);
+        static NAN_METHOD(ColWidth);
+        static NAN_METHOD(RowHeight);
+        static NAN_METHOD(SetCol);
+        static NAN_METHOD(SetRow);
+        static NAN_METHOD(RowHidden);
+        static NAN_METHOD(SetRowHidden);
+        static NAN_METHOD(ColHidden);
+        static NAN_METHOD(SetColHidden);
+        static NAN_METHOD(SetMerge);
 
     private:
 

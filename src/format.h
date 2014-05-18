@@ -51,14 +51,14 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
 
     protected:
 
-        static v8::Handle<v8::Value> SetNumFormat(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> NumFormat(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetWrap(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetShrinkToFit(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetAlignH(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetFillPattern(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetPatternBackgroundColor(const v8::Arguments& arguments);
-        static v8::Handle<v8::Value> SetPatternForegroundColor(const v8::Arguments& arguments);     
+        static NAN_METHOD(SetNumFormat);
+        static NAN_METHOD(NumFormat);
+        static NAN_METHOD(SetWrap);
+        static NAN_METHOD(SetShrinkToFit);
+        static NAN_METHOD(SetAlignH);
+        static NAN_METHOD(SetFillPattern);
+        static NAN_METHOD(SetPatternBackgroundColor);
+        static NAN_METHOD(SetPatternForegroundColor);
 
     private:
 

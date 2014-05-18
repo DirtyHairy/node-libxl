@@ -1,25 +1,32 @@
 {
-    "name": "libxl",
-    "author": "Christian Speckner <cnspeckn@googlemail.com>",
-    "license": "MIT",
-    "version": "0.0.9",
-    "description": "libxl bindings for node",
-    "keywords": ["excel", "libxl", "spreadsheet"],
-    "homepage": "https://github.com/DirtyHairy/node-libxl",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/DirtyHairy/node-libxl.git"
-    },
-    "bugs": {
-        "url": "https://github.com/DirtyHairy/node-libxl/issues"
-    },
-    "engines":{
-        "node": ">=0.10"
-    },
-    "main": "./lib/libxl.js",
-    "gypfile": true,
-    "scripts": {
-        "preinstall": "node install-libxl.js",
-        "install": "node-gyp rebuild"
-    }
+  "name": "libxl",
+  "author": "Christian Speckner <cnspeckn@googlemail.com>",
+  "license": "MIT",
+  "version": "0.0.9",
+  "description": "libxl bindings for node",
+  "keywords": [
+    "excel",
+    "libxl",
+    "spreadsheet"
+  ],
+  "homepage": "https://github.com/DirtyHairy/node-libxl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DirtyHairy/node-libxl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DirtyHairy/node-libxl/issues"
+  },
+  "engines": {
+    "node": ">=0.10"
+  },
+  "main": "./lib/libxl.js",
+  "gypfile": true,
+  "scripts": {
+    "preinstall": "node install-libxl.js",
+    "install": "node-gyp rebuild"
+  },
+  "dependencies": {
+    "nan": "^1.0.0"
+  }
 }

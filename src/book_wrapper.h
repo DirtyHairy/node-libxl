@@ -38,11 +38,15 @@ class BookWrapper{
         ~BookWrapper();
 
         v8::Handle<v8::Value> GetBookHandle() {
-            return bookHandle;
+            NanEscapableScope();
+
+            return NanEscapeScope(NanNew(bookHandle));
         }
 
         Book* GetBook() {
-            return Book::Unwrap(bookHandle);
+            NanScope();
+
+            return Book::Unwrap(NanNew(bookHandle));
         }
 
     protected:
@@ -59,10 +63,7 @@ class BookWrapper{
 
         // We need to template this in order to unwrap the correct object
         // pointer
-        template<typename T> static v8::Handle<v8::Value> BookAccessor(
-            v8::Local<v8::String> property,
-            const v8::AccessorInfo& info
-        );
+        template<typename T> static NAN_GETTER(BookAccessor);
 
         BookWrapper();
         BookWrapper(const BookWrapper&);
@@ -80,7 +81,7 @@ template<typename T> void BookWrapper::Initialize(
         constructor->InstanceTemplate();
     
     instanceTemplate->SetAccessor(
-        v8::String::New("book"),
+        NanSymbol("book"),
         BookAccessor<T>, 
         NULL,
         v8::Handle<v8::Value>(),
@@ -90,19 +91,17 @@ template<typename T> void BookWrapper::Initialize(
 }
 
 
-template<typename T> v8::Handle<v8::Value> BookWrapper::BookAccessor(
-    v8::Local<v8::String> property,
-    const v8::AccessorInfo& info)
+template<typename T>  NAN_GETTER(BookWrapper::BookAccessor)
 {
-    v8::HandleScope scope;
+    NanScope();
 
     BookWrapper* bookWrapper = dynamic_cast<BookWrapper*>(
-        node::ObjectWrap::Unwrap<T>(info.This()));
+        node::ObjectWrap::Unwrap<T>(args.This()));
    
     if (bookWrapper) {
-        return scope.Close(bookWrapper->bookHandle);
+        NanReturnValue(NanNew(bookWrapper->bookHandle));
     } else {
-        return scope.Close(v8::Undefined());
+        NanReturnUndefined();
     }
 }
 

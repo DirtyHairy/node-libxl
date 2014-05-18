@@ -35,14 +35,14 @@ namespace util {
 
 v8::Handle<v8::Value> ProxyConstructor(
     v8::Handle<v8::Function> constructor,
-    const v8::Arguments& arguments
+    _NAN_METHOD_ARGS_TYPE arguments
 );
 
 
-template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T book);
+template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
 
 
-v8::Handle<v8::Value> StubConstructor(const v8::Arguments& arguments);
+NAN_METHOD(StubConstructor);
 
 
 v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
@@ -71,11 +71,14 @@ inline libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
 }
 
 
-template<typename T> v8::Handle<v8::Value> ThrowLibxlError(T wrappedBook) {
+template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
+    NanScope();
+
     libxl::Book* book = UnwrapBook(wrappedBook);
 
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-        book ? book->errorMessage() : NULL)));
+    CSNanThrow(v8::Exception::Error(
+        NanNew<v8::String>(book ? book->errorMessage() : "")
+    ));
 }
 
 

@@ -30,6 +30,8 @@
 
 import os
 import ycm_core
+import subprocess
+import re
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
@@ -132,6 +134,12 @@ def FindNodeGypPath():
 
   return FindBest(os.listdir(basepath))
 
+def GetNanPath():
+
+  path = os.path.join('.', 
+    subprocess.check_output(["node", "-e", "require('nan')"]))
+
+  return re.sub('\\n$', '', path)
   
 def FlagsForFile( filename, **kwargs ):
   relative_to = DirectoryOfThisScript()
@@ -144,6 +152,7 @@ def FlagsForFile( filename, **kwargs ):
     final_flags += ["-I", os.path.join(node_gyp_path, "src")]
     final_flags += ["-I", os.path.join(node_gyp_path, "deps", "uv", "include")]
     final_flags += ["-I", os.path.join(node_gyp_path, "deps", "v8", "include")]
+    final_flags += ["-I", GetNanPath()]
 
   final_flags = MakeRelativePathsInFlagsAbsolute( flags, relative_to )
 

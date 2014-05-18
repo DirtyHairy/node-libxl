@@ -29,90 +29,98 @@
 namespace node_libxl {
 
 
-ArgumentHelper::ArgumentHelper(const v8::Arguments& args) :
-   arguments(args)
+ArgumentHelper::ArgumentHelper(_NAN_METHOD_ARGS_TYPE args) :
+    arguments(args)
 {}
 
 
 int32_t ArgumentHelper::GetInt(uint8_t pos) {
-   if (!arguments[pos]->IsInt32()) {
-      RaiseException("integer required at position", pos);
-      return 0;
-   }
+    if (!arguments[pos]->IsInt32()) {
+        RaiseException("integer required at position", pos);
+        return 0;
+    }
 
-   return arguments[pos]->Int32Value();
+    return arguments[pos]->Int32Value();
 }
 
 
 int32_t ArgumentHelper::GetInt(uint8_t pos, int32_t def) {
-   return arguments[pos]->IsInt32() ? arguments[pos]->Int32Value() : def;
+    return arguments[pos]->IsInt32() ? arguments[pos]->Int32Value() : def;
 }
 
 
 double ArgumentHelper::GetDouble(uint8_t pos) {
-   if (!arguments[pos]->IsNumber()) {
-      RaiseException("number required at position", pos);
-      return 0;
-   }
+    if (!arguments[pos]->IsNumber()) {
+        RaiseException("number required at position", pos);
+        return 0;
+    }
 
-   return arguments[pos]->NumberValue();
+    return arguments[pos]->NumberValue();
 }
 
 
 double ArgumentHelper::GetDouble(uint8_t pos, double def) {
-   return arguments[pos]->IsNumber() ? arguments[pos]->NumberValue() : def;
+    return arguments[pos]->IsNumber() ? arguments[pos]->NumberValue() : def;
 }
 
 
 bool ArgumentHelper::GetBoolean(uint8_t pos) {
-   if (!arguments[pos]->IsBoolean()) {
-      RaiseException("bool required at position", pos);
-      return false;
-   }
+    if (!arguments[pos]->IsBoolean()) {
+        RaiseException("bool required at position", pos);
+        return false;
+    }
 
-   return arguments[pos]->BooleanValue();
+    return arguments[pos]->BooleanValue();
 }
 
 
 bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
-   return arguments[pos]->IsBoolean() ? arguments[pos]->BooleanValue() : def;
+    return arguments[pos]->IsBoolean() ? arguments[pos]->BooleanValue() : def;
 }
 
 
 v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
-   if (!arguments[pos]->IsString()) {
-      RaiseException("string required at position", pos);
-   }
+    if (!arguments[pos]->IsString()) {
+        RaiseException("string required at position", pos);
+    }
 
-   return arguments[pos];
+    return arguments[pos];
 }
 
 
 v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
-   return arguments[pos]->IsString() ? arguments[pos] :
-      v8::Handle<v8::Value>(v8::String::New(def));
+    NanEscapableScope();
+
+    if (arguments[pos]->IsString()) {
+        return NanEscapeScope(arguments[pos]);
+    } else {
+        return NanEscapeScope(NanNew<v8::String>(def));
+    }
 }
 
 
 void ArgumentHelper::RaiseException(const std::string& message, int32_t pos) {
-   if (HasException()) return;
+    NanEscapableScope();
 
-   std::stringstream ss;
-   ss.str("");
-   ss << message;
+    if (HasException()) return;
 
-   if (pos >= 0) ss << " " << pos;
+    std::stringstream ss;
+    ss.str("");
+    ss << message;
 
-   exception = v8::Exception::TypeError(v8::String::New(ss.str().data()));
+    if (pos >= 0) ss << " " << pos;
+
+    exception = NanEscapeScope(v8::Exception::TypeError(
+        NanNew<v8::String>(ss.str().data())));
 }
 
 
 bool ArgumentHelper::HasException() const {
-   return !exception.IsEmpty();
+    return !exception.IsEmpty();
 }
 
-const v8::Handle<v8::Value> ArgumentHelper::ThrowException() const {
-   return v8::ThrowException(exception);
+_NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
+    CSNanThrow(exception);
 }
 
 
