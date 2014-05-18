@@ -304,16 +304,16 @@ NAN_METHOD(Sheet::WriteBool) {
 }
 
 
-Handle<Value> Sheet::ReadBlank(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ReadBlank) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    Handle<Value> formatRef = arguments[2];
-    ASSERT_ARGUMENTS(args);
+    ArgumentHelper arguments(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    Handle<Value> formatRef = args[2];
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
@@ -325,27 +325,27 @@ Handle<Value> Sheet::ReadBlank(const Arguments& arguments) {
         that->GetBookHandle());
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(String::NewSymbol("format"), formatHandle);
+        formatRef.As<Object>()->Set(NanSymbol("format"), formatHandle);
     }
 
-    return scope.Close(formatHandle);
+    NanReturnValue(formatHandle);
 }
 
 
-Handle<Value> Sheet::WriteBlank(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::WriteBlank) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    Format* format = Format::Unwrap(arguments[2]);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    Format* format = Format::Unwrap(args[2]);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (!format) {
-        return ThrowException(Exception::TypeError(String::New(
+        CSNanThrow(Exception::TypeError(NanNew<String>(
             "format expected at position 2")));
     }
     ASSERT_SAME_BOOK(that, format);
@@ -356,20 +356,20 @@ Handle<Value> Sheet::WriteBlank(const Arguments& arguments) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::ReadFormula(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ReadFormula) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    Handle<Value> formatRef = arguments[2];
-    ASSERT_ARGUMENTS(args);
+    ArgumentHelper arguments(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    Handle<Value> formatRef = args[2];
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
@@ -379,27 +379,27 @@ Handle<Value> Sheet::ReadFormula(const Arguments& arguments) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(String::NewSymbol("format"),
+        formatRef.As<Object>()->Set(NanSymbol("format"),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
-    return scope.Close(String::New(value));
+    NanReturnValue(NanNew<String>(value));
 }
 
 
-Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::WriteFormula) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    String::Utf8Value value(args.GetString(2));
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    String::Utf8Value value(arguments.GetString(2));
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* format = Format::Unwrap(arguments[3]);
+    Format* format = Format::Unwrap(args[3]);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -411,19 +411,19 @@ Handle<Value> Sheet::WriteFormula(const Arguments& arguments) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::ReadComment(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ReadComment) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    ASSERT_ARGUMENTS(args);
+    ArgumentHelper arguments(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     const char* value = that->GetWrapped()->readComment(row, col);
@@ -431,27 +431,27 @@ Handle<Value> Sheet::ReadComment(const Arguments& arguments) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(String::New(value));
+    NanReturnValue(NanNew<String>(value));
 }
 
 
-Handle<Value> Sheet::WriteComment(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::WriteComment) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    String::Utf8Value value(args.GetString(2));
-    String::Utf8Value author(args.GetString(3, ""));
-    int32_t width = args.GetInt(4, 129);
-    int32_t height = args.GetInt(5, 75);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    String::Utf8Value value(arguments.GetString(2));
+    String::Utf8Value author(arguments.GetString(3, ""));
+    int32_t width = arguments.GetInt(4, 129);
+    int32_t height = arguments.GetInt(5, 75);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    if (arguments[3]->IsString()) {
+    if (args[3]->IsString()) {
         that->GetWrapped()->writeComment(row, col, *value, *author,
             width, height);
     } else {
@@ -459,69 +459,69 @@ Handle<Value> Sheet::WriteComment(const Arguments& arguments) {
             width, height);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::ReadError(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ReadError) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    int32_t col = args.GetInt(1);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    int32_t col = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Integer::New(that->GetWrapped()->readError(row, col)));
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->readError(row, col)));
 }
 
 
-Handle<Value> Sheet::ColWidth(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ColWidth) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t col = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t col = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Number::New(that->GetWrapped()->colWidth(col)));
+    NanReturnValue(NanNew<Number>(that->GetWrapped()->colWidth(col)));
 }
 
 
-Handle<Value> Sheet::RowHeight(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::RowHeight) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Number::New(that->GetWrapped()->rowHeight(row)));
+    NanReturnValue(NanNew<Number>(that->GetWrapped()->rowHeight(row)));
 }
 
 
-Handle<Value> Sheet::SetCol(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::SetCol) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t first = args.GetInt(0);
-    int32_t last = args.GetInt(1);
-    double width = args.GetDouble(2);
-    Format* format = Format::Unwrap(arguments[3]);
-    bool hidden = args.GetBoolean(4, false);
-    ASSERT_ARGUMENTS(args);
+    int32_t first = arguments.GetInt(0);
+    int32_t last = arguments.GetInt(1);
+    double width = arguments.GetDouble(2);
+    Format* format = Format::Unwrap(args[3]);
+    bool hidden = arguments.GetBoolean(4, false);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -533,22 +533,22 @@ Handle<Value> Sheet::SetCol(const Arguments& arguments) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::SetRow(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::SetRow) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    double height = args.GetDouble(1);
-    Format* format = Format::Unwrap(arguments[2]);
-    bool hidden = args.GetBoolean(3, false);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    double height = arguments.GetDouble(1);
+    Format* format = Format::Unwrap(args[2]);
+    bool hidden = arguments.GetBoolean(3, false);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -560,99 +560,99 @@ Handle<Value> Sheet::SetRow(const Arguments& arguments) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::RowHidden(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::RowHidden) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Boolean::New(that->GetWrapped()->rowHidden(row)));
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rowHidden(row)));
 }
 
 
-Handle<Value> Sheet::SetRowHidden(const Arguments &arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::SetRowHidden) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t row = args.GetInt(0);
-    bool hidden = args.GetBoolean(1);
-    ASSERT_ARGUMENTS(args);
+    int32_t row = arguments.GetInt(0);
+    bool hidden = arguments.GetBoolean(1);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setRowHidden(row, hidden)) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::ColHidden(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::ColHidden) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t col = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t col = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Boolean::New(that->GetWrapped()->colHidden(col)));
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->colHidden(col)));
 }
 
 
-Handle<Value> Sheet::SetColHidden(const Arguments &arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::SetColHidden) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t col = args.GetInt(0);
-    bool hidden = args.GetBoolean(1);
-    ASSERT_ARGUMENTS(args);
+    int32_t col = arguments.GetInt(0);
+    bool hidden = arguments.GetBoolean(1);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setColHidden(col, hidden)) {
         return util::ThrowLibxlError(that);
     }
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Sheet::SetMerge(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Sheet::SetMerge) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t rowFirst = args.GetInt(0);
-    int32_t rowLast = args.GetInt(1);
-    int32_t colFirst = args.GetInt(2);
-    int32_t colLast = args.GetInt(3);
-    ASSERT_ARGUMENTS(args);
+    int32_t rowFirst = arguments.GetInt(0);
+    int32_t rowLast = arguments.GetInt(1);
+    int32_t colFirst = arguments.GetInt(2);
+    int32_t colLast = arguments.GetInt(3);
+    ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(arguments.This());
+    Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
     
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
@@ -662,10 +662,10 @@ Handle<Value> Sheet::SetMerge(const Arguments& arguments) {
 void Sheet::Initialize(Handle<Object> exports) {
     using namespace libxl;
 
-    HandleScope scope;
+    NanScope();
 
-    Local<FunctionTemplate> t = FunctionTemplate::New(util::StubConstructor);
-    t->SetClassName(String::NewSymbol("Sheet"));
+    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
+    t->SetClassName(NanSymbol("Sheet"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Sheet>(t);
@@ -700,7 +700,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
 
     t->ReadOnlyPrototype();
-    constructor = Persistent<Function>::New(t->GetFunction());
+    NanAssignPersistent(constructor, t->GetFunction());
 
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_EMPTY);
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_NUMBER);

@@ -29,13 +29,14 @@ using namespace v8;
 namespace node_libxl {
 
 
-BookWrapper::BookWrapper(Handle<Value> bookHandle) :
-    bookHandle(Persistent<Value>::New(bookHandle))
-{}
+BookWrapper::BookWrapper(Handle<Value> bookHandle)
+{
+    NanAssignPersistent(this->bookHandle, bookHandle);
+}
 
 
 BookWrapper::~BookWrapper() {
-    bookHandle.Dispose();
+    NanDisposePersistent(bookHandle);
 }
 
 

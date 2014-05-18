@@ -45,145 +45,146 @@ Handle<Object> Format::NewInstance(
     libxl::Format* libxlFormat,
     Handle<Value> book)
 {
-    HandleScope scope;
+    NanEscapableScope();
 
     Format* format = new Format(libxlFormat, book);
 
-    Handle<Object> that = util::CallStubConstructor(constructor).As<Object>();
+    Local<Object> that = 
+        NanNew(util::CallStubConstructor(NanNew(constructor)).As<Object>());
 
     format->Wrap(that);
 
-    return scope.Close(that);
+    return NanEscapeScope(that);
 }
 
 
 // Wrappers
 
 
-Handle<Value> Format::SetNumFormat(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetNumFormat) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
     
-    int32_t format = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t format = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setNumFormat(format);
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::NumFormat(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::NumFormat) {
+    NanScope();
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    return scope.Close(Integer::New(that->GetWrapped()->numFormat()));
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->numFormat()));
 }
 
 
-Handle<Value> Format::SetWrap(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetWrap) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
-    bool wrap = args.GetBoolean(0);
-    ASSERT_ARGUMENTS(args);
+    ArgumentHelper arguments(args);
+    bool wrap = arguments.GetBoolean(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setWrap(wrap);
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::SetShrinkToFit(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetShrinkToFit) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
-    bool shrink = args.GetBoolean(0);
-    ASSERT_ARGUMENTS(args);
+    ArgumentHelper arguments(args);
+    bool shrink = arguments.GetBoolean(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setShrinkToFit(shrink);
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::SetAlignH(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetAlignH) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t align = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t align = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignH(static_cast<libxl::AlignH>(align));
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::SetFillPattern(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetFillPattern) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t pattern = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t pattern = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setFillPattern(static_cast<libxl::FillPattern>(pattern));
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::SetPatternBackgroundColor(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetPatternBackgroundColor) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t color = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternBackgroundColor(static_cast<libxl::Color>(color));
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
-Handle<Value> Format::SetPatternForegroundColor(const Arguments& arguments) {
-    HandleScope scope;
+NAN_METHOD(Format::SetPatternForegroundColor) {
+    NanScope();
 
-    ArgumentHelper args(arguments);
+    ArgumentHelper arguments(args);
 
-    int32_t color = args.GetInt(0);
-    ASSERT_ARGUMENTS(args);
+    int32_t color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(arguments.This());
+    Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternForegroundColor(static_cast<libxl::Color>(color));
 
-    return scope.Close(arguments.This());
+    NanReturnValue(args.This());
 }
 
 
@@ -192,10 +193,10 @@ Handle<Value> Format::SetPatternForegroundColor(const Arguments& arguments) {
 
 void Format::Initialize(Handle<Object> exports) {
     using namespace libxl;
-    HandleScope scope;
+    NanScope();
 
-    Local<FunctionTemplate> t = FunctionTemplate::New(util::StubConstructor);
-    t->SetClassName(String::NewSymbol("Format"));
+    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
+    t->SetClassName(NanSymbol("Format"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Format>(t);
@@ -212,7 +213,7 @@ void Format::Initialize(Handle<Object> exports) {
         SetPatternForegroundColor);
 
     t->ReadOnlyPrototype();
-    constructor = Persistent<Function>::New(t->GetFunction());
+    NanAssignPersistent(constructor, t->GetFunction());
 
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_GENERAL);
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_NUMBER);
