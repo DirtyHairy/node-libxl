@@ -2,7 +2,7 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "libxl bindings for node",
   "keywords": [
     "excel",
