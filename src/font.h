@@ -22,53 +22,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_BOOK
-#define BINDINGS_BOOK
+#ifndef BINDINGS_FONT_H
+#define BINDINGS_FONT_H
 
 #include "common.h"
 #include "wrapper.h"
+#include "book_wrapper.h"
 
 namespace node_libxl {
 
 
-enum {
-    BOOK_TYPE_XLS,
-    BOOK_TYPE_XLSX
-};
+class Font : public Wrapper<libxl::Font> , public BookWrapper
 
-
-class Book : public Wrapper<libxl::Book> {
+{
     public:
 
-        Book(libxl::Book* libxlBook);
-        ~Book();
+        Font(libxl::Font* font, v8::Handle<v8::Value> book);
 
         static void Initialize(v8::Handle<v8::Object> exports);
-
-        static Book* Unwrap(v8::Handle<v8::Value> object) {
-            return Wrapper<libxl::Book>::Unwrap<Book>(object);
+        
+        static Font* Unwrap(v8::Handle<v8::Value> object) {
+            return Wrapper<libxl::Font>::Unwrap<Font>(object);
         }
+
+        static v8::Handle<v8::Object> NewInstance(
+            libxl::Font* font,
+            v8::Handle<v8::Value> book
+        );
 
     protected:
 
-        static NAN_METHOD(New);
-
-        static NAN_METHOD(WriteSync);
-        static NAN_METHOD(AddSheet);
-        static NAN_METHOD(AddFormat);
-        static NAN_METHOD(AddFont);
-        static NAN_METHOD(AddCustomNumFormat);
+        static NAN_METHOD(SetSize);
 
     private:
 
-        Book(const Book&);
-        const Book& operator=(const Book&);
-
+        Font(const Font&);
+        const Font& operator=(const Font&);
 };
 
 
 }
 
-#include "libxl.h"
-
-#endif // BINDINGS_BOOK
+#endif // BINDINGS_FONT_H

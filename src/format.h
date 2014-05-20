@@ -51,6 +51,7 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
 
     protected:
 
+        static NAN_METHOD(SetFont);
         static NAN_METHOD(SetNumFormat);
         static NAN_METHOD(NumFormat);
         static NAN_METHOD(SetWrap);

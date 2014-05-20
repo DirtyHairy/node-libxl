@@ -9,6 +9,7 @@
         'src/util.cc',
         'src/sheet.cc',
         'src/format.cc',
+        'src/font.cc',
         'src/book_wrapper.cc'
       ],
       'include_dirs': [

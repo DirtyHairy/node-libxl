@@ -28,6 +28,7 @@
 #include "util.h"
 #include "sheet.h"
 #include "format.h"
+#include "font.h"
 #include "api_key.h"
 
 using namespace v8;
@@ -193,6 +194,31 @@ NAN_METHOD(Book::AddFormat) {
 }
 
 
+NAN_METHOD(Book::AddFont) {
+    NanScope();
+
+    Font* parentFont = Font::Unwrap(args[0]);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (parentFont) {
+        ASSERT_SAME_BOOK(parentFont, that);
+    }
+
+    libxl::Book* libxlBook = that->GetWrapped();
+    libxl::Font* libxlFont = libxlBook->addFont(
+        parentFont ? parentFont->GetWrapped() : NULL);
+
+    if (!libxlFont) {
+        return util::ThrowLibxlError(libxlBook);
+    }
+
+    NanReturnValue(NanNew(
+        Font::NewInstance(libxlFont, args.This())));
+}
+
+
 // Init
 
 
@@ -207,6 +233,7 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "addFont", AddFont);
 
     #ifdef INCLUDE_API_KEY
         exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),

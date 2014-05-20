@@ -27,6 +27,7 @@
 #include "assert.h"
 #include "util.h"
 #include "argument_helper.h"
+#include "font.h"
 
 using namespace v8;
 
@@ -59,6 +60,26 @@ Handle<Object> Format::NewInstance(
 
 
 // Wrappers
+
+
+NAN_METHOD(Format::SetFont) {
+    NanScope();
+
+    Font* font = Font::Unwrap(args[0]);
+
+    if (!font) {
+        return NanThrowTypeError("font required at position 0");
+    }
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setFont(font->GetWrapped())) {
+        util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
 
 
 NAN_METHOD(Format::SetNumFormat) {
@@ -201,6 +222,7 @@ void Format::Initialize(Handle<Object> exports) {
 
     BookWrapper::Initialize<Format>(t);
 
+    NODE_SET_PROTOTYPE_METHOD(t, "setFont", SetFont);
     NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);

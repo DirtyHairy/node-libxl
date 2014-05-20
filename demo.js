@@ -11,6 +11,7 @@ function fillSheet(sheet) {
     row++;
 
     format = book.addFormat();
+    format.setFont(book.addFont().setSize(20));
     sheet
         .writeStr(row, 0, 'green', format);
     sheet.cellFormat(row, 0)
