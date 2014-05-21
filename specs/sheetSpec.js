@@ -1,5 +1,18 @@
 var xl = require('../lib/libxl');
 
+describe('The font class', function() {
+
+    var book = new xl.Book(xl.BOOK_TYPE_XLS),
+        font = book.addFont(),
+        wrongBook = new xl.Book(xl.BOOK_TYPE_XLS),
+        wrongFont = book.addFont();
+
+    it('The font constructor can not be called directly', function() {
+        expect(function() {new font.constructor();}).toThrow();
+    });
+
+});
+
 describe('The sheet class', function() {
 
     var book = new xl.Book(xl.BOOK_TYPE_XLS),

@@ -55,7 +55,8 @@ class ArgumentHelper {
     private:
 
         _NAN_METHOD_ARGS_TYPE arguments;
-        v8::Handle<v8::Value> exception;
+        std::string exceptionMessage;
+        bool exceptionRaised;
 
         void RaiseException(const std::string& message, int32_t pos = -1);
 

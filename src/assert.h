@@ -25,9 +25,8 @@
 #define ASSERT_ARGUMENTS(ARGS) if (ARGS.HasException()) \
     return (ARGS.ThrowException())
 
-#define ASSERT_THIS(THIS) if (!THIS) CSNanThrow(\
-    Exception::TypeError(NanNew<String>("invalid scope")))
+#define ASSERT_THIS(THIS) if (!THIS) return(NanThrowTypeError("invalid scope"))
 
 #define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
-    !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) CSNanThrow(\
-        Exception::TypeError(NanNew<String>("parent books differ")))
+    !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) \
+    return NanThrowTypeError("parent books differ")

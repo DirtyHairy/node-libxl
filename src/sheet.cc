@@ -135,8 +135,7 @@ NAN_METHOD(Sheet::SetCellFormat) {
     ASSERT_THIS(that);
 
     if (!format) {
-        CSNanThrow(Exception::TypeError(NanNew<String>(
-            "format required at position 2")));
+        return NanThrowTypeError("format required at position 2");
     }
     ASSERT_SAME_BOOK(that, format);
 
@@ -345,8 +344,7 @@ NAN_METHOD(Sheet::WriteBlank) {
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
     if (!format) {
-        CSNanThrow(Exception::TypeError(NanNew<String>(
-            "format expected at position 2")));
+        return NanThrowTypeError("format expected at position 2");
     }
     ASSERT_SAME_BOOK(that, format);
 

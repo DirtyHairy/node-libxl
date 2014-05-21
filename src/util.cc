@@ -65,9 +65,8 @@ NAN_METHOD(StubConstructor) {
             sentry->IsExternal() &&
             sentry.As<External>()->Value() == NULL
     )) {
-        CSNanThrow(Exception::TypeError(NanNew<String>(
-            "You are not supposed to call this constructor directly"
-        )));
+        return NanThrowTypeError(
+            "You are not supposed to call this constructor directly");
     }
 
     NanSetInternalFieldPointer(args.This(), 0, NULL);

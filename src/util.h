@@ -76,9 +76,7 @@ template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
 
     libxl::Book* book = UnwrapBook(wrappedBook);
 
-    CSNanThrow(v8::Exception::Error(
-        NanNew<v8::String>(book ? book->errorMessage() : "")
-    ));
+    return NanThrowError(book ? book->errorMessage() : "");
 }
 
 

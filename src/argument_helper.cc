@@ -30,7 +30,8 @@ namespace node_libxl {
 
 
 ArgumentHelper::ArgumentHelper(_NAN_METHOD_ARGS_TYPE args) :
-    arguments(args)
+    arguments(args),
+    exceptionRaised(false)
 {}
 
 
@@ -110,17 +111,17 @@ void ArgumentHelper::RaiseException(const std::string& message, int32_t pos) {
 
     if (pos >= 0) ss << " " << pos;
 
-    exception = NanEscapeScope(v8::Exception::TypeError(
-        NanNew<v8::String>(ss.str().data())));
+    exceptionMessage = ss.str();
+    exceptionRaised = true;
 }
 
 
 bool ArgumentHelper::HasException() const {
-    return !exception.IsEmpty();
+    return exceptionRaised;
 }
 
 _NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
-    CSNanThrow(exception);
+    return NanThrowTypeError(exceptionMessage.data());
 }
 
 

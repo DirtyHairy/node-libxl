@@ -72,14 +72,11 @@ NAN_METHOD(Book::New) {
             libxlBook = xlCreateXMLBook();
             break;
         default:
-            CSNanThrow(Exception::TypeError(
-                NanNew<String>("invalid book type")
-            ));
+            return NanThrowTypeError("invalid book type");
     }
 
     if (!libxlBook) {
-        CSNanThrow(Exception::Error(
-            NanNew<String>("unknown error")));
+        return NanThrowError("unknown error");
     }
 
     libxlBook->setLocale("UTF-8");
