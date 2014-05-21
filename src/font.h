@@ -52,7 +52,22 @@ class Font : public Wrapper<libxl::Font> , public BookWrapper
 
     protected:
 
+        static NAN_METHOD(Size);
         static NAN_METHOD(SetSize);
+        static NAN_METHOD(Italic);
+        static NAN_METHOD(SetItalic);
+        static NAN_METHOD(StrikeOut);
+        static NAN_METHOD(SetStrikeOut);
+        static NAN_METHOD(Color);
+        static NAN_METHOD(SetColor);
+        static NAN_METHOD(Bold);
+        static NAN_METHOD(SetBold);
+        static NAN_METHOD(Script);
+        static NAN_METHOD(SetScript);
+        static NAN_METHOD(Underline);
+        static NAN_METHOD(SetUnderline);
+        static NAN_METHOD(Name);
+        static NAN_METHOD(SetName);
 
     private:
 
