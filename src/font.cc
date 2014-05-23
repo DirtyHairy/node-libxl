@@ -285,7 +285,6 @@ NAN_METHOD(Font::SetName) {
 }
 
 
-
 // Init
 
 

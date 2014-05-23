@@ -62,10 +62,25 @@ Handle<Object> Format::NewInstance(
 // Wrappers
 
 
+NAN_METHOD(Format::Font) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    libxl::Font* font = that->GetWrapped()->font();
+    if (!font) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(Font::NewInstance(font, that->GetBookHandle()));
+}
+
+
 NAN_METHOD(Format::SetFont) {
     NanScope();
 
-    Font* font = Font::Unwrap(args[0]);
+    node_libxl::Font* font = Font::Unwrap(args[0]);
 
     if (!font) {
         return NanThrowTypeError("font required at position 0");
@@ -222,6 +237,7 @@ void Format::Initialize(Handle<Object> exports) {
 
     BookWrapper::Initialize<Format>(t);
 
+    NODE_SET_PROTOTYPE_METHOD(t, "font", Font);
     NODE_SET_PROTOTYPE_METHOD(t, "setFont", SetFont);
     NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);

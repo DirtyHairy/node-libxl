@@ -128,7 +128,6 @@ describe('The font class', function() {
         shouldThrow(font.setName, book, 'arial');
         expect(font.setName('arial')).toBe(font);
     });
-
 });
 
 describe('The sheet class', function() {
