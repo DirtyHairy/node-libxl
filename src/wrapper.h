@@ -40,12 +40,6 @@ template<typename T> class Wrapper : public node::ObjectWrap {
             return wrapped;
         }
 
-        static v8::Handle<v8::Function> GetConstructor() {
-            NanScope();
-
-            return NanNew(constructor);
-        }
-
         static bool InstanceOf(v8::Handle<v8::Value> object);
         template<typename U> static U* Unwrap(v8::Handle<v8::Value> object);
 

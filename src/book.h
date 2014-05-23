@@ -53,8 +53,11 @@ class Book : public Wrapper<libxl::Book> {
 
         static NAN_METHOD(New);
 
+        static NAN_METHOD(LoadSync);
         static NAN_METHOD(WriteSync);
         static NAN_METHOD(AddSheet);
+        static NAN_METHOD(GetSheet);
+        static NAN_METHOD(SheetCount);
         static NAN_METHOD(AddFormat);
         static NAN_METHOD(AddFont);
         static NAN_METHOD(AddCustomNumFormat);

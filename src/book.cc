@@ -95,6 +95,25 @@ NAN_METHOD(Book::New) {
 // Wrappers
 
 
+NAN_METHOD(Book::LoadSync){
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    String::Utf8Value filename(arguments.GetString(0));
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->load(*filename)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Book::WriteSync) {
     NanScope();
 
@@ -141,6 +160,36 @@ NAN_METHOD(Book::AddSheet) {
 
     NanReturnValue(Sheet::NewInstance(
         libxlSheet, args.This()));
+}
+
+
+NAN_METHOD(Book::GetSheet) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    libxl::Sheet* sheet = that->GetWrapped()->getSheet(index);
+    if (!sheet) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(Sheet::NewInstance(sheet, args.This()));
+}
+
+
+NAN_METHOD(Book::SheetCount) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetCount()));
 }
 
 
@@ -226,8 +275,11 @@ void Book::Initialize(Handle<Object> exports) {
     t->SetClassName(NanNew<String>("Book"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
+    NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "sheetCount", SheetCount);
     NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "addFont", AddFont);
