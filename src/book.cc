@@ -163,6 +163,34 @@ NAN_METHOD(Book::AddSheet) {
 }
 
 
+NAN_METHOD(Book::InsertSheet) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    String::Utf8Value name(arguments.GetString(1));
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* parentSheet = Sheet::Unwrap(args[2]);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+    if (parentSheet) {
+        ASSERT_SAME_BOOK(parentSheet, that);
+    }
+
+    libxl::Sheet* libxlSheet = that->GetWrapped()->insertSheet(index, *name,
+        parentSheet ? parentSheet->GetWrapped() : NULL);
+
+    if (!libxlSheet) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(Sheet::NewInstance(libxlSheet, args.This()));
+}
+
+
 NAN_METHOD(Book::GetSheet) {
     NanScope();
 
@@ -183,6 +211,40 @@ NAN_METHOD(Book::GetSheet) {
 }
 
 
+NAN_METHOD(Book::SheetType) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetType(index)));
+}
+
+
+NAN_METHOD(Book::DelSheet) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->delSheet(index)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Book::SheetCount) {
     NanScope();
 
@@ -190,28 +252,6 @@ NAN_METHOD(Book::SheetCount) {
     ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetCount()));
-}
-
-
-NAN_METHOD(Book::AddCustomNumFormat) {
-    NanScope();
-
-    ArgumentHelper arguments(args);
-
-    String::Utf8Value description(arguments.GetString(0));
-    ASSERT_ARGUMENTS(arguments);
-
-    Book* that = Unwrap(args.This());
-    ASSERT_THIS(that);
-    
-    libxl::Book* libxlBook = that->GetWrapped();
-    int32_t format = libxlBook->addCustomNumFormat(*description);
-
-    if (!format) {
-        return util::ThrowLibxlError(libxlBook);
-    }
-
-    NanReturnValue(NanNew<Number>(format));
 }
 
 
@@ -265,10 +305,54 @@ NAN_METHOD(Book::AddFont) {
 }
 
 
+NAN_METHOD(Book::AddCustomNumFormat) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    String::Utf8Value description(arguments.GetString(0));
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+    
+    libxl::Book* libxlBook = that->GetWrapped();
+    int32_t format = libxlBook->addCustomNumFormat(*description);
+
+    if (!format) {
+        return util::ThrowLibxlError(libxlBook);
+    }
+
+    NanReturnValue(NanNew<Number>(format));
+}
+
+
+NAN_METHOD(Book::CustomNumFormat) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    const char* formatString = that->GetWrapped()->customNumFormat(index);
+    if (!formatString) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(NanNew<String>(formatString));
+}
+
+
 // Init
 
 
 void Book::Initialize(Handle<Object> exports) {
+    using namespace libxl;
+
     NanScope();
 
     Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
@@ -278,11 +362,15 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "sheetType", SheetType);
+    NODE_SET_PROTOTYPE_METHOD(t, "delSheet", DelSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "sheetCount", SheetCount);
     NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "addFont", AddFont);
+    NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "customNumFormat", CustomNumFormat);
 
     #ifdef INCLUDE_API_KEY
         exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),
@@ -298,6 +386,9 @@ void Book::Initialize(Handle<Object> exports) {
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);
+    NODE_DEFINE_CONSTANT(exports, SHEETTYPE_SHEET);
+    NODE_DEFINE_CONSTANT(exports, SHEETTYPE_CHART);
+    NODE_DEFINE_CONSTANT(exports, SHEETTYPE_UNKNOWN);
 }
 
 
