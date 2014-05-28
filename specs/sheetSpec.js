@@ -1,11 +1,14 @@
 var xl = require('../lib/libxl'),
-    util = require('util');
+    util = require('util'),
+    testUtils = require('./testUtils');
 
 function shouldThrow(fun, scope) {
     var args = Array.prototype.slice.call(arguments, 2);
 
     expect(function() {fun.apply(scope, args);}).toThrow();
 }
+
+testUtils.initFilesystem();
 
 describe('The font class', function() {
 
@@ -410,5 +413,134 @@ describe('The sheet class', function() {
         expect(sheet.setColHidden(0, false)).toBe(sheet);
         expect(sheet.colHidden(0)).toBe(false);
     });
+});
 
+describe('The book class', function() {
+    var book;
+
+    beforeEach(function() {
+        book = new xl.Book(xl.BOOK_TYPE_XLS);
+    });
+
+    it('Books are created via the book constructor', function() {
+        expect(function() {var book = new xl.Book();}).toThrow();
+        expect(function() {var book = new xl.Book(200);}).toThrow();
+        expect(function() {var book = new xl.Book('a');}).toThrow();
+
+        var bookXls = new xl.Book(xl.BOOK_TYPE_XLS),
+            bookXlsx = new xl.Book(xl.BOOK_TYPE_XLSX);
+    });
+
+    it('book.writeSync writes a book in sync mode', function() {
+        var sheet = book.addSheet('foo');
+        sheet.writeStr(1, 0, 'bar');
+
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.writeSync, book, 10);
+        shouldThrow(book.writeSync, {}, file);
+        expect(book.writeSync(file)).toBe(book);
+    });
+
+    it('book.loadSync loads a book in sync mode', function() {
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.loadSync, book, 10);
+        shouldThrow(book.loadSync, {}, file);
+
+        expect(book.loadSync(file)).toBe(book);
+        var sheet = book.getSheet(0);
+        expect(sheet.readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.addSheet adds a sheet to a book', function() {
+        shouldThrow(book.addSheet, book, 10);
+        shouldThrow(book.addSheet, {}, 'foo');
+        book.addSheet('baz', 10);
+
+        var sheet1 = book.addSheet('foo');
+        sheet1.writeStr(1, 0, 'aaa');
+        var sheet2 = book.addSheet('bar', sheet1);
+        expect(sheet2.readStr(1, 0)).toBe('aaa');
+    });
+
+    it('book.insertSheet inserts a sheet at a given position', function() {
+        var sheet1 = book.addSheet('foo');
+        sheet1.writeStr(1, 0, 'bbb');
+
+        shouldThrow(book.insertSheet, book, 'a', 'bar');
+        shouldThrow(book.insertSheet, book, 2, 'bar');
+        shouldThrow(book.insertSheet, {}, 0, 'bar');
+        book.insertSheet(0, 'bar');
+        expect(book.sheetCount()).toBe(2);
+
+        var sheet2 = book.insertSheet(0, 'baz', sheet1);
+        expect(sheet2.readStr(1, 0)).toBe('bbb');
+    });
+
+    it('book.getSheet retrieves a sheet at a given index', function() {
+        var sheet = book.addSheet('foo');
+        sheet.writeStr(1, 0, 'bar');
+
+        shouldThrow(book.getSheet, book, 'a');
+        shouldThrow(book.getSheet, book, 1);
+        shouldThrow(book.getSheet, {}, 0);
+
+        var sheet2 = book.getSheet(0);
+        expect(sheet2.readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.sheetType determines sheet type', function() {
+        var sheet = book.addSheet('foo');
+        shouldThrow(book.sheetType, book, 'a');
+        shouldThrow(book.sheetType, {}, 0);
+        expect(book.sheetType(0)).toBe(xl.SHEETTYPE_SHEET);
+        expect(book.sheetType(1)).toBe(xl.SHEETTYPE_UNKNOWN);
+    });
+
+    it('book.delSheet removes a sheet', function() {
+        book.addSheet('foo');
+        book.addSheet('bar');
+        shouldThrow(book.delSheet, book, 'a');
+        shouldThrow(book.delSheet, book, 3);
+        shouldThrow(book.delSheet, {}, 0);
+        expect(book.delSheet(0)).toBe(book);
+        expect(book.sheetCount()).toBe(1);
+    });
+
+    it('book.sheetCount counts the number of sheets in a book', function() {
+        shouldThrow(book.sheetCount, {});
+        expect(book.sheetCount()).toBe(0);
+        book.addSheet('foo');
+        expect(book.sheetCount()).toBe(1);
+    });
+
+    it('book.addFormat adds a format', function() {
+        shouldThrow(book.addFormat, {});
+        book.addFormat('a');
+        book.addFormat();
+        // TODO add a check for format inheritance once format has been
+        // completed
+    });
+
+    it('book.addFont adds a font', function() {
+        shouldThrow(book.addFont, {});
+        book.addFont(10);
+
+        var font1 = book.addFont();
+        font1.setName('times');
+        expect(book.addFont(font1).name()).toBe('times');
+    });
+
+    it('book.addCusomtNumFormat adds a custom number format', function() {
+        shouldThrow(book.addCusomtNumFormat, book, 10);
+        shouldThrow(book.addCusomtNumFormat, {}, '000');
+        book.addCustomNumFormat('000');
+    });
+
+    it('book.customNumFormat retrieves a custom number format', function() {
+        var format = book.addCustomNumFormat('000');
+        shouldThrow(book.customNumFormat, book, 'a');
+        shouldThrow(book.customNumFormat, {}, format);
+
+        expect(book.customNumFormat(format)).toBe('000');
+    });
 });
