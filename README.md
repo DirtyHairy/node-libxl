@@ -26,7 +26,11 @@ or
 
     xlsBook.writeSync('file.xls');
 
-(loading and async writing are not implemented atm).
+and read back via
+
+    xlsBook.loadSync('file.xls');
+
+(async operations are not implemented atm).
 
 The API closely follows the
 [libxl documentation](http://www.libxl.com/documentation.html).
@@ -46,10 +50,12 @@ is possible to chain calls
 
 Errors are handled by throwing exceptions.
 
-API coverage is a work in progress; see demo.js,
-jasmine specs and the class initializers
-(Book::Initialize, Sheet::Initialize, Format::Initialize)
-to find out what is currently supported :).
+API coverage is a work in progress. At the moment, the Font class is fully
+implemented, and the other three classes (Book, Sheet and Format) are covered
+sufficiently to support reading and writing documents. Please see
+the jasmine specs and the class initializers
+(Book::Initialize, Sheet::Initialize, Format::Initialize, Font::Initialize)
+for a more detailed overview of what is currently supported :).
 
 ## Unlocking the API
 
@@ -75,6 +81,8 @@ jasmine specs and a call to demo.js (if applicable).
 * Torben Fitschen wrote the install script which pulls the
   necessary libxl SDK before building.
 * Martin Schröder for adding Mac support.
+* Parts if this package were developed during slacktime provided by the awesome folks at
+  [Mayflower GmbH](http://www.mayflower.de)
 * Alexander Makarenko wrote
   [node-excel-libxl](https://github.com/7eggs/node-excel-libxl)
   Though node-libxl is rewritten from scratch, this
