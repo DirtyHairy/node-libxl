@@ -67,6 +67,22 @@ class Book : public Wrapper<libxl::Book> {
         static NAN_METHOD(AddFont);
         static NAN_METHOD(AddCustomNumFormat);
         static NAN_METHOD(CustomNumFormat);
+        static NAN_METHOD(Format);
+        static NAN_METHOD(FormatSize);
+        static NAN_METHOD(Font);
+        static NAN_METHOD(FontSize);
+        static NAN_METHOD(DatePack);
+        static NAN_METHOD(DateUnpack);
+        static NAN_METHOD(ColorPack);
+        static NAN_METHOD(ColorUnpack);
+        static NAN_METHOD(ActiveSheet);
+        static NAN_METHOD(SetActiveSheet);
+        // TODO PictureSize
+        // TODO GetPicture
+        // TODO AddPicture
+        // TODO AddPicture2
+        static NAN_METHOD(DefaultFont);
+        static NAN_METHOD(SetDefaultFont);
 
     private:
 

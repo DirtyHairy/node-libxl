@@ -84,7 +84,6 @@ NAN_METHOD(Book::New) {
         libxlBook->setKey(API_KEY_NAME, API_KEY_KEY);
     #endif
 
-
     Book* book = new Book(libxlBook);
     book->Wrap(args.This());
 
@@ -258,7 +257,7 @@ NAN_METHOD(Book::SheetCount) {
 NAN_METHOD(Book::AddFormat) {
     NanScope();
 
-    Format* parentFormat = Format::Unwrap(args[0]);
+    node_libxl::Format* parentFormat = Format::Unwrap(args[0]);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -283,7 +282,7 @@ NAN_METHOD(Book::AddFormat) {
 NAN_METHOD(Book::AddFont) {
     NanScope();
 
-    Font* parentFont = Font::Unwrap(args[0]);
+    node_libxl::Font* parentFont = Font::Unwrap(args[0]);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -347,6 +346,225 @@ NAN_METHOD(Book::CustomNumFormat) {
 }
 
 
+NAN_METHOD(Book::Format) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    libxl::Format* format = that->GetWrapped()->format(index);
+    if (!format) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(Format::NewInstance(format, args.This()));
+}
+
+
+NAN_METHOD(Book::FormatSize) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->formatSize()));
+}
+
+
+NAN_METHOD(Book::Font) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    libxl::Font* font = that->GetWrapped()->font(index);
+    if (!font) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(Font::NewInstance(font, args.This()));
+}
+
+NAN_METHOD(Book::FontSize) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->fontSize()));
+}
+
+
+NAN_METHOD(Book::DatePack) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int year        = arguments.GetInt(0),
+        month       = arguments.GetInt(1),
+        day         = arguments.GetInt(2),
+        hour        = arguments.GetInt(3, 0),
+        minute      = arguments.GetInt(4, 0),
+        second      = arguments.GetInt(5, 0),
+        msecond     = arguments.GetInt(6, 0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Number>(that->GetWrapped()->datePack(
+        year, month, day, hour, minute, second, msecond)));
+}
+
+
+NAN_METHOD(Book::DateUnpack) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    double value = arguments.GetDouble(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    int year, month, day, hour, minute, second, msecond;
+    if (!that->GetWrapped()->dateUnpack(
+        value, &year, &month, &day, &hour, &minute, &second, &msecond))
+    {
+        return util::ThrowLibxlError(that);
+    }
+
+    Local<Object> result = NanNew<Object>();
+    result->Set(NanSymbol("year"),      NanNew<Integer>(year));
+    result->Set(NanSymbol("month"),     NanNew<Integer>(month));
+    result->Set(NanSymbol("day"),       NanNew<Integer>(day));
+    result->Set(NanSymbol("hour"),      NanNew<Integer>(hour));
+    result->Set(NanSymbol("minute"),    NanNew<Integer>(minute));
+    result->Set(NanSymbol("second"),    NanNew<Integer>(second));
+    result->Set(NanSymbol("msecond"),   NanNew<Integer>(msecond));
+
+    NanReturnValue(result);
+}
+
+
+NAN_METHOD(Book::ColorPack) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int red     = arguments.GetInt(0),
+        green   = arguments.GetInt(1),
+        blue    = arguments.GetInt(2);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->colorPack(red, green, blue)));
+}
+
+
+NAN_METHOD(Book::ColorUnpack) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int32_t value = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    Local<Object> result = NanNew<Object>();
+    int red, green, blue;
+
+    that->GetWrapped()->colorUnpack(
+        static_cast<libxl::Color>(value), &red, &green, &blue);
+
+    result->Set(NanSymbol("red"),   NanNew<Integer>(red));
+    result->Set(NanSymbol("green"), NanNew<Integer>(green));
+    result->Set(NanSymbol("blue"),  NanNew<Integer>(blue));
+
+    NanReturnValue(result);
+}
+
+
+NAN_METHOD(Book::ActiveSheet) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->activeSheet()));
+}
+
+
+NAN_METHOD(Book::SetActiveSheet) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setActiveSheet(index);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::DefaultFont) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    int size;
+    const char* name = that->GetWrapped()->defaultFont(&size);
+
+    if (!name) {
+        return util::ThrowLibxlError(that);
+    }
+
+    Local<Object> result = NanNew<Object>();
+    result->Set(NanSymbol("name"), NanNew<String>(name));
+    result->Set(NanSymbol("size"), NanNew<Integer>(size));
+
+    NanReturnValue(result);
+}
+
+
+NAN_METHOD(Book::SetDefaultFont) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    String::Utf8Value name(arguments.GetString(0));
+    int size = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setDefaultFont(*name, size);
+
+    NanReturnValue(args.This());
+}
+
 // Init
 
 
@@ -371,6 +589,18 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "addFont", AddFont);
     NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "customNumFormat", CustomNumFormat);
+    NODE_SET_PROTOTYPE_METHOD(t, "format", Format);
+    NODE_SET_PROTOTYPE_METHOD(t, "formatSize", FormatSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "font", Font);
+    NODE_SET_PROTOTYPE_METHOD(t, "fontSize", FontSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "datePack", DatePack);
+    NODE_SET_PROTOTYPE_METHOD(t, "dateUnpack", DateUnpack);
+    NODE_SET_PROTOTYPE_METHOD(t, "colorPack", ColorPack);
+    NODE_SET_PROTOTYPE_METHOD(t, "colorUnpack", ColorUnpack);
+    NODE_SET_PROTOTYPE_METHOD(t, "activeSheet", ActiveSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "setActiveSheet", SetActiveSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "defaultFont", DefaultFont);
+    NODE_SET_PROTOTYPE_METHOD(t, "setDefaultFont", SetDefaultFont);
 
     #ifdef INCLUDE_API_KEY
         exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),
