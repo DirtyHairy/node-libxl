@@ -81,7 +81,7 @@ template<typename T> void BookWrapper::Initialize(
         constructor->InstanceTemplate();
     
     instanceTemplate->SetAccessor(
-        NanSymbol("book"),
+        NanNew<v8::String>("book"),
         BookAccessor<T>, 
         NULL,
         v8::Handle<v8::Value>(),

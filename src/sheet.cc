@@ -164,7 +164,7 @@ NAN_METHOD(Sheet::ReadStr) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanSymbol("format"),
+        formatRef.As<Object>()->Set(NanNew<String>("format"),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
@@ -216,7 +216,7 @@ NAN_METHOD(Sheet::ReadNum) {
     double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanSymbol("format"),
+        formatRef.As<Object>()->Set(NanNew<String>("format"),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
@@ -268,7 +268,7 @@ NAN_METHOD(Sheet::ReadBool) {
     bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanSymbol("format"),
+        formatRef.As<Object>()->Set(NanNew<String>("format"),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
@@ -324,7 +324,7 @@ NAN_METHOD(Sheet::ReadBlank) {
         that->GetBookHandle());
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanSymbol("format"), formatHandle);
+        formatRef.As<Object>()->Set(NanNew<String>("format"), formatHandle);
     }
 
     NanReturnValue(formatHandle);
@@ -377,7 +377,7 @@ NAN_METHOD(Sheet::ReadFormula) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanSymbol("format"),
+        formatRef.As<Object>()->Set(NanNew<String>("format"),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
@@ -663,7 +663,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NanScope();
 
     Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
-    t->SetClassName(NanSymbol("Sheet"));
+    t->SetClassName(NanNew<String>("Sheet"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Sheet>(t);

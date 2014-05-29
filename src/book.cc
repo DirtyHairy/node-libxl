@@ -446,13 +446,13 @@ NAN_METHOD(Book::DateUnpack) {
     }
 
     Local<Object> result = NanNew<Object>();
-    result->Set(NanSymbol("year"),      NanNew<Integer>(year));
-    result->Set(NanSymbol("month"),     NanNew<Integer>(month));
-    result->Set(NanSymbol("day"),       NanNew<Integer>(day));
-    result->Set(NanSymbol("hour"),      NanNew<Integer>(hour));
-    result->Set(NanSymbol("minute"),    NanNew<Integer>(minute));
-    result->Set(NanSymbol("second"),    NanNew<Integer>(second));
-    result->Set(NanSymbol("msecond"),   NanNew<Integer>(msecond));
+    result->Set(NanNew<String>("year"),      NanNew<Integer>(year));
+    result->Set(NanNew<String>("month"),     NanNew<Integer>(month));
+    result->Set(NanNew<String>("day"),       NanNew<Integer>(day));
+    result->Set(NanNew<String>("hour"),      NanNew<Integer>(hour));
+    result->Set(NanNew<String>("minute"),    NanNew<Integer>(minute));
+    result->Set(NanNew<String>("second"),    NanNew<Integer>(second));
+    result->Set(NanNew<String>("msecond"),   NanNew<Integer>(msecond));
 
     NanReturnValue(result);
 }
@@ -492,9 +492,9 @@ NAN_METHOD(Book::ColorUnpack) {
     that->GetWrapped()->colorUnpack(
         static_cast<libxl::Color>(value), &red, &green, &blue);
 
-    result->Set(NanSymbol("red"),   NanNew<Integer>(red));
-    result->Set(NanSymbol("green"), NanNew<Integer>(green));
-    result->Set(NanSymbol("blue"),  NanNew<Integer>(blue));
+    result->Set(NanNew<String>("red"),   NanNew<Integer>(red));
+    result->Set(NanNew<String>("green"), NanNew<Integer>(green));
+    result->Set(NanNew<String>("blue"),  NanNew<Integer>(blue));
 
     NanReturnValue(result);
 }
@@ -541,8 +541,8 @@ NAN_METHOD(Book::DefaultFont) {
     }
 
     Local<Object> result = NanNew<Object>();
-    result->Set(NanSymbol("name"), NanNew<String>(name));
-    result->Set(NanSymbol("size"), NanNew<Integer>(size));
+    result->Set(NanNew<String>("name"), NanNew<String>(name));
+    result->Set(NanNew<String>("size"), NanNew<Integer>(size));
 
     NanReturnValue(result);
 }
@@ -612,7 +612,7 @@ void Book::Initialize(Handle<Object> exports) {
 
     t->ReadOnlyPrototype();
     NanAssignPersistent(constructor, t->GetFunction());
-    exports->Set(NanSymbol("Book"), NanNew(constructor));
+    exports->Set(NanNew<String>("Book"), NanNew(constructor));
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);

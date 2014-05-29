@@ -294,7 +294,7 @@ void Font::Initialize(Handle<Object> exports) {
     NanScope();
 
     Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
-    t->SetClassName(NanSymbol("Font"));
+    t->SetClassName(NanNew<String>("Font"));
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Font>(t);

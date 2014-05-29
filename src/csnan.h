@@ -27,7 +27,8 @@
 
 #if (NODE_MODULE_VERSION > 0x000B)
 
-#define CSNanNewExternal(Value) v8::External::New(nan_isolate, Value)
+#define CSNanNewExternal(Value) v8::External::New(v8::Isolate::GetCurrent(), \
+    Value)
 
 #else
 

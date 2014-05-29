@@ -66,7 +66,7 @@ template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
 
     return object->IsObject() &&
         object.As<v8::Object>()->GetPrototype()->StrictEquals(
-            NanNew(constructor)->Get(NanSymbol("prototype")));
+            NanNew(constructor)->Get(NanNew<v8::String>("prototype")));
 }
 
 
