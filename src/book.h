@@ -83,6 +83,16 @@ class Book : public Wrapper<libxl::Book> {
         // TODO AddPicture2
         static NAN_METHOD(DefaultFont);
         static NAN_METHOD(SetDefaultFont);
+        static NAN_METHOD(RefR1C1);
+        static NAN_METHOD(SetRefR1C1);
+        static NAN_METHOD(RgbMode);
+        static NAN_METHOD(SetRgbMode);
+        static NAN_METHOD(BiffVersion);
+        static NAN_METHOD(IsDate1904);
+        static NAN_METHOD(SetDate1904);
+        static NAN_METHOD(IsTemplate);
+        static NAN_METHOD(SetTemplate);
+        static NAN_METHOD(SetKey);
 
     private:
 

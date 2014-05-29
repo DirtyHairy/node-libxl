@@ -565,6 +565,142 @@ NAN_METHOD(Book::SetDefaultFont) {
     NanReturnValue(args.This());
 }
 
+
+NAN_METHOD(Book::RefR1C1) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->refR1C1()));
+}
+
+NAN_METHOD(Book::SetRefR1C1) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool refR1C1 = arguments.GetBoolean(0, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setRefR1C1(refR1C1);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::RgbMode) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rgbMode()));
+}
+
+
+NAN_METHOD(Book::SetRgbMode) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool rgbMode = arguments.GetBoolean(0, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setRgbMode(rgbMode);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::BiffVersion) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->biffVersion()));
+}
+
+
+NAN_METHOD(Book::IsDate1904) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate1904()));
+}
+
+
+NAN_METHOD(Book::SetDate1904) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool date1904 = arguments.GetBoolean(0, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setDate1904(date1904);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::IsTemplate) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isTemplate()));
+}
+
+
+NAN_METHOD(Book::SetTemplate) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool isTemplate = arguments.GetBoolean(0, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setTemplate(isTemplate);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::SetKey) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    String::Utf8Value   name(arguments.GetString(0)),
+                        key(arguments.GetString(1));
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setKey(*name, *key);
+
+    NanReturnValue(args.This());
+}
+
+
 // Init
 
 
@@ -601,6 +737,15 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setActiveSheet", SetActiveSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "defaultFont", DefaultFont);
     NODE_SET_PROTOTYPE_METHOD(t, "setDefaultFont", SetDefaultFont);
+    NODE_SET_PROTOTYPE_METHOD(t, "refR1C1", RefR1C1);
+    NODE_SET_PROTOTYPE_METHOD(t, "setRefR1C1", SetRefR1C1);
+    NODE_SET_PROTOTYPE_METHOD(t, "rgbMode", RgbMode);
+    NODE_SET_PROTOTYPE_METHOD(t, "setRgbMode", SetRgbMode);
+    NODE_SET_PROTOTYPE_METHOD(t, "isDate1904", IsDate1904);
+    NODE_SET_PROTOTYPE_METHOD(t, "setDate1904", SetDate1904);
+    NODE_SET_PROTOTYPE_METHOD(t, "isTemplate", IsTemplate);
+    NODE_SET_PROTOTYPE_METHOD(t, "setTemplate", SetTemplate);
+    NODE_SET_PROTOTYPE_METHOD(t, "setKey", SetKey);
 
     #ifdef INCLUDE_API_KEY
         exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),
