@@ -741,6 +741,7 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setRefR1C1", SetRefR1C1);
     NODE_SET_PROTOTYPE_METHOD(t, "rgbMode", RgbMode);
     NODE_SET_PROTOTYPE_METHOD(t, "setRgbMode", SetRgbMode);
+    NODE_SET_PROTOTYPE_METHOD(t, "biffVersion", BiffVersion);
     NODE_SET_PROTOTYPE_METHOD(t, "isDate1904", IsDate1904);
     NODE_SET_PROTOTYPE_METHOD(t, "setDate1904", SetDate1904);
     NODE_SET_PROTOTYPE_METHOD(t, "isTemplate", IsTemplate);

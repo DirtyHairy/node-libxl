@@ -515,7 +515,6 @@ describe('The book class', function() {
 
     it('book.addFormat adds a format', function() {
         shouldThrow(book.addFormat, {});
-        book.addFormat('a');
         book.addFormat();
         // TODO add a check for format inheritance once format has been
         // completed
@@ -542,5 +541,166 @@ describe('The book class', function() {
         shouldThrow(book.customNumFormat, {}, format);
 
         expect(book.customNumFormat(format)).toBe('000');
+    });
+
+    it('book.format retrieves a format by index', function() {
+        var format = book.addFormat();
+        shouldThrow(book.format, book, 'a');
+        shouldThrow(book.format, {}, 0);
+        expect(book.format(0) instanceof format.constructor).toBe(true);
+    });
+
+    it('book.formatSize counts the number of formats', function() {
+        shouldThrow(book.formatSize, {});
+        var n = book.formatSize();
+        book.addFormat();
+        expect(book.formatSize()).toBe(n+1);
+    });
+
+    it('book.font gets a font by index', function() {
+        var font = book.addFont();
+        shouldThrow(book.font, book, -1);
+        shouldThrow(book.font, {}, 0);
+        expect(book.font(0) instanceof font.constructor).toBe(true);
+    });
+
+    it('book.fontSize counts the number of fonts', function() {
+        shouldThrow(book.fontSize, {});
+        var n = book.fontSize();
+        book.addFont();
+        expect(book.fontSize()).toBe(n+1);
+    });
+
+    it('book.datePack packs a date', function() {
+        shouldThrow(book.datePack, book, 'a', 1, 2);
+        shouldThrow(book.datePack, {}, 1, 2, 3);
+        book.datePack(1, 2, 3);
+    });
+
+    it('book.datePack unpacks a date', function() {
+        var date = book.datePack(1999, 2, 3, 4, 5, 6, 7);
+        shouldThrow(book.dateUnpack, book, 'a');
+        shouldThrow(book.dateUnpack, {}, date);
+
+        var unpacked = book.dateUnpack(date);
+        expect(unpacked.year).toBe(1999);
+        expect(unpacked.month).toBe(2);
+        expect(unpacked.day).toBe(3);
+        expect(unpacked.hour).toBe(4);
+        expect(unpacked.minute).toBe(5);
+        expect(unpacked.second).toBe(6);
+        expect(unpacked.msecond).toBe(7);
+    });
+
+    it('book.colorPack packs a color', function() {
+        shouldThrow(book.colorPack, book, 'a', 2, 3);
+        shouldThrow(book.colorPack, {}, 1, 2, 3);
+        book.colorPack(1, 2, 3);
+    });
+
+    it('book.colorUnpack unpacks a color', function() {
+        var color = book.colorPack(1, 2, 3);
+        shouldThrow(book.colorUnpack, book, 'a');
+        shouldThrow(book.colorUnpack, {}, color);
+
+        var unpacked = book.colorUnpack(color);
+        expect(unpacked.red).toBe(1);
+        expect(unpacked.green).toBe(2);
+        expect(unpacked.blue).toBe(3);
+    });
+
+    it('book.activeSheet returns the index of a book\'s active sheet', function() {
+        book.addSheet('foo');
+        book.addSheet('bar');
+        book.setActiveSheet(0);
+        shouldThrow(book.activeSheet, {});
+        expect(book.activeSheet()).toBe(0);
+        book.setActiveSheet(1);
+        expect(book.activeSheet()).toBe(1);
+    });
+
+    it('book.setActiveSheet sets the active sheet', function() {
+        book.addSheet('foo');
+        shouldThrow(book.setActiveSheet, book, 'a');
+        shouldThrow(book.setActiveSheet, {}, 0);
+        expect(book.setActiveSheet(0)).toBe(book);
+    });
+
+    it('book.defaultFont returns the default font', function() {
+        book.setDefaultFont('times', 13);
+        shouldThrow(book.defaultFont, {});
+
+        var defaultFont = book.defaultFont();
+        expect(defaultFont.name).toBe('times');
+        expect(defaultFont.size).toBe(13);
+    });
+
+    it('book.setDefaultFont sets the default font', function() {
+        shouldThrow(book.setDefaultFont, book, 10, 10);
+        shouldThrow(book.setDefaultFont, {}, 'times', 10);
+        expect(book.setDefaultFont('times', 10)).toBe(book);
+    });
+
+    it('book.refR1C1 checks for R1C1 mode', function() {
+        book.setRefR1C1();
+        shouldThrow(book.refR1C1, {});
+        expect(book.refR1C1()).toBe(true);
+        book.setRefR1C1(false);
+        expect(book.refR1C1()).toBe(false);
+    });
+
+    it('book.setRefR1C1 switches R1C1 mode', function() {
+        shouldThrow(book.setRefR1C1, {});
+        expect(book.setRefR1C1(true)).toBe(book);
+    });
+
+    it('book.rgbMode checks for RGB mode', function() {
+        book.setRgbMode();
+        shouldThrow(book.rgbMode, {});
+        expect(book.rgbMode()).toBe(true);
+        book.setRgbMode(false);
+        expect(book.rgbMode()).toBe(false);
+    });
+
+    it('book.setRgbMode switches RGB mode', function() {
+        shouldThrow(book.setRgbMode, {});
+        expect(book.setRgbMode(true)).toBe(book);
+    });
+
+    it('book.biffVersion returns the BIFF format version', function() {
+        shouldThrow(book.biffVersion, {});
+        expect(book.biffVersion()).toBe(1536);
+    });
+
+    it('book.isDate1904 checks which date system is active', function() {
+        book.setDate1904();
+        shouldThrow(book.isDate1904, {});
+        expect(book.isDate1904()).toBe(true);
+        book.setDate1904(false);
+        expect(book.isDate1904()).toBe(false);
+    });
+
+    it('book.setDate1904 sets the active date system', function() {
+        shouldThrow(book.setDate1904, {}, true);
+        expect(book.setDate1904(true)).toBe(book);
+    });
+
+    it('book.isTemplate checks whether the document is a template', function() {
+        book.setTemplate();
+        shouldThrow(book.isTemplate, {});
+        expect(book.isTemplate()).toBe(true);
+        book.setTemplate(false);
+        expect(book.isTemplate()).toBe(false);
+    });
+
+    it('book.setTemplate toggles whether a document is a template', function() {
+        shouldThrow(book.setTemplate, {});
+        expect(book.setTemplate(true)).toBe(book);
+    });
+
+    it('book.setKey sets the API key', function() {
+        shouldThrow(book.setKey, book, 1, 'a');
+        shouldThrow(book.setKey, {}, 'a', 'b');
+        expect(book.setKey('a', 'b')).toBe(book);
     });
 });
