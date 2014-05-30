@@ -139,9 +139,9 @@ NAN_METHOD(Book::AddSheet) {
     ArgumentHelper arguments(args);
 
     String::Utf8Value name(arguments.GetString(0));
+    Sheet* parentSheet = arguments.GetWrapped<Sheet>(1, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* parentSheet = Sheet::Unwrap(args[1]);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -169,9 +169,9 @@ NAN_METHOD(Book::InsertSheet) {
 
     int index = arguments.GetInt(0);
     String::Utf8Value name(arguments.GetString(1));
+    Sheet* parentSheet = arguments.GetWrapped<Sheet>(2, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* parentSheet = Sheet::Unwrap(args[2]);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -257,7 +257,11 @@ NAN_METHOD(Book::SheetCount) {
 NAN_METHOD(Book::AddFormat) {
     NanScope();
 
-    node_libxl::Format* parentFormat = Format::Unwrap(args[0]);
+    ArgumentHelper arguments(args);
+
+    node_libxl::Format* parentFormat =
+        arguments.GetWrapped<node_libxl::Format>(0, NULL);
+    ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -282,7 +286,11 @@ NAN_METHOD(Book::AddFormat) {
 NAN_METHOD(Book::AddFont) {
     NanScope();
 
-    node_libxl::Font* parentFont = Font::Unwrap(args[0]);
+    ArgumentHelper arguments(args);
+
+    node_libxl::Font* parentFont =
+        arguments.GetWrapped<node_libxl::Font>(0, NULL);
+    ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
     ASSERT_THIS(that);

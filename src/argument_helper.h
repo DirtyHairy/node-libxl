@@ -49,6 +49,9 @@ class ArgumentHelper {
         v8::Handle<v8::Value> GetString(uint8_t pos);
         v8::Handle<v8::Value> GetString(uint8_t pos, const char* def);
 
+        template<typename T> T* GetWrapped(uint8_t pos);
+        template<typename T> T* GetWrapped(uint8_t pos, T* def);
+
         bool HasException() const;
         _NAN_METHOD_RETURN_TYPE ThrowException() const;
 
@@ -63,6 +66,20 @@ class ArgumentHelper {
         ArgumentHelper(const ArgumentHelper&);
         const ArgumentHelper& operator=(ArgumentHelper&);
 };
+
+
+template<typename T> T* ArgumentHelper::GetWrapped(uint8_t pos) {
+    T* unwrapped = T::Unwrap(arguments[pos]);
+    if (!unwrapped)
+        RaiseException("Invalid type for argument", pos);
+    return unwrapped;
+}
+
+
+template<typename T> T* ArgumentHelper::GetWrapped(uint8_t pos, T* def) {
+    if (arguments[pos]->IsUndefined()) return def;
+    return GetWrapped<T>(pos);
+}
 
 
 }

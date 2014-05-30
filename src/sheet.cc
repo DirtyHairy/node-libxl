@@ -128,15 +128,11 @@ NAN_METHOD(Sheet::SetCellFormat) {
 
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
-    Format* format = Format::Unwrap(args[2]);
+    Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
-
-    if (!format) {
-        return NanThrowTypeError("format required at position 2");
-    }
     ASSERT_SAME_BOOK(that, format);
 
     that->GetWrapped()->setCellFormat(row, col, format->GetWrapped());
@@ -180,9 +176,8 @@ NAN_METHOD(Sheet::WriteStr) {
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
     String::Utf8Value value(arguments.GetString(2));
+    Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
-
-    Format* format = Format::Unwrap(args[3]);
 
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -232,9 +227,8 @@ NAN_METHOD(Sheet::WriteNum) {
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
     double value = arguments.GetDouble(2);
+    Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
-
-    Format* format = Format::Unwrap(args[3]);
 
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -284,7 +278,7 @@ NAN_METHOD(Sheet::WriteBool) {
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
     bool value = arguments.GetBoolean(2);
-    Format* format = Format::Unwrap(args[3]);
+    Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -338,14 +332,11 @@ NAN_METHOD(Sheet::WriteBlank) {
 
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
-    Format* format = Format::Unwrap(args[2]);
+    Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
-    if (!format) {
-        return NanThrowTypeError("format expected at position 2");
-    }
     ASSERT_SAME_BOOK(that, format);
 
     if (!that->GetWrapped()->
@@ -393,9 +384,8 @@ NAN_METHOD(Sheet::WriteFormula) {
     int32_t row = arguments.GetInt(0);
     int32_t col = arguments.GetInt(1);
     String::Utf8Value value(arguments.GetString(2));
+    Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
-
-    Format* format = Format::Unwrap(args[3]);
 
     Sheet* that = Unwrap(args.This());
     ASSERT_THIS(that);
@@ -515,7 +505,7 @@ NAN_METHOD(Sheet::SetCol) {
     int32_t first = arguments.GetInt(0);
     int32_t last = arguments.GetInt(1);
     double width = arguments.GetDouble(2);
-    Format* format = Format::Unwrap(args[3]);
+    Format* format = arguments.GetWrapped<Format>(3, NULL);
     bool hidden = arguments.GetBoolean(4, false);
     ASSERT_ARGUMENTS(arguments);
 
@@ -542,7 +532,7 @@ NAN_METHOD(Sheet::SetRow) {
 
     int32_t row = arguments.GetInt(0);
     double height = arguments.GetDouble(1);
-    Format* format = Format::Unwrap(args[2]);
+    Format* format = arguments.GetWrapped<Format>(2, NULL);
     bool hidden = arguments.GetBoolean(3, false);
     ASSERT_ARGUMENTS(arguments);
 

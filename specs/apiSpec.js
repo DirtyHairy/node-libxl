@@ -453,8 +453,9 @@ describe('The book class', function() {
 
     it('book.addSheet adds a sheet to a book', function() {
         shouldThrow(book.addSheet, book, 10);
+        shouldThrow(book.addSheet, book, 'foo', 10);
         shouldThrow(book.addSheet, {}, 'foo');
-        book.addSheet('baz', 10);
+        book.addSheet('baz');
 
         var sheet1 = book.addSheet('foo');
         sheet1.writeStr(1, 0, 'aaa');
@@ -514,6 +515,7 @@ describe('The book class', function() {
     });
 
     it('book.addFormat adds a format', function() {
+        shouldThrow(book.addFormat, book, 10);
         shouldThrow(book.addFormat, {});
         book.addFormat();
         // TODO add a check for format inheritance once format has been
@@ -521,8 +523,9 @@ describe('The book class', function() {
     });
 
     it('book.addFont adds a font', function() {
+        shouldThrow(book.addFont, book, 10);
         shouldThrow(book.addFont, {});
-        book.addFont(10);
+        book.addFont();
 
         var font1 = book.addFont();
         font1.setName('times');

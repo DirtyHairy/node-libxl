@@ -46,7 +46,8 @@ int32_t ArgumentHelper::GetInt(uint8_t pos) {
 
 
 int32_t ArgumentHelper::GetInt(uint8_t pos, int32_t def) {
-    return arguments[pos]->IsInt32() ? arguments[pos]->Int32Value() : def;
+    if (arguments[pos]->IsUndefined()) return def;
+    return GetInt(pos);
 }
 
 
@@ -61,7 +62,8 @@ double ArgumentHelper::GetDouble(uint8_t pos) {
 
 
 double ArgumentHelper::GetDouble(uint8_t pos, double def) {
-    return arguments[pos]->IsNumber() ? arguments[pos]->NumberValue() : def;
+    if (arguments[pos]->IsUndefined()) return def;
+    return GetDouble(pos);
 }
 
 
@@ -76,7 +78,8 @@ bool ArgumentHelper::GetBoolean(uint8_t pos) {
 
 
 bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
-    return arguments[pos]->IsBoolean() ? arguments[pos]->BooleanValue() : def;
+    if (arguments[pos]->IsUndefined()) return def;
+    return GetBoolean(pos);
 }
 
 
@@ -92,11 +95,10 @@ v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
 v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
     NanEscapableScope();
 
-    if (arguments[pos]->IsString()) {
-        return NanEscapeScope(arguments[pos]);
-    } else {
+    if (arguments[pos]->IsUndefined())
         return NanEscapeScope(NanNew<v8::String>(def));
-    }
+
+    return NanEscapeScope(GetString(pos));
 }
 
 

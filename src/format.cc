@@ -80,11 +80,10 @@ NAN_METHOD(Format::Font) {
 NAN_METHOD(Format::SetFont) {
     NanScope();
 
-    node_libxl::Font* font = Font::Unwrap(args[0]);
+    ArgumentHelper arguments(args);
 
-    if (!font) {
-        return NanThrowTypeError("font required at position 0");
-    }
+    node_libxl::Font* font = arguments.GetWrapped<node_libxl::Font>(0);
+    ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
