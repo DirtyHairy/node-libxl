@@ -123,35 +123,13 @@ NAN_METHOD(Format::NumFormat) {
 }
 
 
-NAN_METHOD(Format::SetWrap) {
+NAN_METHOD(Format::AlignH) {
     NanScope();
-
-    ArgumentHelper arguments(args);
-    bool wrap = arguments.GetBoolean(0);
-    ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
     ASSERT_THIS(that);
 
-    that->GetWrapped()->setWrap(wrap);
-
-    NanReturnValue(args.This());
-}
-
-
-NAN_METHOD(Format::SetShrinkToFit) {
-    NanScope();
-
-    ArgumentHelper arguments(args);
-    bool shrink = arguments.GetBoolean(0);
-    ASSERT_ARGUMENTS(arguments);
-
-    Format* that = Unwrap(args.This());
-    ASSERT_THIS(that);
-
-    that->GetWrapped()->setShrinkToFit(shrink);
-
-    NanReturnValue(args.This());
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignH()));
 }
 
 
@@ -168,6 +146,360 @@ NAN_METHOD(Format::SetAlignH) {
 
     that->GetWrapped()->setAlignH(static_cast<libxl::AlignH>(align));
 
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::GetWrap) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->wrap()));
+}
+
+
+NAN_METHOD(Format::SetWrap) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+    bool wrap = arguments.GetBoolean(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setWrap(wrap);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::Rotation) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->rotation()));
+}
+
+
+NAN_METHOD(Format::SetRotation) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int rotation = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setRotation(rotation)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::Indent) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->indent()));
+}
+
+
+NAN_METHOD(Format::SetIndent) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int indent = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setIndent(indent);
+
+    NanReturnValue(args.This());
+}
+
+NAN_METHOD(Format::ShrinkToFit) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->shrinkToFit()));
+}
+
+
+NAN_METHOD(Format::SetShrinkToFit) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool shrink = arguments.GetBoolean(0, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setShrinkToFit(shrink);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::SetBorder) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorder(static_cast<libxl::BorderStyle>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::SetBorderColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderColor(static_cast<libxl::Color>(color));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderLeft) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeft()));
+}
+
+
+NAN_METHOD(Format::SetBorderLeft) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderLeft(static_cast<libxl::BorderStyle>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderRight) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRight()));
+}
+
+
+NAN_METHOD(Format::SetBorderRight) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderRight(static_cast<libxl::BorderStyle>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderTop) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTop()));
+}
+
+
+NAN_METHOD(Format::SetBorderTop) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderTop(static_cast<libxl::BorderStyle>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderBottom) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottom()));
+}
+
+
+NAN_METHOD(Format::SetBorderBottom) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderBottom(static_cast<libxl::BorderStyle>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderLeftColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeftColor()));
+}
+
+
+NAN_METHOD(Format::SetBorderLeftColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderLeftColor(static_cast<libxl::Color>(color));
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderRightColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRightColor()));
+}
+
+
+NAN_METHOD(Format::SetBorderRightColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderRightColor(static_cast<libxl::Color>(color));
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderTopColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTopColor()));
+}
+
+
+NAN_METHOD(Format::SetBorderTopColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderTopColor(static_cast<libxl::Color>(color));
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderBottomColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottomColor()));
+}
+
+
+NAN_METHOD(Format::SetBorderBottomColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderBottomColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
 }
 
@@ -240,9 +572,30 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setFont", SetFont);
     NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);
-    NODE_SET_PROTOTYPE_METHOD(t, "setShrinkToFit", SetShrinkToFit);
+    NODE_SET_PROTOTYPE_METHOD(t, "alignH", AlignH);
     NODE_SET_PROTOTYPE_METHOD(t, "setAlignH", SetAlignH);
+    NODE_SET_PROTOTYPE_METHOD(t, "wrap", GetWrap);
+    NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);
+    NODE_SET_PROTOTYPE_METHOD(t, "rotation", Rotation);
+    NODE_SET_PROTOTYPE_METHOD(t, "setRotation", SetRotation);
+    NODE_SET_PROTOTYPE_METHOD(t, "indent", Indent);
+    NODE_SET_PROTOTYPE_METHOD(t, "setIndent", SetIndent);
+    NODE_SET_PROTOTYPE_METHOD(t, "shrinkToFit", ShrinkToFit);
+    NODE_SET_PROTOTYPE_METHOD(t, "setShrinkToFit", SetShrinkToFit);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorder", SetBorder);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderColor", SetBorderColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderLeft", BorderLeft);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeft", SetBorderLeft);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderRight", BorderRight);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderRight", SetBorderRight);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderTop", BorderTop);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTop", SetBorderTop);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderBottom", BorderBottom);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottom", SetBorderBottom);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeftColor", SetBorderLeftColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderRightColor", SetBorderRightColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTopColor", SetBorderTopColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottomColor", SetBorderBottomColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setFillPattern", SetFillPattern);
     NODE_SET_PROTOTYPE_METHOD(t, "setPatternBackgroundColor",
         SetPatternBackgroundColor);
@@ -378,6 +731,21 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_DEFINE_CONSTANT(exports, COLOR_DEFAULT_BACKGROUND);
     NODE_DEFINE_CONSTANT(exports, COLOR_TOOLTIP);
     NODE_DEFINE_CONSTANT(exports, COLOR_AUTO);
+
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_NONE);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_THIN);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_MEDIUM);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DASHED);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DOTTED);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_THICK);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DOUBLE);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_HAIR);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_MEDIUMDASHED);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DASHDOT);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_MEDIUMDASHDOT);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DASHDOTDOT);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_MEDIUMDASHDOTDOT);
+    NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_SLANTDASHDOT);
 }
 
 
