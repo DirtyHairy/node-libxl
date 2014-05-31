@@ -59,7 +59,7 @@ NAN_METHOD(Book::New) {
 
     ArgumentHelper arguments(args);
 
-    int32_t type = arguments.GetInt(0);
+    int type = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     libxl::Book* libxlBook;
@@ -324,7 +324,7 @@ NAN_METHOD(Book::AddCustomNumFormat) {
     ASSERT_THIS(that);
     
     libxl::Book* libxlBook = that->GetWrapped();
-    int32_t format = libxlBook->addCustomNumFormat(*description);
+    int format = libxlBook->addCustomNumFormat(*description);
 
     if (!format) {
         return util::ThrowLibxlError(libxlBook);
@@ -488,7 +488,7 @@ NAN_METHOD(Book::ColorUnpack) {
 
     ArgumentHelper arguments(args);
 
-    int32_t value = arguments.GetInt(0);
+    int value = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());

@@ -37,8 +37,8 @@ class ArgumentHelper {
 
         ArgumentHelper(_NAN_METHOD_ARGS_TYPE args);
 
-        int32_t GetInt(uint8_t pos);
-        int32_t GetInt(uint8_t pos, int32_t def);
+        int GetInt(uint8_t pos);
+        int GetInt(uint8_t pos, int def);
 
         double GetDouble(uint8_t pos);
         double GetDouble(uint8_t pos, double def);

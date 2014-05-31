@@ -67,7 +67,7 @@ NAN_METHOD(Font::SetSize) {
 
     ArgumentHelper arguments(args);
 
-    int32_t size = arguments.GetInt(0);
+    int size = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
@@ -158,7 +158,7 @@ NAN_METHOD(Font::SetColor) {
 
     ArgumentHelper arguments(args);
 
-    int32_t color = arguments.GetInt(0);
+    int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
@@ -212,7 +212,7 @@ NAN_METHOD(Font::SetScript) {
 
     ArgumentHelper arguments(args);
 
-    int32_t script = arguments.GetInt(0);
+    int script = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
@@ -239,7 +239,7 @@ NAN_METHOD(Font::SetUnderline) {
 
     ArgumentHelper arguments(args);
 
-    int32_t underline = arguments.GetInt(0);
+    int underline = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());

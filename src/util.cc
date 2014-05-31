@@ -41,10 +41,10 @@ Handle<Value> ProxyConstructor(
 ) {
     NanEscapableScope();
 
-    uint32_t argc = arguments.Length();
+    uint8_t argc = arguments.Length();
     Handle<Value>* argv = new Handle<Value>[argc];
 
-    for (uint32_t i = 0; i < argc; i++) {
+    for (uint8_t i = 0; i < argc; i++) {
         argv[i] = arguments[i];
     }
 

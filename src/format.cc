@@ -101,7 +101,7 @@ NAN_METHOD(Format::SetNumFormat) {
 
     ArgumentHelper arguments(args);
     
-    int32_t format = arguments.GetInt(0);
+    int format = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
@@ -138,7 +138,7 @@ NAN_METHOD(Format::SetAlignH) {
 
     ArgumentHelper arguments(args);
 
-    int32_t align = arguments.GetInt(0);
+    int align = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
@@ -509,7 +509,7 @@ NAN_METHOD(Format::SetFillPattern) {
 
     ArgumentHelper arguments(args);
 
-    int32_t pattern = arguments.GetInt(0);
+    int pattern = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
@@ -526,7 +526,7 @@ NAN_METHOD(Format::SetPatternBackgroundColor) {
 
     ArgumentHelper arguments(args);
 
-    int32_t color = arguments.GetInt(0);
+    int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
@@ -543,7 +543,7 @@ NAN_METHOD(Format::SetPatternForegroundColor) {
 
     ArgumentHelper arguments(args);
 
-    int32_t color = arguments.GetInt(0);
+    int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());

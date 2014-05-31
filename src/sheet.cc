@@ -67,8 +67,8 @@ NAN_METHOD(Sheet::CellType) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -88,8 +88,8 @@ NAN_METHOD(Sheet::IsFormula) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -104,8 +104,8 @@ NAN_METHOD(Sheet::CellFormat) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -126,8 +126,8 @@ NAN_METHOD(Sheet::SetCellFormat) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
@@ -145,8 +145,8 @@ NAN_METHOD(Sheet::ReadStr) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Handle<Value> formatRef = args[2];
     ASSERT_ARGUMENTS(arguments);
 
@@ -173,8 +173,8 @@ NAN_METHOD(Sheet::WriteStr) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     String::Utf8Value value(arguments.GetString(2));
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
@@ -199,8 +199,8 @@ NAN_METHOD(Sheet::ReadNum) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Handle<Value> formatRef = args[2];
     ASSERT_ARGUMENTS(arguments);
 
@@ -224,8 +224,8 @@ NAN_METHOD(Sheet::WriteNum) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     double value = arguments.GetDouble(2);
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
@@ -250,8 +250,8 @@ NAN_METHOD(Sheet::ReadBool) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Handle<Value> formatRef = args[2];
     ASSERT_ARGUMENTS(arguments);
 
@@ -275,8 +275,8 @@ NAN_METHOD(Sheet::WriteBool) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     bool value = arguments.GetBoolean(2);
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
@@ -301,8 +301,8 @@ NAN_METHOD(Sheet::ReadBlank) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Handle<Value> formatRef = args[2];
     ASSERT_ARGUMENTS(arguments);
 
@@ -330,8 +330,8 @@ NAN_METHOD(Sheet::WriteBlank) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
@@ -353,8 +353,8 @@ NAN_METHOD(Sheet::ReadFormula) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     Handle<Value> formatRef = args[2];
     ASSERT_ARGUMENTS(arguments);
 
@@ -381,8 +381,8 @@ NAN_METHOD(Sheet::WriteFormula) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     String::Utf8Value value(arguments.GetString(2));
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
@@ -407,8 +407,8 @@ NAN_METHOD(Sheet::ReadComment) {
     NanScope();
 
     ArgumentHelper arguments(args);
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -428,12 +428,12 @@ NAN_METHOD(Sheet::WriteComment) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     String::Utf8Value value(arguments.GetString(2));
     String::Utf8Value author(arguments.GetString(3, ""));
-    int32_t width = arguments.GetInt(4, 129);
-    int32_t height = arguments.GetInt(5, 75);
+    int width = arguments.GetInt(4, 129);
+    int height = arguments.GetInt(5, 75);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -456,8 +456,8 @@ NAN_METHOD(Sheet::ReadError) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
-    int32_t col = arguments.GetInt(1);
+    int row = arguments.GetInt(0);
+    int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -472,7 +472,7 @@ NAN_METHOD(Sheet::ColWidth) {
 
     ArgumentHelper arguments(args);
 
-    int32_t col = arguments.GetInt(0);
+    int col = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -487,7 +487,7 @@ NAN_METHOD(Sheet::RowHeight) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
+    int row = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -502,8 +502,8 @@ NAN_METHOD(Sheet::SetCol) {
 
     ArgumentHelper arguments(args);
 
-    int32_t first = arguments.GetInt(0);
-    int32_t last = arguments.GetInt(1);
+    int first = arguments.GetInt(0);
+    int last = arguments.GetInt(1);
     double width = arguments.GetDouble(2);
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     bool hidden = arguments.GetBoolean(4, false);
@@ -530,7 +530,7 @@ NAN_METHOD(Sheet::SetRow) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
+    int row = arguments.GetInt(0);
     double height = arguments.GetDouble(1);
     Format* format = arguments.GetWrapped<Format>(2, NULL);
     bool hidden = arguments.GetBoolean(3, false);
@@ -557,7 +557,7 @@ NAN_METHOD(Sheet::RowHidden) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
+    int row = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -572,7 +572,7 @@ NAN_METHOD(Sheet::SetRowHidden) {
 
     ArgumentHelper arguments(args);
 
-    int32_t row = arguments.GetInt(0);
+    int row = arguments.GetInt(0);
     bool hidden = arguments.GetBoolean(1);
     ASSERT_ARGUMENTS(arguments);
 
@@ -592,7 +592,7 @@ NAN_METHOD(Sheet::ColHidden) {
 
     ArgumentHelper arguments(args);
 
-    int32_t col = arguments.GetInt(0);
+    int col = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -607,7 +607,7 @@ NAN_METHOD(Sheet::SetColHidden) {
 
     ArgumentHelper arguments(args);
 
-    int32_t col = arguments.GetInt(0);
+    int col = arguments.GetInt(0);
     bool hidden = arguments.GetBoolean(1);
     ASSERT_ARGUMENTS(arguments);
 
@@ -627,10 +627,10 @@ NAN_METHOD(Sheet::SetMerge) {
 
     ArgumentHelper arguments(args);
 
-    int32_t rowFirst = arguments.GetInt(0);
-    int32_t rowLast = arguments.GetInt(1);
-    int32_t colFirst = arguments.GetInt(2);
-    int32_t colLast = arguments.GetInt(3);
+    int rowFirst = arguments.GetInt(0);
+    int rowLast = arguments.GetInt(1);
+    int colFirst = arguments.GetInt(2);
+    int colLast = arguments.GetInt(3);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());

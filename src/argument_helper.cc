@@ -35,17 +35,17 @@ ArgumentHelper::ArgumentHelper(_NAN_METHOD_ARGS_TYPE args) :
 {}
 
 
-int32_t ArgumentHelper::GetInt(uint8_t pos) {
+int ArgumentHelper::GetInt(uint8_t pos) {
     if (!arguments[pos]->IsInt32()) {
         RaiseException("integer required at position", pos);
         return 0;
     }
 
-    return arguments[pos]->Int32Value();
+    return arguments[pos]->IntegerValue();
 }
 
 
-int32_t ArgumentHelper::GetInt(uint8_t pos, int32_t def) {
+int ArgumentHelper::GetInt(uint8_t pos, int def) {
     if (arguments[pos]->IsUndefined()) return def;
     return GetInt(pos);
 }
