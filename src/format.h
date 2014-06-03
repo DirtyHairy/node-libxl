@@ -83,9 +83,20 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
         static NAN_METHOD(SetBorderTopColor);
         static NAN_METHOD(BorderBottomColor);
         static NAN_METHOD(SetBorderBottomColor);
+        static NAN_METHOD(BorderDiagonal);
+        static NAN_METHOD(SetBorderDiagonal);
+        static NAN_METHOD(BorderDiagonalColor);
+        static NAN_METHOD(SetBorderDiagonalColor);
+        static NAN_METHOD(FillPattern);
         static NAN_METHOD(SetFillPattern);
+        static NAN_METHOD(PatternBackgroundColor);
         static NAN_METHOD(SetPatternBackgroundColor);
+        static NAN_METHOD(PatternForegroundColor);
         static NAN_METHOD(SetPatternForegroundColor);
+        static NAN_METHOD(Locked);
+        static NAN_METHOD(SetLocked);
+        static NAN_METHOD(Hidden);
+        static NAN_METHOD(SetHidden);
 
     private:
 

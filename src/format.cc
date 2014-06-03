@@ -504,6 +504,69 @@ NAN_METHOD(Format::SetBorderBottomColor) {
 }
 
 
+NAN_METHOD(Format::BorderDiagonal) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonal()));
+}
+
+
+NAN_METHOD(Format::SetBorderDiagonal) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderDiagonal(static_cast<libxl::BorderDiagonal>(border));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::BorderDiagonalColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonalColor()));
+}
+
+
+NAN_METHOD(Format::SetBorderDiagonalColor) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int color = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setBorderDiagonalColor(static_cast<libxl::Color>(color));
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::FillPattern) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->fillPattern()));
+}
+
+
 NAN_METHOD(Format::SetFillPattern) {
     NanScope();
 
@@ -518,6 +581,16 @@ NAN_METHOD(Format::SetFillPattern) {
     that->GetWrapped()->setFillPattern(static_cast<libxl::FillPattern>(pattern));
 
     NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::PatternBackgroundColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternBackgroundColor()));
 }
 
 
@@ -538,6 +611,16 @@ NAN_METHOD(Format::SetPatternBackgroundColor) {
 }
 
 
+NAN_METHOD(Format::PatternForegroundColor) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternForegroundColor()));
+}
+
+
 NAN_METHOD(Format::SetPatternForegroundColor) {
     NanScope();
 
@@ -550,6 +633,60 @@ NAN_METHOD(Format::SetPatternForegroundColor) {
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternForegroundColor(static_cast<libxl::Color>(color));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::Locked) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->locked()));
+}
+
+
+NAN_METHOD(Format::SetLocked) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    bool locked = arguments.GetBoolean(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setLocked(locked);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Format::Hidden) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->hidden()));
+}
+
+
+NAN_METHOD(Format::SetHidden) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+    
+    bool hidden = arguments.GetBoolean(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setHidden(hidden);
 
     NanReturnValue(args.This());
 }
@@ -594,13 +731,22 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottom", SetBorderBottom);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeftColor", SetBorderLeftColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderRightColor", SetBorderRightColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonal", BorderDiagonal);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonal", SetBorderDiagonal);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonalColor", BorderDiagonalColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonalColor", SetBorderDiagonalColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderTopColor", SetBorderTopColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottomColor", SetBorderBottomColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "fillPattern", FillPattern);
     NODE_SET_PROTOTYPE_METHOD(t, "setFillPattern", SetFillPattern);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPatternBackgroundColor",
-        SetPatternBackgroundColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPatternForegroundColor",
-        SetPatternForegroundColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "patternBackgroundColor", PatternBackgroundColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setPatternBackgroundColor", SetPatternBackgroundColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "patternForegroundColor", PatternForegroundColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setPatternForegroundColor", SetPatternForegroundColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "hidden", Hidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "setHidden", SetHidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "locked", Locked);
+    NODE_SET_PROTOTYPE_METHOD(t, "setLocked", SetLocked);
 
     t->ReadOnlyPrototype();
     NanAssignPersistent(constructor, t->GetFunction());
@@ -746,6 +892,11 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_DASHDOTDOT);
     NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_MEDIUMDASHDOTDOT);
     NODE_DEFINE_CONSTANT(exports, BORDERSTYLE_SLANTDASHDOT);
+
+    NODE_DEFINE_CONSTANT(exports, BORDERDIAGONAL_NONE);
+    NODE_DEFINE_CONSTANT(exports, BORDERDIAGONAL_DOWN);
+    NODE_DEFINE_CONSTANT(exports, BORDERDIAGONAL_UP);
+    NODE_DEFINE_CONSTANT(exports, BORDERDIAGONAL_BOTH);
 }
 
 
