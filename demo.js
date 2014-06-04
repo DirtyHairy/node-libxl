@@ -45,6 +45,10 @@ function fillSheet(sheet) {
         .writeString(row, 0, 'Comment')
         .writeComment(row, 0, 'This a comment', 'from me', 200, 200);
     row++;
+
+    sheet.writeNum(row, 0, book.datePack(1980, 8, 19),
+        book.addFormat().setNumFormat(xl.NUMFORMAT_DATE));
+    row++;
 }
 
 function fillBook(book) {

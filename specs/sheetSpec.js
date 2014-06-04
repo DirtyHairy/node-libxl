@@ -200,6 +200,17 @@ describe('The sheet class', function() {
         row++;
     });
 
+    it('sheet.isDate checks whether a cell contains a date', function() {
+        sheet.writeNum(row, 0, book.datePack(1980, 8, 19),
+            book.addFormat().setNumFormat(xl.NUMFORMAT_DATE));
+
+        shouldThrow(sheet.isDate, sheet, row, 'a');
+        shouldThrow(sheet.isDate, {}, row, 0);
+
+        expect(sheet.isDate(row - 1, 0)).toBe(false);
+        expect(sheet.isDate(row, 0)).toBe(true);
+    });
+
     it('sheet.readError reads an error', function() {
         sheet.writeStr(row, 0, '');
 

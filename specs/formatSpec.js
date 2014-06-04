@@ -25,7 +25,7 @@ describe('The format class', function() {
         format.numFormat();
     });
 
-    it('format.setNumbFormat sets the number format', function() {
+    it('format.setNumFormat sets the number format', function() {
         shouldThrow(format.setNumFormat, format, 'a');
         shouldThrow(format.setNumFormat, {}, xl.NUMFORMAT_DATE);
         expect(format.setNumFormat(xl.NUMFORMAT_DATE)).toBe(format);

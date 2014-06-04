@@ -467,6 +467,22 @@ NAN_METHOD(Sheet::ReadError) {
 }
 
 
+NAN_METHOD(Sheet::IsDate) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row = arguments.GetInt(0),
+        col = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate(row, col)));
+}
+
+
 NAN_METHOD(Sheet::ColWidth) {
     NanScope();
 
@@ -676,6 +692,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
     NODE_SET_PROTOTYPE_METHOD(t, "readComment", ReadComment);
     NODE_SET_PROTOTYPE_METHOD(t, "writeComment", WriteComment);
+    NODE_SET_PROTOTYPE_METHOD(t, "isDate", IsDate);
     NODE_SET_PROTOTYPE_METHOD(t, "readError", ReadError);
     NODE_SET_PROTOTYPE_METHOD(t, "colWidth", ColWidth);
     NODE_SET_PROTOTYPE_METHOD(t, "rowHeight", RowHeight);

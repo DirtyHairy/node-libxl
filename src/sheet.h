@@ -68,7 +68,7 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(WriteFormula);
         static NAN_METHOD(ReadComment);
         static NAN_METHOD(WriteComment);
-        // TODO IsDate
+        static NAN_METHOD(IsDate);
         static NAN_METHOD(ReadError);
         static NAN_METHOD(ColWidth);
         static NAN_METHOD(RowHeight);
