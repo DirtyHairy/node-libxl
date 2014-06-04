@@ -150,6 +150,33 @@ NAN_METHOD(Format::SetAlignH) {
 }
 
 
+NAN_METHOD(Format::AlignV) {
+    NanScope();
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignV()));
+}
+
+
+NAN_METHOD(Format::SetAlignV) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int align = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Format* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setAlignV(static_cast<libxl::AlignV>(align));
+    
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Format::GetWrap) {
     NanScope();
 
@@ -711,6 +738,8 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
     NODE_SET_PROTOTYPE_METHOD(t, "alignH", AlignH);
     NODE_SET_PROTOTYPE_METHOD(t, "setAlignH", SetAlignH);
+    NODE_SET_PROTOTYPE_METHOD(t, "alignV", AlignV);
+    NODE_SET_PROTOTYPE_METHOD(t, "setAlignV", SetAlignV);
     NODE_SET_PROTOTYPE_METHOD(t, "wrap", GetWrap);
     NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);
     NODE_SET_PROTOTYPE_METHOD(t, "rotation", Rotation);
@@ -729,14 +758,18 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderTop", SetBorderTop);
     NODE_SET_PROTOTYPE_METHOD(t, "borderBottom", BorderBottom);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottom", SetBorderBottom);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderLeftColor", BorderLeftColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeftColor", SetBorderLeftColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderRightColor", BorderRightColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderRightColor", SetBorderRightColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderTopColor", BorderTopColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTopColor", SetBorderTopColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "borderBottomColor", BorderBottomColor);
+    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottomColor", SetBorderBottomColor);
     NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonal", BorderDiagonal);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonal", SetBorderDiagonal);
     NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonalColor", BorderDiagonalColor);
     NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonalColor", SetBorderDiagonalColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTopColor", SetBorderTopColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottomColor", SetBorderBottomColor);
     NODE_SET_PROTOTYPE_METHOD(t, "fillPattern", FillPattern);
     NODE_SET_PROTOTYPE_METHOD(t, "setFillPattern", SetFillPattern);
     NODE_SET_PROTOTYPE_METHOD(t, "patternBackgroundColor", PatternBackgroundColor);
@@ -796,6 +829,12 @@ void Format::Initialize(Handle<Object> exports) {
     NODE_DEFINE_CONSTANT(exports, ALIGNH_JUSTIFY);
     NODE_DEFINE_CONSTANT(exports, ALIGNH_MERGE);
     NODE_DEFINE_CONSTANT(exports, ALIGNH_DISTRIBUTED);
+
+    NODE_DEFINE_CONSTANT(exports, ALIGNV_TOP);
+    NODE_DEFINE_CONSTANT(exports, ALIGNV_CENTER);
+    NODE_DEFINE_CONSTANT(exports, ALIGNV_BOTTOM);
+    NODE_DEFINE_CONSTANT(exports, ALIGNV_JUSTIFY);
+    NODE_DEFINE_CONSTANT(exports, ALIGNV_DISTRIBUTED);
 
     NODE_DEFINE_CONSTANT(exports, FILLPATTERN_NONE);
     NODE_DEFINE_CONSTANT(exports, FILLPATTERN_SOLID);

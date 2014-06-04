@@ -57,6 +57,8 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
         static NAN_METHOD(SetNumFormat);
         static NAN_METHOD(AlignH);
         static NAN_METHOD(SetAlignH);
+        static NAN_METHOD(AlignV);
+        static NAN_METHOD(SetAlignV);
         static NAN_METHOD(GetWrap);
         static NAN_METHOD(SetWrap);
         static NAN_METHOD(Rotation);
