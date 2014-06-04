@@ -17,5 +17,11 @@ module.exports = {
 
     getWriteTestFile: function() {
         return writeTestFile;
+    },
+
+    shouldThrow: function(fun, scope) {
+        var args = Array.prototype.slice.call(arguments, 2);
+
+        expect(function() {fun.apply(scope, args);}).toThrow();
     }
 };
