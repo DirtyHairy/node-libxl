@@ -14,6 +14,8 @@ and require the module via
 
 ## API
 
+### Usage
+
 A new excel document is created via
 
     var xlsBook = new xl.Book(xl.BOOK_TYPE_XLS);
@@ -32,7 +34,7 @@ and read back via
 
 (async operations are not implemented atm).
 
-The API closely follows the
+The Javascript API closely follows the C++ API described in the
 [libxl documentation](http://www.libxl.com/documentation.html).
 For example, adding a new sheet and writing two cells works as
 
@@ -50,21 +52,37 @@ is possible to chain calls
 
 Errors are handled by throwing exceptions.
 
-API coverage is a work in progress. At the moment, the Font class is fully
-implemented, and the other three classes (Book, Sheet and Format) are covered
-sufficiently to support reading and writing documents. Please see
-the jasmine specs and the class initializers
-(Book::Initialize, Sheet::Initialize, Format::Initialize, Font::Initialize)
-for a more detailed overview of what is currently supported :).
+Functions that return multiple values
+by reference in C++ (like Book::dateUnpack) return a object with the return
+values as properties.
+
+In C++, the cell value getters on Sheet (e.g. Sheet::readStr) can store the cell
+format in an optional second argument. In Javascript, this is implemented by
+allowing for an optional JS object as second parameter which will receive the
+format in its 'format' property.
+
+**IMPORTANT:** The Javascript API enforces the types defined in its C++
+counterpart for all function arguments; there is no implicit type casting. For
+example, passing a Number to Sheet::writeStr will throw a TypeError instead of
+silently converting the string to a number.
+
+### Coverage
+
+API coverage is a work in progress. At the moment, the Font, Format and Book
+(except methods dealing with embedded pictures) classes are fully implemented,
+and Sheet is about 50% covered (reading, writing, formatting and splitting cells
+works fine).  Please see the jasmine specs and the class initializers
+(Book::Initialize, Sheet::Initialize, Format::Initialize, Font::Initialize) for
+a more detailed overview of what is currently supported
+:).
 
 ## Unlocking the API
 
-If you have purchased a licence key from XLware, you can
-build it into the bindings by modifying `api_key.h` and
-rebuilding the library via `node-gyp rebuild` (you'll have
-to install node-gyp for this) or `npm install` in the package
-directory. I might implement `book.setKey` at some point in the
-future, too.
+If you have purchased a licence key from XLware, you can call book.setKey in
+order to unlock the library. As an alternative, you can build the key into the
+bindings by modifying `api_key.h` and rebuilding the library via `node-gyp
+rebuild` (you'll have to install node-gyp for this) or `npm install` in the
+package directory.
 
 ## Platform support
 

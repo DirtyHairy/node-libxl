@@ -2,8 +2,8 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.0.11",
-  "description": "libxl bindings for node",
+  "version": "0.0.12",
+  "description": "Libxl bindings for node - read and write excel files using the libxl library.",
   "keywords": [
     "excel",
     "libxl",
@@ -27,6 +27,6 @@
     "install": "node-gyp rebuild"
   },
   "dependencies": {
-    "nan": "^1.0.0"
+    "nan": "~1.2.0"
   }
 }
