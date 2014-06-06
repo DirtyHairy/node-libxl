@@ -638,6 +638,36 @@ NAN_METHOD(Sheet::SetColHidden) {
 }
 
 
+NAN_METHOD(Sheet::GetMerge) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row = arguments.GetInt(0),
+        col = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    int rowFirst, rowLast, colFirst, colLast;
+
+    if (!that->GetWrapped()->getMerge(row, col, &rowFirst, &rowLast,
+        &colFirst, &colLast))
+    {
+        return util::ThrowLibxlError(that);
+    }
+
+    Local<Object> result = NanNew<Object>();
+    result->Set(NanNew<String>("rowFirst"), NanNew<Integer>(rowFirst));
+    result->Set(NanNew<String>("rowLast"),  NanNew<Integer>(rowLast));
+    result->Set(NanNew<String>("colFirst"), NanNew<Integer>(colFirst));
+    result->Set(NanNew<String>("colLast"),  NanNew<Integer>(colLast));
+
+    NanReturnValue(result);
+}
+
+
 NAN_METHOD(Sheet::SetMerge) {
     NanScope();
 
@@ -656,6 +686,26 @@ NAN_METHOD(Sheet::SetMerge) {
         return util::ThrowLibxlError(that);
     }
     
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Sheet::DelMerge) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row = arguments.GetInt(0),
+        col = arguments.GetInt(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->delMerge(row, col)) {
+        return util::ThrowLibxlError(that);
+    }
+
     NanReturnValue(args.This());
 }
 
@@ -702,7 +752,9 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setRowHidden", SetRowHidden);
     NODE_SET_PROTOTYPE_METHOD(t, "colHidden", ColHidden);
     NODE_SET_PROTOTYPE_METHOD(t, "setColHidden", SetColHidden);
+    NODE_SET_PROTOTYPE_METHOD(t, "getMerge", GetMerge);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
+    NODE_SET_PROTOTYPE_METHOD(t, "delMerge", DelMerge);
 
     t->ReadOnlyPrototype();
     NanAssignPersistent(constructor, t->GetFunction());

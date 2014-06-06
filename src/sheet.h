@@ -78,7 +78,9 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(SetRowHidden);
         static NAN_METHOD(ColHidden);
         static NAN_METHOD(SetColHidden);
+        static NAN_METHOD(GetMerge);
         static NAN_METHOD(SetMerge);
+        static NAN_METHOD(DelMerge);
 
     private:
 

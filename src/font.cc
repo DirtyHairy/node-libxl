@@ -278,7 +278,7 @@ NAN_METHOD(Font::SetName) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setName(*name)) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());
