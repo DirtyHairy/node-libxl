@@ -710,6 +710,96 @@ NAN_METHOD(Sheet::DelMerge) {
 }
 
 
+NAN_METHOD(Sheet::GetHorPageBreak) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreak(index)));
+}
+
+
+NAN_METHOD(Sheet::GetHorPageBreakSize) {
+    NanScope();
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreakSize()));
+}
+
+
+NAN_METHOD(Sheet::GetVerPageBreak) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+    
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreak(index)));
+}
+
+
+NAN_METHOD(Sheet::GetVerPageBreakSize) {
+    NanScope();
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreakSize()));
+}
+
+
+NAN_METHOD(Sheet::SetHorPageBreak) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row = arguments.GetInt(0);
+    bool pagebreak = arguments.GetBoolean(1, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setHorPageBreak(row, pagebreak)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Sheet::SetVerPageBreak) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int col = arguments.GetInt(0);
+    bool pagebreak = arguments.GetBoolean(1, true);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->setVerPageBreak(col, pagebreak)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
+}
+
+
 // Init
 
 
@@ -755,6 +845,12 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "getMerge", GetMerge);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
     NODE_SET_PROTOTYPE_METHOD(t, "delMerge", DelMerge);
+    NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreak", GetHorPageBreak);
+    NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreakSize", GetHorPageBreakSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "getVerPageBreak", GetVerPageBreak);
+    NODE_SET_PROTOTYPE_METHOD(t, "getVerPageBreakSize", GetVerPageBreakSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "setHorPageBreak", SetHorPageBreak);
+    NODE_SET_PROTOTYPE_METHOD(t, "setVerPageBreak", SetVerPageBreak);
 
     t->ReadOnlyPrototype();
     NanAssignPersistent(constructor, t->GetFunction());

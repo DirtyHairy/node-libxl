@@ -89,7 +89,7 @@ NAN_METHOD(Format::SetFont) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setFont(font->GetWrapped())) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());

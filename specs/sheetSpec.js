@@ -294,4 +294,27 @@ describe('The sheet class', function() {
         expect(sheet.setColHidden(0, false)).toBe(sheet);
         expect(sheet.colHidden(0)).toBe(false);
     });
+
+    it('sheet.setMerge, sheet.getMerge and sheet.delMerge manage merged cells', function() {
+        shouldThrow(sheet.getMerge, sheet, row, 0);
+        shouldThrow(sheet.delMerge, sheet, row, 0);
+
+        shouldThrow(sheet.setMerge, sheet, 'a', row + 2, 0, 3);
+        shouldThrow(sheet.setMerge, {}, row, row + 2, 0, 3);
+        expect(sheet.setMerge(row, row + 2, 0, 3)).toBe(sheet);
+
+        shouldThrow(sheet.getMerge, sheet, 'a', 0);
+        shouldThrow(sheet.getMerge, {}, row, 0);
+        merge = sheet.getMerge(row, 0);
+        expect(merge.rowFirst).toBe(row);
+        expect(merge.rowLast).toBe(row + 2);
+        expect(merge.colFirst).toBe(0);
+        expect(merge.colLast).toBe(3);
+
+        shouldThrow(sheet.delMerge, sheet, 'a', 0);
+        shouldThrow(sheet.delMerge, {}, row, 0);
+        sheet.delMerge(row, 0);
+
+        shouldThrow(sheet.delMerge, sheet, row, 0);
+    });
 });
