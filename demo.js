@@ -49,6 +49,8 @@ function fillSheet(sheet) {
     sheet.writeNum(row, 0, book.datePack(1980, 8, 19),
         book.addFormat().setNumFormat(xl.NUMFORMAT_DATE));
     row++;
+
+    sheet.split(2, 5);
 }
 
 function fillBook(book) {

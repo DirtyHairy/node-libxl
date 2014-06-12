@@ -317,4 +317,42 @@ describe('The sheet class', function() {
 
         shouldThrow(sheet.delMerge, sheet, row, 0);
     });
+
+    it('sheet.getHorPageBreak, sheet.setHorPageBreak and sheet.horPageBreakSize' +
+        'manage horizontal page breaks', function()
+    {
+        shouldThrow(sheet.getHorPageBreakSize, {});
+        var n = sheet.getHorPageBreakSize();
+
+        shouldThrow(sheet.setHorPageBreak, sheet, 'a');
+        shouldThrow(sheet.setHorPageBreak, {}, row);
+        expect(sheet.setHorPageBreak(row)).toBe(sheet);
+        expect(sheet.getHorPageBreakSize()).toBe(n + 1);
+
+        shouldThrow(sheet.getHorPageBreak, sheet, 'a');
+        shouldThrow(sheet.getHorPageBreak, {}, n + 1);
+        expect(sheet.getHorPageBreak(n)).toBe(row);
+
+        sheet.setHorPageBreak(row, false);
+        expect(sheet.getHorPageBreakSize()).toBe(n);
+    });
+
+    it('sheet.getVerPageBreak, sheet.setVerPageBreak and sheet.horPageBreakSize' +
+        'manage vertical page breaks', function()
+    {
+        shouldThrow(sheet.getVerPageBreakSize, {});
+        var n = sheet.getVerPageBreakSize();
+
+        shouldThrow(sheet.setVerPageBreak, sheet, 'a');
+        shouldThrow(sheet.setVerPageBreak, {}, row);
+        expect(sheet.setVerPageBreak(10)).toBe(sheet);
+        expect(sheet.getVerPageBreakSize()).toBe(n + 1);
+
+        shouldThrow(sheet.getVerPageBreak, sheet, 'a');
+        shouldThrow(sheet.getVerPageBreak, {}, n + 1);
+        expect(sheet.getVerPageBreak(n)).toBe(10);
+
+        sheet.setVerPageBreak(10, false);
+        expect(sheet.getVerPageBreakSize()).toBe(n);
+    });
 });
