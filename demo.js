@@ -30,6 +30,11 @@ function fillSheet(sheet) {
         .writeNum(row, 1, 10);
     row++;
 
+    sheet.insertRow(row, row+1);
+    row += 2;
+
+    sheet.insertCol(1, 2);
+
     sheet
         .writeStr(row, 0, 'True')
         .writeBool(row, 1, true);

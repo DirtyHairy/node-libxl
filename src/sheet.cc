@@ -1690,7 +1690,7 @@ NAN_METHOD(Sheet::DelNamedRange) {
     ArgumentHelper arguments(args);
 
     String::Utf8Value name(arguments.GetString(0));
-    int scopeId = arguments.GetInt(0);
+    int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
@@ -2004,6 +2004,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setGroupSummaryBelow", SetGroupSummaryBelow);
     NODE_SET_PROTOTYPE_METHOD(t, "groupSummaryRight", GroupSummaryRight);
     NODE_SET_PROTOTYPE_METHOD(t, "setGroupSummaryRight", SetGroupSummaryRight);
+    NODE_SET_PROTOTYPE_METHOD(t, "clear", Clear);
     NODE_SET_PROTOTYPE_METHOD(t, "insertRow", InsertRow);
     NODE_SET_PROTOTYPE_METHOD(t, "insertCol", InsertCol);
     NODE_SET_PROTOTYPE_METHOD(t, "removeRow", RemoveRow);
@@ -2024,7 +2025,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "getPrintFit", GetPrintFit);
     NODE_SET_PROTOTYPE_METHOD(t, "setPrintFit", SetPrintFit);
     NODE_SET_PROTOTYPE_METHOD(t, "landscape", Landscape);
-    NODE_SET_PROTOTYPE_METHOD(t, "SetLandscape", SetLandscape);
+    NODE_SET_PROTOTYPE_METHOD(t, "setLandscape", SetLandscape);
     NODE_SET_PROTOTYPE_METHOD(t, "paper", Paper);
     NODE_SET_PROTOTYPE_METHOD(t, "setPaper", SetPaper);
     NODE_SET_PROTOTYPE_METHOD(t, "header", Header);
