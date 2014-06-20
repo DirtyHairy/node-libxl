@@ -22,24 +22,33 @@
  * THE SOFTWARE.
  */
 
-#include "autolock.h"
+#ifndef BINDINGS_WORKER_H
+#define BINDINGS_WORKER_H
+
+#include "common.h"
+#include "book.h"
 
 namespace node_libxl {
 
 
-AutoLock::AutoLock(Book* book) : book(book) {
-    book->Lock();
+class AsyncWorker : public NanAsyncWorker {
+    public:
+
+        AsyncWorker(NanCallback* callback, v8::Handle<v8::Object> book);
+
+        virtual void WorkComplete();
+
+    protected:
+
+        Book* book;
+
+    private:
+
+        AsyncWorker(const AsyncWorker&);
+        const AsyncWorker& operator=(const AsyncWorker&);
+};
+
+
 }
 
-
-AutoLock::AutoLock(BookWrapper* bookWrapper) : book(bookWrapper->GetBook()) {
-    book->Lock();
-}
-
-
-AutoLock::~AutoLock() {
-    book->Unlock();
-}
-
-
-}
+#endif

@@ -24,8 +24,6 @@
 
 #ifndef BINDINGS_COMMON_H
 
-#include <v8.h>
-#include <node.h>
 #include <libxl.h>
 #include <nan.h>
 #include "csnan.h"

@@ -84,11 +84,13 @@ bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
 
 
 v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
+    NanEscapableScope();
+
     if (!arguments[pos]->IsString()) {
         RaiseException("string required at position", pos);
     }
 
-    return arguments[pos];
+    return NanEscapeScope(arguments[pos]);
 }
 
 
@@ -99,6 +101,17 @@ v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
         return NanEscapeScope(NanNew<v8::String>(def));
 
     return NanEscapeScope(GetString(pos));
+}
+
+
+v8::Handle<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
+    NanEscapableScope();
+
+    if (!arguments[pos]->IsFunction()) {
+        RaiseException("function required at position", pos);
+    }
+
+    return NanEscapeScope(arguments[pos].As<v8::Function>());
 }
 
 

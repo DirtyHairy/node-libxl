@@ -30,6 +30,8 @@
 #include "format.h"
 #include "font.h"
 #include "api_key.h"
+#include "worker.h"
+#include "string_copy.h"
 
 using namespace v8;
 
@@ -40,15 +42,13 @@ namespace node_libxl {
 
 
 Book::Book(libxl::Book* libxlBook) :
-    Wrapper<libxl::Book>(libxlBook)
-{
-    uv_mutex_init(&mutex);
-}
+    Wrapper<libxl::Book>(libxlBook),
+    asyncPending(false)
+{}
 
 
 Book::~Book() {
     wrapped->release();
-    uv_mutex_destroy(&mutex);
 }
 
 
@@ -94,17 +94,25 @@ NAN_METHOD(Book::New) {
 }
 
 
-// Locking and unlocking
+// Async guard
 
-void Book::Lock() {
-    uv_mutex_lock(&mutex);
+
+void Book::StartAsync() {
+    asyncPending = true;
 }
 
-void Book::Unlock() {
-    uv_mutex_unlock(&mutex);
+
+void Book::StopAsync() {
+    asyncPending = false;
 }
 
-// Wrappers
+
+bool Book::AsyncPending() {
+    return asyncPending;
+}
+
+
+// Implementation
 
 
 NAN_METHOD(Book::LoadSync){
@@ -116,7 +124,7 @@ NAN_METHOD(Book::LoadSync){
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (!that->GetWrapped()->load(*filename)) {
         return util::ThrowLibxlError(that);
@@ -135,12 +143,49 @@ NAN_METHOD(Book::WriteSync) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     libxl::Book* libxlBook = that->GetWrapped();
     if (!libxlBook->save(*filename)) {
         return util::ThrowLibxlError(libxlBook);
     }
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::Write) {
+    class Worker : public AsyncWorker {
+        public:
+            Worker(NanCallback* callback, Handle<Object> book, Handle<Value> filename) :
+                AsyncWorker(callback, book),
+                filename(filename)
+            {}
+
+            virtual void Execute() {
+                libxl::Book* libxlBook = book->GetWrapped();
+
+                if (!libxlBook->save(*filename)) {
+                    SetErrorMessage(libxlBook->errorMessage());
+                }
+            }
+        
+        private:
+            StringCopy filename;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Handle<Value> filename = arguments.GetString(0);
+    Handle<Function> callback = arguments.GetFunction(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), filename));
 
     NanReturnValue(args.This());
 }
@@ -157,7 +202,7 @@ NAN_METHOD(Book::AddSheet) {
 
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
     if (parentSheet) {
         ASSERT_SAME_BOOK(parentSheet, that);
     }
@@ -187,7 +232,7 @@ NAN_METHOD(Book::InsertSheet) {
 
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
     if (parentSheet) {
         ASSERT_SAME_BOOK(parentSheet, that);
     }
@@ -212,7 +257,7 @@ NAN_METHOD(Book::GetSheet) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     libxl::Sheet* sheet = that->GetWrapped()->getSheet(index);
     if (!sheet) {
@@ -232,7 +277,7 @@ NAN_METHOD(Book::SheetType) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetType(index)));
 }
@@ -247,7 +292,7 @@ NAN_METHOD(Book::DelSheet) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (!that->GetWrapped()->delSheet(index)) {
         return util::ThrowLibxlError(that);
@@ -261,7 +306,7 @@ NAN_METHOD(Book::SheetCount) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetCount()));
 }
@@ -277,7 +322,7 @@ NAN_METHOD(Book::AddFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (parentFormat) {
         ASSERT_SAME_BOOK(parentFormat, that);
@@ -306,7 +351,7 @@ NAN_METHOD(Book::AddFont) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (parentFont) {
         ASSERT_SAME_BOOK(parentFont, that);
@@ -334,7 +379,7 @@ NAN_METHOD(Book::AddCustomNumFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
     
     libxl::Book* libxlBook = that->GetWrapped();
     int format = libxlBook->addCustomNumFormat(*description);
@@ -356,7 +401,7 @@ NAN_METHOD(Book::CustomNumFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     const char* formatString = that->GetWrapped()->customNumFormat(index);
     if (!formatString) {
@@ -376,7 +421,7 @@ NAN_METHOD(Book::Format) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     libxl::Format* format = that->GetWrapped()->format(index);
     if (!format) {
@@ -391,7 +436,7 @@ NAN_METHOD(Book::FormatSize) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->formatSize()));
 }
@@ -406,7 +451,7 @@ NAN_METHOD(Book::Font) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     libxl::Font* font = that->GetWrapped()->font(index);
     if (!font) {
@@ -420,7 +465,7 @@ NAN_METHOD(Book::FontSize) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->fontSize()));
 }
@@ -441,7 +486,7 @@ NAN_METHOD(Book::DatePack) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->datePack(
         year, month, day, hour, minute, second, msecond)));
@@ -457,7 +502,7 @@ NAN_METHOD(Book::DateUnpack) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     int year, month, day, hour, minute, second, msecond;
     if (!that->GetWrapped()->dateUnpack(
@@ -490,7 +535,7 @@ NAN_METHOD(Book::ColorPack) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->colorPack(red, green, blue)));
 }
@@ -505,7 +550,7 @@ NAN_METHOD(Book::ColorUnpack) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     Local<Object> result = NanNew<Object>();
     int red, green, blue;
@@ -525,7 +570,7 @@ NAN_METHOD(Book::ActiveSheet) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->activeSheet()));
 }
@@ -540,7 +585,7 @@ NAN_METHOD(Book::SetActiveSheet) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setActiveSheet(index);
 
@@ -552,7 +597,7 @@ NAN_METHOD(Book::DefaultFont) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     int size;
     const char* name = that->GetWrapped()->defaultFont(&size);
@@ -579,7 +624,7 @@ NAN_METHOD(Book::SetDefaultFont) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setDefaultFont(*name, size);
 
@@ -591,7 +636,7 @@ NAN_METHOD(Book::RefR1C1) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->refR1C1()));
 }
@@ -605,7 +650,7 @@ NAN_METHOD(Book::SetRefR1C1) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setRefR1C1(refR1C1);
 
@@ -617,7 +662,7 @@ NAN_METHOD(Book::RgbMode) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rgbMode()));
 }
@@ -632,7 +677,7 @@ NAN_METHOD(Book::SetRgbMode) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setRgbMode(rgbMode);
 
@@ -644,7 +689,7 @@ NAN_METHOD(Book::BiffVersion) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->biffVersion()));
 }
@@ -654,7 +699,7 @@ NAN_METHOD(Book::IsDate1904) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate1904()));
 }
@@ -669,7 +714,7 @@ NAN_METHOD(Book::SetDate1904) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setDate1904(date1904);
 
@@ -681,7 +726,7 @@ NAN_METHOD(Book::IsTemplate) {
     NanScope();
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isTemplate()));
 }
@@ -696,7 +741,7 @@ NAN_METHOD(Book::SetTemplate) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setTemplate(isTemplate);
 
@@ -714,7 +759,7 @@ NAN_METHOD(Book::SetKey) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setKey(*name, *key);
 
@@ -736,6 +781,7 @@ void Book::Initialize(Handle<Object> exports) {
 
     NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);

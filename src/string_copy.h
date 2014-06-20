@@ -22,19 +22,33 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_ASSERT_H
-#define BINDINGS_ASSERT_H
+#ifndef BINDINGS_STRING_COPY_H
+#define BINDINGS_STRING_COPY_H
 
-#include "util.h"
+#include <v8.h>
 
-#define ASSERT_ARGUMENTS(ARGS) if (ARGS.HasException()) \
-    return (ARGS.ThrowException())
+namespace node_libxl {
 
-#define ASSERT_THIS(THIS) if (!THIS) return(NanThrowTypeError("invalid scope")); \
-    if (::node_libxl::util::AsyncPending(THIS)) return(NanThrowError("async operation pending"))
 
-#define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
-    !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) \
-    return NanThrowTypeError("parent books differ")
+class StringCopy {
+    public:
 
-#endif // BINDINGS_ASSERT_H
+        StringCopy(v8::String::Utf8Value& utf8Value);
+        StringCopy(v8::Handle<v8::Value> value);
+
+        ~StringCopy();
+
+        char* operator*();
+
+    private:
+       
+        StringCopy(const StringCopy&);
+        const StringCopy& operator=(const StringCopy&);
+        
+        char* str;
+};
+
+
+}
+
+#endif // BINDINGS_STRING_COPY_H

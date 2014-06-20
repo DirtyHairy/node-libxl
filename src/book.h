@@ -27,7 +27,6 @@
 
 #include "common.h"
 #include "wrapper.h"
-#include <uv.h>
 
 namespace node_libxl {
 
@@ -44,15 +43,15 @@ class Book : public Wrapper<libxl::Book> {
         Book(libxl::Book* libxlBook);
         ~Book();
 
+        void StartAsync();
+        void StopAsync();
+        bool AsyncPending();
+
         static void Initialize(v8::Handle<v8::Object> exports);
 
         static Book* Unwrap(v8::Handle<v8::Value> object) {
             return Wrapper<libxl::Book>::Unwrap<Book>(object);
         }
-
-        void Lock();
-
-        void Unlock();
 
     protected:
 
@@ -60,6 +59,7 @@ class Book : public Wrapper<libxl::Book> {
 
         static NAN_METHOD(LoadSync);
         static NAN_METHOD(WriteSync);
+        static NAN_METHOD(Write);
         // TODO LoadRaw
         // TODO SaveRaw
         static NAN_METHOD(AddSheet);
@@ -104,7 +104,7 @@ class Book : public Wrapper<libxl::Book> {
         Book(const Book&);
         const Book& operator=(const Book&);
 
-        uv_mutex_t mutex;
+        bool asyncPending;
 };
 
 

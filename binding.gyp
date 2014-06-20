@@ -11,7 +11,8 @@
         'src/format.cc',
         'src/font.cc',
         'src/book_wrapper.cc',
-        'src/autolock.cc'
+        'src/string_copy.cc',
+        'src/worker.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp',

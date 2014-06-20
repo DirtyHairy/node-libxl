@@ -84,6 +84,16 @@ Handle<Value> CallStubConstructor(Handle<Function> constructor) {
 }
 
 
+bool AsyncPending(Book* book) {
+    return book->AsyncPending();
+}
+
+
+bool AsyncPending(BookWrapper* bookWrapper) {
+    return bookWrapper->GetBook()->AsyncPending();
+}
+
+
 libxl::Book* UnwrapBook(libxl::Book* book) {
     return book;
 }

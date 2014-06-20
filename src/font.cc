@@ -71,7 +71,7 @@ NAN_METHOD(Font::SetSize) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setSize(size);
 
@@ -83,7 +83,7 @@ NAN_METHOD(Font::Size) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->size()));
 }
@@ -93,7 +93,7 @@ NAN_METHOD(Font::Italic) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->italic()));
 }
@@ -108,7 +108,7 @@ NAN_METHOD(Font::SetItalic){
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setItalic(italic);
 
@@ -120,7 +120,7 @@ NAN_METHOD(Font::StrikeOut) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->strikeOut()));
 }
@@ -135,7 +135,7 @@ NAN_METHOD(Font::SetStrikeOut) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setStrikeOut(strikeOut);
 
@@ -147,7 +147,7 @@ NAN_METHOD(Font::Color) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->color()));
 }
@@ -162,7 +162,7 @@ NAN_METHOD(Font::SetColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setColor(static_cast<libxl::Color>(color));
 
@@ -174,7 +174,7 @@ NAN_METHOD(Font::Bold) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->bold()));
 }
@@ -189,7 +189,7 @@ NAN_METHOD(Font::SetBold) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBold(bold);
 
@@ -201,7 +201,7 @@ NAN_METHOD(Font::Script) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->script()));
 }
@@ -216,7 +216,7 @@ NAN_METHOD(Font::SetScript) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setScript(static_cast<libxl::Script>(script));
 
@@ -228,7 +228,7 @@ NAN_METHOD(Font::Underline) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->underline()));
 }
@@ -243,7 +243,7 @@ NAN_METHOD(Font::SetUnderline) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setUnderline(static_cast<libxl::Underline>(underline));
 
@@ -255,7 +255,7 @@ NAN_METHOD(Font::Name) {
     NanScope();
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     const char* name = that->GetWrapped()->name();
     if (!name) {
@@ -275,7 +275,7 @@ NAN_METHOD(Font::SetName) {
     ASSERT_ARGUMENTS(arguments);
 
     Font* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setName(*name)) {
         return util::ThrowLibxlError(that);

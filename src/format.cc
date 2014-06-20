@@ -66,7 +66,7 @@ NAN_METHOD(Format::Font) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     libxl::Font* font = that->GetWrapped()->font();
     if (!font) {
@@ -86,7 +86,7 @@ NAN_METHOD(Format::SetFont) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setFont(font->GetWrapped())) {
         return util::ThrowLibxlError(that);
@@ -105,7 +105,7 @@ NAN_METHOD(Format::SetNumFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setNumFormat(format);
 
@@ -117,7 +117,7 @@ NAN_METHOD(Format::NumFormat) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->numFormat()));
 }
@@ -127,7 +127,7 @@ NAN_METHOD(Format::AlignH) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignH()));
 }
@@ -142,7 +142,7 @@ NAN_METHOD(Format::SetAlignH) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignH(static_cast<libxl::AlignH>(align));
 
@@ -154,7 +154,7 @@ NAN_METHOD(Format::AlignV) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignV()));
 }
@@ -169,7 +169,7 @@ NAN_METHOD(Format::SetAlignV) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignV(static_cast<libxl::AlignV>(align));
     
@@ -181,7 +181,7 @@ NAN_METHOD(Format::GetWrap) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->wrap()));
 }
@@ -195,7 +195,7 @@ NAN_METHOD(Format::SetWrap) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setWrap(wrap);
 
@@ -207,7 +207,7 @@ NAN_METHOD(Format::Rotation) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->rotation()));
 }
@@ -222,7 +222,7 @@ NAN_METHOD(Format::SetRotation) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setRotation(rotation)) {
         return util::ThrowLibxlError(that);
@@ -236,7 +236,7 @@ NAN_METHOD(Format::Indent) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->indent()));
 }
@@ -251,7 +251,7 @@ NAN_METHOD(Format::SetIndent) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setIndent(indent);
 
@@ -262,7 +262,7 @@ NAN_METHOD(Format::ShrinkToFit) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->shrinkToFit()));
 }
@@ -277,7 +277,7 @@ NAN_METHOD(Format::SetShrinkToFit) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setShrinkToFit(shrink);
 
@@ -294,7 +294,7 @@ NAN_METHOD(Format::SetBorder) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorder(static_cast<libxl::BorderStyle>(border));
 
@@ -311,7 +311,7 @@ NAN_METHOD(Format::SetBorderColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderColor(static_cast<libxl::Color>(color));
 
@@ -323,7 +323,7 @@ NAN_METHOD(Format::BorderLeft) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeft()));
 }
@@ -338,7 +338,7 @@ NAN_METHOD(Format::SetBorderLeft) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderLeft(static_cast<libxl::BorderStyle>(border));
 
@@ -350,7 +350,7 @@ NAN_METHOD(Format::BorderRight) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRight()));
 }
@@ -365,7 +365,7 @@ NAN_METHOD(Format::SetBorderRight) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderRight(static_cast<libxl::BorderStyle>(border));
 
@@ -377,7 +377,7 @@ NAN_METHOD(Format::BorderTop) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTop()));
 }
@@ -392,7 +392,7 @@ NAN_METHOD(Format::SetBorderTop) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderTop(static_cast<libxl::BorderStyle>(border));
 
@@ -404,7 +404,7 @@ NAN_METHOD(Format::BorderBottom) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottom()));
 }
@@ -419,7 +419,7 @@ NAN_METHOD(Format::SetBorderBottom) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderBottom(static_cast<libxl::BorderStyle>(border));
 
@@ -431,7 +431,7 @@ NAN_METHOD(Format::BorderLeftColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeftColor()));
 }
@@ -446,7 +446,7 @@ NAN_METHOD(Format::SetBorderLeftColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderLeftColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
@@ -457,7 +457,7 @@ NAN_METHOD(Format::BorderRightColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRightColor()));
 }
@@ -472,7 +472,7 @@ NAN_METHOD(Format::SetBorderRightColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderRightColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
@@ -483,7 +483,7 @@ NAN_METHOD(Format::BorderTopColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTopColor()));
 }
@@ -498,7 +498,7 @@ NAN_METHOD(Format::SetBorderTopColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderTopColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
@@ -509,7 +509,7 @@ NAN_METHOD(Format::BorderBottomColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottomColor()));
 }
@@ -524,7 +524,7 @@ NAN_METHOD(Format::SetBorderBottomColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderBottomColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
@@ -535,7 +535,7 @@ NAN_METHOD(Format::BorderDiagonal) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonal()));
 }
@@ -550,7 +550,7 @@ NAN_METHOD(Format::SetBorderDiagonal) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderDiagonal(static_cast<libxl::BorderDiagonal>(border));
 
@@ -562,7 +562,7 @@ NAN_METHOD(Format::BorderDiagonalColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonalColor()));
 }
@@ -577,7 +577,7 @@ NAN_METHOD(Format::SetBorderDiagonalColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderDiagonalColor(static_cast<libxl::Color>(color));
     NanReturnValue(args.This());
@@ -588,7 +588,7 @@ NAN_METHOD(Format::FillPattern) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->fillPattern()));
 }
@@ -603,7 +603,7 @@ NAN_METHOD(Format::SetFillPattern) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setFillPattern(static_cast<libxl::FillPattern>(pattern));
 
@@ -615,7 +615,7 @@ NAN_METHOD(Format::PatternBackgroundColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternBackgroundColor()));
 }
@@ -630,7 +630,7 @@ NAN_METHOD(Format::SetPatternBackgroundColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternBackgroundColor(static_cast<libxl::Color>(color));
 
@@ -642,7 +642,7 @@ NAN_METHOD(Format::PatternForegroundColor) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternForegroundColor()));
 }
@@ -657,7 +657,7 @@ NAN_METHOD(Format::SetPatternForegroundColor) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternForegroundColor(static_cast<libxl::Color>(color));
 
@@ -669,7 +669,7 @@ NAN_METHOD(Format::Locked) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->locked()));
 }
@@ -684,7 +684,7 @@ NAN_METHOD(Format::SetLocked) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setLocked(locked);
 
@@ -696,7 +696,7 @@ NAN_METHOD(Format::Hidden) {
     NanScope();
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->hidden()));
 }
@@ -711,7 +711,7 @@ NAN_METHOD(Format::SetHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Format* that = Unwrap(args.This());
-    ASSERT_AND_LOCK_THIS(that);
+    ASSERT_THIS(that);
 
     that->GetWrapped()->setHidden(hidden);
 
