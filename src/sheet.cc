@@ -72,7 +72,7 @@ NAN_METHOD(Sheet::CellType) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::CellType cellType = that->GetWrapped()->cellType(row, col);
     if (cellType == libxl::CELLTYPE_ERROR) {
@@ -93,7 +93,7 @@ NAN_METHOD(Sheet::IsFormula) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isFormula(row, col)));
 }
@@ -109,7 +109,7 @@ NAN_METHOD(Sheet::CellFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = that->GetWrapped()->cellFormat(row, col);
     if (!libxlFormat) {
@@ -132,7 +132,7 @@ NAN_METHOD(Sheet::SetCellFormat) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     ASSERT_SAME_BOOK(that, format);
 
     that->GetWrapped()->setCellFormat(row, col, format->GetWrapped());
@@ -151,7 +151,7 @@ NAN_METHOD(Sheet::ReadStr) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     const char* value = that->GetWrapped()->readStr(row, col, &libxlFormat);
@@ -180,7 +180,7 @@ NAN_METHOD(Sheet::WriteStr) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -205,7 +205,7 @@ NAN_METHOD(Sheet::ReadNum) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
@@ -231,7 +231,7 @@ NAN_METHOD(Sheet::WriteNum) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -256,7 +256,7 @@ NAN_METHOD(Sheet::ReadBool) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
@@ -282,7 +282,7 @@ NAN_METHOD(Sheet::WriteBool) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -307,7 +307,7 @@ NAN_METHOD(Sheet::ReadBlank) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     if (!that->GetWrapped()->readBlank(row, col, &libxlFormat) || !libxlFormat) {
@@ -336,7 +336,7 @@ NAN_METHOD(Sheet::WriteBlank) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     ASSERT_SAME_BOOK(that, format);
 
     if (!that->GetWrapped()->
@@ -359,7 +359,7 @@ NAN_METHOD(Sheet::ReadFormula) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     const char* value = that->GetWrapped()->readFormula(row, col, &libxlFormat);
@@ -388,7 +388,7 @@ NAN_METHOD(Sheet::WriteFormula) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -412,7 +412,7 @@ NAN_METHOD(Sheet::ReadComment) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     const char* value = that->GetWrapped()->readComment(row, col);
     if (!value) {
@@ -437,7 +437,7 @@ NAN_METHOD(Sheet::WriteComment) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (args[3]->IsString()) {
         that->GetWrapped()->writeComment(row, col, *value, *author,
@@ -461,7 +461,7 @@ NAN_METHOD(Sheet::ReadError) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->readError(row, col)));
 }
@@ -477,7 +477,7 @@ NAN_METHOD(Sheet::IsDate) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate(row, col)));
 }
@@ -492,7 +492,7 @@ NAN_METHOD(Sheet::ColWidth) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->colWidth(col)));
 }
@@ -507,7 +507,7 @@ NAN_METHOD(Sheet::RowHeight) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->rowHeight(row)));
 }
@@ -526,7 +526,7 @@ NAN_METHOD(Sheet::SetCol) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -553,7 +553,7 @@ NAN_METHOD(Sheet::SetRow) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
     }
@@ -577,7 +577,7 @@ NAN_METHOD(Sheet::RowHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rowHidden(row)));
 }
@@ -593,7 +593,7 @@ NAN_METHOD(Sheet::SetRowHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setRowHidden(row, hidden)) {
         return util::ThrowLibxlError(that);
@@ -612,7 +612,7 @@ NAN_METHOD(Sheet::ColHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->colHidden(col)));
 }
@@ -628,7 +628,7 @@ NAN_METHOD(Sheet::SetColHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setColHidden(col, hidden)) {
         return util::ThrowLibxlError(that);
@@ -648,7 +648,7 @@ NAN_METHOD(Sheet::GetMerge) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast;
 
@@ -680,7 +680,7 @@ NAN_METHOD(Sheet::SetMerge) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
         return util::ThrowLibxlError(that);
@@ -700,7 +700,7 @@ NAN_METHOD(Sheet::DelMerge) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->delMerge(row, col)) {
         return util::ThrowLibxlError(that);
@@ -719,7 +719,7 @@ NAN_METHOD(Sheet::GetHorPageBreak) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreak(index)));
 }
@@ -729,7 +729,7 @@ NAN_METHOD(Sheet::GetHorPageBreakSize) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreakSize()));
 }
@@ -744,7 +744,7 @@ NAN_METHOD(Sheet::GetVerPageBreak) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreak(index)));
 }
@@ -754,7 +754,7 @@ NAN_METHOD(Sheet::GetVerPageBreakSize) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreakSize()));
 }
@@ -770,7 +770,7 @@ NAN_METHOD(Sheet::SetHorPageBreak) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setHorPageBreak(row, pagebreak)) {
         return util::ThrowLibxlError(that);
@@ -790,7 +790,7 @@ NAN_METHOD(Sheet::SetVerPageBreak) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setVerPageBreak(col, pagebreak)) {
         return util::ThrowLibxlError(that);
@@ -810,7 +810,7 @@ NAN_METHOD(Sheet::Split) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->split(row, col);
 
@@ -829,7 +829,7 @@ NAN_METHOD(Sheet::GroupRows) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->groupRows(rowFirst, rowLast, collapsed)) {
         return util::ThrowLibxlError(that);
@@ -850,7 +850,7 @@ NAN_METHOD(Sheet::GroupCols) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->groupCols(colFirst, colLast, collapsed)) {
         return util::ThrowLibxlError(that);
@@ -864,7 +864,7 @@ NAN_METHOD(Sheet::GroupSummaryBelow) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->groupSummaryBelow()));
 }
@@ -879,7 +879,7 @@ NAN_METHOD(Sheet::SetGroupSummaryBelow) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setGroupSummaryBelow(summaryBelow);
 
@@ -891,7 +891,7 @@ NAN_METHOD(Sheet::GroupSummaryRight) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->groupSummaryRight()));
 }
@@ -906,7 +906,7 @@ NAN_METHOD(Sheet::SetGroupSummaryRight) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setGroupSummaryRight(summaryRight);
 
@@ -926,7 +926,7 @@ NAN_METHOD(Sheet::Clear) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->clear(rowFirst, rowLast, colFirst, colLast);
 
@@ -944,7 +944,7 @@ NAN_METHOD(Sheet::InsertRow) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
         return util::ThrowLibxlError(that);
@@ -964,7 +964,7 @@ NAN_METHOD(Sheet::InsertCol) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
         return util::ThrowLibxlError(that);
@@ -984,7 +984,7 @@ NAN_METHOD(Sheet::RemoveRow) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->removeRow(rowFirst, rowLast)) {
         return util::ThrowLibxlError(that);
@@ -1004,7 +1004,7 @@ NAN_METHOD(Sheet::RemoveCol) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->removeCol(colFirst, colLast)) {
         return util::ThrowLibxlError(that);
@@ -1026,7 +1026,7 @@ NAN_METHOD(Sheet::CopyCell) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->copyCell(rowSrc, colSrc, rowDst, colDst)) {
         return util::ThrowLibxlError(that);
@@ -1040,7 +1040,7 @@ NAN_METHOD(Sheet::FirstRow) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->firstRow()));
 }
@@ -1051,7 +1051,7 @@ NAN_METHOD(Sheet::LastRow) {
 
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->lastRow()));
 }
@@ -1061,7 +1061,7 @@ NAN_METHOD(Sheet::FirstCol) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->firstCol()));
 }
@@ -1070,7 +1070,7 @@ NAN_METHOD(Sheet::LastCol) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->lastCol()));
 }
@@ -1080,7 +1080,7 @@ NAN_METHOD(Sheet::DisplayGridlines) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->displayGridlines()));
 }
@@ -1095,7 +1095,7 @@ NAN_METHOD(Sheet::SetDisplayGridlines) {
     ASSERT_ARGUMENTS(arguments);
     
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setDisplayGridlines(displayGridlines);
 
@@ -1107,7 +1107,7 @@ NAN_METHOD(Sheet::PrintGridlines) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->printGridlines()));
 }
@@ -1122,7 +1122,7 @@ NAN_METHOD(Sheet::SetPrintGridlines) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintGridlines(printGridlines);
 
@@ -1134,7 +1134,7 @@ NAN_METHOD(Sheet::Zoom) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->zoom()));
 }
@@ -1149,7 +1149,7 @@ NAN_METHOD(Sheet::SetZoom) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setZoom(zoom);
 
@@ -1161,7 +1161,7 @@ NAN_METHOD(Sheet::PrintZoom) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->printZoom()));
 }
@@ -1176,7 +1176,7 @@ NAN_METHOD(Sheet::SetPrintZoom) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintZoom(zoom);
 
@@ -1188,7 +1188,7 @@ NAN_METHOD(Sheet::GetPrintFit) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int wPages, hPages;
 
@@ -1215,7 +1215,7 @@ NAN_METHOD(Sheet::SetPrintFit) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintFit(wPages, hPages);
 
@@ -1227,7 +1227,7 @@ NAN_METHOD(Sheet::Landscape) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->landscape()));
 }
@@ -1242,7 +1242,7 @@ NAN_METHOD(Sheet::SetLandscape) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setLandscape(landscape);
 
@@ -1254,7 +1254,7 @@ NAN_METHOD(Sheet::Paper) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->paper()));
 }
@@ -1269,7 +1269,7 @@ NAN_METHOD(Sheet::SetPaper) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPaper(static_cast<libxl::Paper>(paper));
 
@@ -1281,7 +1281,7 @@ NAN_METHOD(Sheet::Header) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<String>(that->GetWrapped()->header()));
 }
@@ -1297,7 +1297,7 @@ NAN_METHOD(Sheet::SetHeader) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setHeader(*header, margin)) {
         util::ThrowLibxlError(that);
@@ -1311,7 +1311,7 @@ NAN_METHOD(Sheet::HeaderMargin) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->headerMargin()));
 }
@@ -1322,7 +1322,7 @@ NAN_METHOD(Sheet::Footer) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<String>(that->GetWrapped()->footer()));
 }
@@ -1338,7 +1338,7 @@ NAN_METHOD(Sheet::SetFooter) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setFooter(*footer, margin)) {
         util::ThrowLibxlError(that);
@@ -1352,7 +1352,7 @@ NAN_METHOD(Sheet::FooterMargin) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->footerMargin()));
 }
@@ -1362,7 +1362,7 @@ NAN_METHOD(Sheet::HCenter) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->hCenter()));
 }
@@ -1377,7 +1377,7 @@ NAN_METHOD(Sheet::SetHCenter) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setHCenter(center);
 
@@ -1389,7 +1389,7 @@ NAN_METHOD(Sheet::VCenter) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->vCenter()));
 }
@@ -1404,7 +1404,7 @@ NAN_METHOD(Sheet::SetVCenter) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setVCenter(center);
 
@@ -1416,7 +1416,7 @@ NAN_METHOD(Sheet::MarginLeft) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->marginLeft()));
 }
@@ -1431,7 +1431,7 @@ NAN_METHOD(Sheet::SetMarginLeft) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setMarginLeft(margin);
 
@@ -1443,7 +1443,7 @@ NAN_METHOD(Sheet::MarginRight) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->marginRight()));
 }
@@ -1458,7 +1458,7 @@ NAN_METHOD(Sheet::SetMarginRight) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setMarginRight(margin);
 
@@ -1470,7 +1470,7 @@ NAN_METHOD(Sheet::MarginTop) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->marginTop()));
 }
@@ -1485,7 +1485,7 @@ NAN_METHOD(Sheet::SetMarginTop) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setMarginTop(margin);
 
@@ -1497,7 +1497,7 @@ NAN_METHOD(Sheet::MarginBottom) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Number>(that->GetWrapped()->marginBottom()));
 }
@@ -1512,7 +1512,7 @@ NAN_METHOD(Sheet::SetMarginBottom) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setMarginBottom(margin);
 
@@ -1524,7 +1524,7 @@ NAN_METHOD(Sheet::PrintRowCol) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->printRowCol()));
 }
@@ -1538,7 +1538,7 @@ NAN_METHOD(Sheet::SetPrintRowCol) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintRowCol(printRowCol);
 
@@ -1556,7 +1556,7 @@ NAN_METHOD(Sheet::SetPrintRepeatRows) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintRepeatRows(rowFirst, rowLast);
 
@@ -1574,7 +1574,7 @@ NAN_METHOD(Sheet::SetPrintRepeatCols) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintRepeatCols(colFirst, colLast);
 
@@ -1594,7 +1594,7 @@ NAN_METHOD(Sheet::SetPrintArea) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setPrintArea(rowFirst, rowLast, colFirst, colLast);
 
@@ -1606,7 +1606,7 @@ NAN_METHOD(Sheet::ClearPrintRepeats) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->clearPrintRepeats();
 
@@ -1618,7 +1618,7 @@ NAN_METHOD(Sheet::ClearPrintArea) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->clearPrintArea();
 
@@ -1636,7 +1636,7 @@ NAN_METHOD(Sheet::GetNamedRange) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast;
     bool hidden;
@@ -1672,7 +1672,7 @@ NAN_METHOD(Sheet::SetNamedRange) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setNamedRange(*name,
         rowFirst, rowLast, colFirst, colLast, static_cast<libxl::Scope>(scopeId)))
@@ -1694,7 +1694,7 @@ NAN_METHOD(Sheet::DelNamedRange) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->delNamedRange(*name,
         static_cast<libxl::Scope>(scopeId)))
@@ -1710,7 +1710,7 @@ NAN_METHOD(Sheet::NamedRangeSize) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->namedRangeSize()));
 }
@@ -1725,7 +1725,7 @@ NAN_METHOD(Sheet::NamedRange) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast, scopeId;
     bool hidden;
@@ -1754,7 +1754,7 @@ NAN_METHOD(Sheet::Name) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<String>(that->GetWrapped()->name()));
 }
@@ -1769,7 +1769,7 @@ NAN_METHOD(Sheet::SetName) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setName(*name);
 
@@ -1781,7 +1781,7 @@ NAN_METHOD(Sheet::Protect) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->protect()));
 }
@@ -1796,7 +1796,7 @@ NAN_METHOD(Sheet::SetProtect) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setProtect(protect);
 
@@ -1808,7 +1808,7 @@ NAN_METHOD(Sheet::RightToLeft) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rightToLeft()));
 }
@@ -1823,7 +1823,7 @@ NAN_METHOD(Sheet::SetRightToLeft) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setRightToLeft(rightToLeft);
 
@@ -1835,7 +1835,7 @@ NAN_METHOD(Sheet::Hidden) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     NanReturnValue(NanNew<Integer>(that->GetWrapped()->hidden()));
 }
@@ -1850,7 +1850,7 @@ NAN_METHOD(Sheet::SetHidden) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     if (!that->GetWrapped()->setHidden(static_cast<libxl::SheetState>(state))) {
         util::ThrowLibxlError(that);
@@ -1864,7 +1864,7 @@ NAN_METHOD(Sheet::GetTopLeftView) {
     NanScope();
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int row, col;
     that->GetWrapped()->getTopLeftView(&row, &col);
@@ -1887,7 +1887,7 @@ NAN_METHOD(Sheet::SetTopLeftView) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     that->GetWrapped()->setTopLeftView(row, col);
 
@@ -1904,7 +1904,7 @@ NAN_METHOD(Sheet::AddrToRowCol) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     int row = -1, col = -1;
     bool rowRelative = true, colRelative = true;
@@ -1933,7 +1933,7 @@ NAN_METHOD(Sheet::RowColToAddr) {
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(args.This());
-    ASSERT_THIS(that);
+    ASSERT_AND_LOCK_THIS(that);
 
     const char* addr = that->GetWrapped()->rowColToAddr(
         row, col, rowRelative, colRelative);

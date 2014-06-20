@@ -27,6 +27,7 @@
 
 #include "common.h"
 #include "wrapper.h"
+#include <uv.h>
 
 namespace node_libxl {
 
@@ -48,6 +49,10 @@ class Book : public Wrapper<libxl::Book> {
         static Book* Unwrap(v8::Handle<v8::Value> object) {
             return Wrapper<libxl::Book>::Unwrap<Book>(object);
         }
+
+        void Lock();
+
+        void Unlock();
 
     protected:
 
@@ -99,6 +104,7 @@ class Book : public Wrapper<libxl::Book> {
         Book(const Book&);
         const Book& operator=(const Book&);
 
+        uv_mutex_t mutex;
 };
 
 

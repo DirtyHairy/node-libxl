@@ -37,18 +37,8 @@ class BookWrapper{
         BookWrapper(v8::Handle<v8::Value> bookHandle);
         ~BookWrapper();
 
-        v8::Handle<v8::Value> GetBookHandle() {
-            NanEscapableScope();
-
-            return NanEscapeScope(NanNew(bookHandle));
-        }
-
-        Book* GetBook() {
-            NanScope();
-
-            return Book::Unwrap(NanNew(bookHandle));
-        }
-
+        v8::Handle<v8::Value> GetBookHandle();
+        Book* GetBook();
     protected:
 
         v8::Persistent<v8::Value> bookHandle;

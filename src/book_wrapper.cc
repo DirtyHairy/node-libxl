@@ -40,4 +40,18 @@ BookWrapper::~BookWrapper() {
 }
 
 
+v8::Handle<v8::Value> BookWrapper::GetBookHandle() {
+    NanEscapableScope();
+
+    return NanEscapeScope(NanNew(bookHandle));
+}
+
+
+Book* BookWrapper::GetBook() {
+    NanScope();
+
+    return Book::Unwrap(NanNew(bookHandle));
+}
+
+
 }

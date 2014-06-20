@@ -10,7 +10,8 @@
         'src/sheet.cc',
         'src/format.cc',
         'src/font.cc',
-        'src/book_wrapper.cc'
+        'src/book_wrapper.cc',
+        'src/autolock.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp',

@@ -22,21 +22,28 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_ASSERT_H
-#define BINDINGS_ASSERT_H
+#ifndef BINDINGS_AUTOLOCK_H
+#define BINDINGS_AUTOLOCK_H
 
-#include "autolock.h"
-#include "util.h"
+#include "book.h"
+#include "book_wrapper.h"
 
-#define ASSERT_ARGUMENTS(ARGS) if (ARGS.HasException()) \
-    return (ARGS.ThrowException())
+namespace node_libxl {
 
-#define ASSERT_THIS(THIS) if (!THIS) return(NanThrowTypeError("invalid scope"))
+class AutoLock {
+    public:
+        AutoLock(Book* book);
+        AutoLock(BookWrapper* book);
 
-#define ASSERT_AND_LOCK_THIS(THIS) ASSERT_THIS(THIS); AutoLock autolock(THIS)
+        ~AutoLock();
 
-#define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
-    !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) \
-    return NanThrowTypeError("parent books differ")
+    private:
+        AutoLock(const AutoLock&);
+        const AutoLock& operator=(const AutoLock&);
 
-#endif // BINDINGS_ASSERT_H
+        Book* book;
+};
+
+}
+
+#endif // BINDINGS_AUTOLOCK_H
