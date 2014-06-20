@@ -2,8 +2,8 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.0.12",
-  "description": "Libxl bindings for node - read and write excel files using the libxl library.",
+  "version": "0.1",
+  "description": "Node bindings for the libxl library for reading and writing excel (XLS and XLSX) spreadsheets.",
   "keywords": [
     "excel",
     "libxl",
