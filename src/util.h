@@ -48,28 +48,10 @@ NAN_METHOD(StubConstructor);
 v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
 
 
-inline libxl::Book* UnwrapBook(libxl::Book* book) {
-    return book;
-}
-
-
-inline libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
-    Book* book = Book::Unwrap(bookHandle);
-
-    return book ? book->GetWrapped() : NULL;
-}
-
-
-inline libxl::Book* UnwrapBook(Book* book) {
-    return book ? book->GetWrapped() : NULL;
-}
-
-
-inline libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
-    Book* book = bookWrapper->GetBook();
-    return book ? book->GetWrapped() : NULL;
-}
-
+libxl::Book* UnwrapBook(libxl::Book* book); 
+libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle);
+libxl::Book* UnwrapBook(Book* book);
+libxl::Book* UnwrapBook(BookWrapper* bookWrapper);
 
 template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
     NanScope();

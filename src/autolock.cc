@@ -24,7 +24,7 @@
 
 #include "autolock.h"
 
-using namespace node_libxl;
+namespace node_libxl {
 
 
 AutoLock::AutoLock(Book* book) : book(book) {
@@ -39,4 +39,7 @@ AutoLock::AutoLock(BookWrapper* bookWrapper) : book(bookWrapper->GetBook()) {
 
 AutoLock::~AutoLock() {
     book->Unlock();
+}
+
+
 }

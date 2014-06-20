@@ -84,6 +84,28 @@ Handle<Value> CallStubConstructor(Handle<Function> constructor) {
 }
 
 
+libxl::Book* UnwrapBook(libxl::Book* book) {
+    return book;
+}
+
+
+libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
+    Book* book = Book::Unwrap(bookHandle);
+
+    return book ? book->GetWrapped() : NULL;
+}
+
+
+libxl::Book* UnwrapBook(Book* book) {
+    return book ? book->GetWrapped() : NULL;
+}
+
+
+libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
+    Book* book = bookWrapper->GetBook();
+    return book ? book->GetWrapped() : NULL;
+}
+
 
 }
 }
