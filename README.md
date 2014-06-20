@@ -3,7 +3,7 @@
 Node.js bindings for [libxl](http://www.libxl.com/). Both Node 0.10 and Node
 0.11 starting with 0.11.13 are supported.
 
-# Installation
+# Compilation and Installation
 
 Pull the library into your project with `npm install libxl`
 and require the module via
@@ -32,23 +32,26 @@ the bindings against that specific version of the library.
 In order to load and use the bindings, the libxl library must be available in
 your dynamic library search path. This is achieved by either
 
-* Copying the library into your system library search path, e.g. `/usr/lib` on
+**Copying the library into your system library search path**, e.g. `/usr/lib` on
   Linux.
-* Copying the library into the working directory where you run the scrip which
+  
+**Copying the library into the working directory** where you run the scrip which
   uses the bindings. The name of the library file is `libxl.so` on Linux,
   `libxl.dylib` on Mac and `libxl.dll` on Windows.
-* Properly setting the `LD_LIBRARY_PATH` (Linux) or `DYLD_LIBRARY_PATH` (Mac)
+  
+**Properly setting the `LD_LIBRARY_PATH` (Linux) or `DYLD_LIBRARY_PATH` (Mac)**
   environment variable. For example, the following command will execute the
   `demo.js` script in the package directory without requiring libxl to be
   installed separately
-
+  
     LD_LIBRARY_PATH="`pwd`/deps/libxl/lib:`pwd`/deps/libxl/lib64:$LD_LIBRARY_PATH" node demo.js
+
 
 ### Overriding the location of the compiled bindings
 
 You can override the location where the Javascript wrapper looks for the
 `libxl.node` file by setting the `NODE_LIBXL_PATH` environment variable. This
-allows to distribute / deploy an application using the bindings to a system
+allows to distribute / deploy an application that uses the bindings to a system
 which runs on a different platform / architecture without recompiling the
 bindings there.
 
@@ -132,7 +135,7 @@ missing are the methods for managing pictures embedded in spreadsheets and
 * `book.colorUnpack`: Returns an object with `red`, `green` and `blue`
   properties.
 * `book.defaultFont`: Returns an object with `name` and `size` properties.
-* `sheet.readStr`, ... : If `sheet.readXXX` is provided with an object as
+* `sheet.readStr` & friends: If `sheet.readXXX` is provided with an object as
   optional second argument, the cell format is returned in the objects `format`
   property.
 * `sheet.getMerge`: Returns an object with the `rowFirst`, `rowLast`,
@@ -151,13 +154,7 @@ missing are the methods for managing pictures embedded in spreadsheets and
 
 * Book object creation: Books are **not** created via `xlCreateBook` and
   `xlCreateXMLBook`. Instead, object instances are directly constructed from the
-  `xl.Book` constructor via either
-
-    new xl.Book(xl.BOOK_TYPE_XLS)
-
-  or
-
-    new xl.Book(xl.BOOK_TYPE_XLSX)
+  `xl.Book` constructor via either `new xl.Book(xl.BOOK_TYPE_XLS)` or `new xl.Book(xl.BOOK_TYPE_XLSX)`
 
 ## Unlocking the API
 
@@ -185,7 +182,7 @@ Please report any bugs on the github issue tracker.
 # Roadmap
 
 Version 0.1 is the first release which covers nearly the full API. For 0.2 (and
-possible 0.3), I anticipate adding asynchroneous calls for reading and writing
+possibly 0.3), I anticipate adding asynchroneous calls for reading and writing
 and implementing the remaining functions.
 
 # Credits
