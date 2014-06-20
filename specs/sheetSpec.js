@@ -634,7 +634,6 @@ describe('The sheet class', function() {
         var sheet2 = newSheet();
 
         function assertRange(range, rowFirst, rowLast, colFirst, colLast, name, scope) {
-        console.error(range);
             expect(range.rowFirst).toBe(rowFirst);
             expect(range.rowLast).toBe(rowLast);
             expect(range.colFirst).toBe(colFirst);
