@@ -134,6 +134,43 @@ NAN_METHOD(Book::LoadSync){
 }
 
 
+NAN_METHOD(Book::Load) {
+    class Worker : public AsyncWorker {
+        public:
+            Worker(NanCallback* callback, Handle<Object> book, Handle<Value> filename) :
+                AsyncWorker(callback, book),
+                filename(filename)
+            {}
+
+            virtual void Execute() {
+                libxl::Book* libxlBook = book->GetWrapped();
+
+                if (!libxlBook->load(*filename)) {
+                    SetErrorMessage(libxlBook->errorMessage());
+                }
+            }
+
+        private:
+            StringCopy filename;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Handle<Value> filename = arguments.GetString(0);
+    Handle<Function> callback = arguments.GetFunction(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), filename));
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Book::WriteSync) {
     NanScope();
 
@@ -780,6 +817,7 @@ void Book::Initialize(Handle<Object> exports) {
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);

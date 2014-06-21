@@ -22,13 +22,41 @@ describe('The book class', function() {
     });
 
     it('book.writeSync writes a book in sync mode', function() {
-        var sheet = book.addSheet('foo');
+        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+            sheet = book.addSheet('foo');
+
         sheet.writeStr(1, 0, 'bar');
 
         var file = testUtils.getWriteTestFile();
         shouldThrow(book.writeSync, book, 10);
         shouldThrow(book.writeSync, {}, file);
         expect(book.writeSync(file)).toBe(book);
+    });
+
+    it('book.write writes a book in sync mode', function() {
+        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+            sheet = book.addSheet('foo'),
+            result = null;
+
+        sheet.writeStr(1, 0, 'bar');
+
+        runs(function() {
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.write, book, file, 10);
+            shouldThrow(book.write, {}, file, function() {});
+
+            expect(book.write(file, function(res) {
+                result = res;
+            })).toBe(book);
+        });
+
+        waitsFor(function() {
+            return result !== null;
+        }, 'book to save', 1000);
+
+        runs(function() {
+            expect(result).toBeUndefined();
+        });
     });
 
     it('book.loadSync loads a book in sync mode', function() {
@@ -39,6 +67,29 @@ describe('The book class', function() {
         expect(book.loadSync(file)).toBe(book);
         var sheet = book.getSheet(0);
         expect(sheet.readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.load loads a book in async mode', function() {
+        var result = null;
+
+        runs(function() {
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.load, book, file, 10);
+            shouldThrow(book.load, {}, file, function() {});
+
+            expect(book.load(file, function(res) {
+                result = res;
+            })).toBe(book);
+        });
+
+        waitsFor(function() {
+            return result !== null;
+        }, 'book to load', 1000);
+
+        runs(function() {
+            expect(result).toBeUndefined();
+            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+        });
     });
 
     it('book.addSheet adds a sheet to a book', function() {

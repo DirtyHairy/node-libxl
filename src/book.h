@@ -58,6 +58,7 @@ class Book : public Wrapper<libxl::Book> {
         static NAN_METHOD(New);
 
         static NAN_METHOD(LoadSync);
+        static NAN_METHOD(Load);
         static NAN_METHOD(WriteSync);
         static NAN_METHOD(Write);
         // TODO LoadRaw
