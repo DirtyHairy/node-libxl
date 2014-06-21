@@ -1300,7 +1300,7 @@ NAN_METHOD(Sheet::SetHeader) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setHeader(*header, margin)) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());
@@ -1341,7 +1341,7 @@ NAN_METHOD(Sheet::SetFooter) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setFooter(*footer, margin)) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());
@@ -1699,7 +1699,7 @@ NAN_METHOD(Sheet::DelNamedRange) {
     if (!that->GetWrapped()->delNamedRange(*name,
         static_cast<libxl::Scope>(scopeId)))
     {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());
@@ -1853,7 +1853,7 @@ NAN_METHOD(Sheet::SetHidden) {
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setHidden(static_cast<libxl::SheetState>(state))) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(args.This());
@@ -1939,7 +1939,7 @@ NAN_METHOD(Sheet::RowColToAddr) {
         row, col, rowRelative, colRelative);
 
     if (!addr) {
-        util::ThrowLibxlError(that);
+        return util::ThrowLibxlError(that);
     }
 
     NanReturnValue(NanNew<String>(addr));

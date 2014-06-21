@@ -842,6 +842,7 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
     NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "saveSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
     NODE_SET_PROTOTYPE_METHOD(t, "writeRawSync", WriteRawSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
