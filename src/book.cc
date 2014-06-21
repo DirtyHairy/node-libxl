@@ -23,7 +23,6 @@
  */
 
 #include <cstring>
-#include <cstdlib>
 
 #include "book.h"
 #include "argument_helper.h"
@@ -244,10 +243,31 @@ NAN_METHOD(Book::WriteRawSync) {
         return util::ThrowLibxlError(that);
     }
 
-    char* buffer = static_cast<char*>(malloc(size));
+    char* buffer = new char[size];
     memcpy(buffer, data, size);
 
     NanReturnValue(NanBufferUse(buffer, size));
+}
+
+
+NAN_METHOD(Book::LoadRawSync) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Handle<Value> buffer = arguments.GetBuffer(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (!that->GetWrapped()->loadRaw(
+        node::Buffer::Data(buffer), node::Buffer::Length(buffer)))
+    {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(args.This());
 }
 
 
@@ -844,7 +864,10 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "saveSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
+    NODE_SET_PROTOTYPE_METHOD(t, "save", Write);
+    NODE_SET_PROTOTYPE_METHOD(t, "loadRawSync", LoadRawSync);
     NODE_SET_PROTOTYPE_METHOD(t, "writeRawSync", WriteRawSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "saveRawSync", WriteRawSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);

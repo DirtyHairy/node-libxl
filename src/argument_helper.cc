@@ -115,6 +115,17 @@ v8::Handle<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
 }
 
 
+v8::Handle<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
+    NanEscapableScope();
+
+    if (!arguments[pos]->IsObject() || !node::Buffer::HasInstance(arguments[pos])) {
+        RaiseException("buffer required at position", pos);
+    }
+
+    return NanEscapeScope(arguments[pos]);
+}
+
+
 void ArgumentHelper::RaiseException(const std::string& message, int32_t pos) {
     NanEscapableScope();
 

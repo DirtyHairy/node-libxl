@@ -51,6 +51,8 @@ class ArgumentHelper {
 
         v8::Handle<v8::Function> GetFunction(uint8_t pos);
 
+        v8::Handle<v8::Value> GetBuffer(uint8_t pos);
+
         template<typename T> T* GetWrapped(uint8_t pos);
         template<typename T> T* GetWrapped(uint8_t pos, T* def);
 
