@@ -22,6 +22,9 @@
  * THE SOFTWARE.
  */
 
+#include <cstring>
+#include <cstdlib>
+
 #include "book.h"
 #include "argument_helper.h"
 #include "assert.h"
@@ -225,6 +228,26 @@ NAN_METHOD(Book::Write) {
     NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), filename));
 
     NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::WriteRawSync) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    const char* data;
+    unsigned size;
+
+    if (!that->GetWrapped()->saveRaw(&data, &size)) {
+        return util::ThrowLibxlError(that);
+    }
+
+    char* buffer = static_cast<char*>(malloc(size));
+    memcpy(buffer, data, size);
+
+    NanReturnValue(NanBufferUse(buffer, size));
 }
 
 
@@ -820,6 +843,7 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
     NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeRawSync", WriteRawSync);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);
