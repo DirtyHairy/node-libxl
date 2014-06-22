@@ -31,7 +31,7 @@
     return (ARGS.ThrowException())
 
 #define ASSERT_THIS(THIS) if (!THIS) return(NanThrowTypeError("invalid scope")); \
-    if (::node_libxl::util::AsyncPending(THIS)) return(NanThrowError("async operation pending"))
+    if (::node_libxl::util::GetBook(THIS)->AsyncPending()) return(NanThrowError("async operation pending"))
 
 #define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
     !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) \

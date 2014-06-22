@@ -84,13 +84,13 @@ Handle<Value> CallStubConstructor(Handle<Function> constructor) {
 }
 
 
-bool AsyncPending(Book* book) {
-    return book->AsyncPending();
+Book* GetBook(Book* book) {
+    return book;
 }
 
 
-bool AsyncPending(BookWrapper* bookWrapper) {
-    return bookWrapper->GetBook()->AsyncPending();
+Book* GetBook(BookWrapper* bookWrapper) {
+    return bookWrapper->GetBook();
 }
 
 

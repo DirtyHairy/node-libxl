@@ -48,8 +48,8 @@ NAN_METHOD(StubConstructor);
 v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
 
 
-bool AsyncPending(Book*);
-bool AsyncPending(BookWrapper*);
+Book* GetBook(Book*);
+Book* GetBook(BookWrapper*);
 
 
 libxl::Book* UnwrapBook(libxl::Book* book); 

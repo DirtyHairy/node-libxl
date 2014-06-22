@@ -100,7 +100,9 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(SetGroupSummaryRight);
         static NAN_METHOD(Clear);
         static NAN_METHOD(InsertRow);
+        static NAN_METHOD(InsertRowAsync);
         static NAN_METHOD(InsertCol);
+        static NAN_METHOD(InsertColAsync);
         static NAN_METHOD(RemoveRow);
         static NAN_METHOD(RemoveCol);
         static NAN_METHOD(CopyCell);

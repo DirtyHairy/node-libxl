@@ -32,7 +32,7 @@
 #include "format.h"
 #include "font.h"
 #include "api_key.h"
-#include "worker.h"
+#include "async_worker.h"
 #include "string_copy.h"
 #include "buffer_copy.h"
 
@@ -138,18 +138,16 @@ NAN_METHOD(Book::LoadSync){
 
 
 NAN_METHOD(Book::Load) {
-    class Worker : public AsyncWorker {
+    class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback* callback, Handle<Object> book, Handle<Value> filename) :
-                AsyncWorker(callback, book),
+            Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
+                AsyncWorker(callback, that),
                 filename(filename)
             {}
 
             virtual void Execute() {
-                libxl::Book* libxlBook = book->GetWrapped();
-
-                if (!libxlBook->load(*filename)) {
-                    SetErrorMessage(libxlBook->errorMessage());
+                if (!that->GetWrapped()->load(*filename)) {
+                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
                 }
             }
 
@@ -195,18 +193,16 @@ NAN_METHOD(Book::WriteSync) {
 
 
 NAN_METHOD(Book::Write) {
-    class Worker : public AsyncWorker {
+    class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback* callback, Handle<Object> book, Handle<Value> filename) :
-                AsyncWorker(callback, book),
+            Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
+                AsyncWorker(callback, that),
                 filename(filename)
             {}
 
             virtual void Execute() {
-                libxl::Book* libxlBook = book->GetWrapped();
-
-                if (!libxlBook->save(*filename)) {
-                    SetErrorMessage(libxlBook->errorMessage());
+                if (!that->GetWrapped()->save(*filename)) {
+                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
                 }
             }
         
@@ -252,18 +248,17 @@ NAN_METHOD(Book::WriteRawSync) {
 
 
 NAN_METHOD(Book::WriteRaw) {
-    class Worker : public AsyncWorker {
+    class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback *callback, Handle<Object> book) :
-                AsyncWorker(callback, book)
+            Worker(NanCallback *callback, Local<Object> that) :
+                AsyncWorker(callback, that)
             {}
 
             virtual void Execute() {
                 const char* data;
-                libxl::Book* libxlBook = book->GetWrapped();
 
-                if (!libxlBook->saveRaw(&data, &size)) {
-                    SetErrorMessage(libxlBook->errorMessage());
+                if (!that->GetWrapped()->saveRaw(&data, &size)) {
+                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
                 } else {
                     buffer = new char[size];
                     memcpy(buffer, data, size);
@@ -323,19 +318,17 @@ NAN_METHOD(Book::LoadRawSync) {
 
 
 NAN_METHOD(Book::LoadRaw) {
-    class Worker : public AsyncWorker {
+    class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback *callback, Handle<Object> book,
+            Worker(NanCallback *callback, Local<Object> that,
                     Handle<Value> buffer) :
-                AsyncWorker(callback, book),
+                AsyncWorker(callback, that),
                 buffer(buffer)
             {}
 
             virtual void Execute() {
-                libxl::Book* libxlBook = book->GetWrapped();
-
-                if (!libxlBook->loadRaw(*buffer, buffer.GetSize())) {
-                    SetErrorMessage(libxlBook->errorMessage());
+                if (!that->GetWrapped()->loadRaw(*buffer, buffer.GetSize())) {
+                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
                 }
             }
 

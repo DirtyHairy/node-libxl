@@ -28,6 +28,7 @@
 #include "util.h"
 #include "argument_helper.h"
 #include "format.h"
+#include "async_worker.h"
 
 using namespace v8;
 
@@ -954,6 +955,45 @@ NAN_METHOD(Sheet::InsertRow) {
 }
 
 
+NAN_METHOD(Sheet::InsertRowAsync) {
+    class Worker : public AsyncWorker<Sheet> {
+        public:
+            Worker(NanCallback* callback, Local<Object> that, int rowFirst,
+                    int rowLast) :
+                AsyncWorker(callback, that),
+                rowFirst(rowFirst),
+                rowLast(rowLast)
+            {}
+
+            virtual void Execute() {
+                if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
+                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+                }
+            }
+
+        private:
+            int rowFirst, rowLast;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int rowFirst    = arguments.GetInt(0),
+        rowLast     = arguments.GetInt(1);
+    Handle<Function> callback = arguments.GetFunction(2);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback),
+        args.This(), rowFirst, rowLast));
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Sheet::InsertCol) {
     NanScope();
 
@@ -969,6 +1009,45 @@ NAN_METHOD(Sheet::InsertCol) {
     if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Sheet::InsertColAsync) {
+    class Worker : public AsyncWorker<Sheet> {
+        public:
+            Worker(NanCallback* callback, Local<Object> that,
+                    int colFirst, int colLast) :
+                AsyncWorker(callback, that),
+                colFirst(colFirst),
+                colLast(colLast)
+            {}
+
+        virtual void Execute() {
+            if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
+                SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+            }
+        }
+
+        private:
+            int colFirst, colLast;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int colFirst    = arguments.GetInt(0),
+        colLast     = arguments.GetInt(1);
+    Handle<Function> callback = arguments.GetFunction(2);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(),
+        colFirst, colLast));
 
     NanReturnValue(args.This());
 }
@@ -2006,7 +2085,9 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setGroupSummaryRight", SetGroupSummaryRight);
     NODE_SET_PROTOTYPE_METHOD(t, "clear", Clear);
     NODE_SET_PROTOTYPE_METHOD(t, "insertRow", InsertRow);
+    NODE_SET_PROTOTYPE_METHOD(t, "InsertRowAsync", InsertRowAsync);
     NODE_SET_PROTOTYPE_METHOD(t, "insertCol", InsertCol);
+    NODE_SET_PROTOTYPE_METHOD(t, "insertColAsync", InsertColAsync);
     NODE_SET_PROTOTYPE_METHOD(t, "removeRow", RemoveRow);
     NODE_SET_PROTOTYPE_METHOD(t, "removeCol", RemoveCol);
     NODE_SET_PROTOTYPE_METHOD(t, "copyCell", CopyCell);

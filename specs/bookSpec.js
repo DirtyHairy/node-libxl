@@ -48,6 +48,8 @@ describe('The book class', function() {
             expect(book.write(file, function(res) {
                 result = res;
             })).toBe(book);
+
+            shouldThrow(book.sheetCount, book);
         });
 
         waitsFor(function() {
@@ -80,6 +82,8 @@ describe('The book class', function() {
             expect(book.load(file, function(res) {
                 result = res;
             })).toBe(book);
+
+            shouldThrow(book.sheetCount, book);
         });
 
         waitsFor(function() {
@@ -130,6 +134,8 @@ describe('The book class', function() {
                 shouldThrow(book2.loadRaw, {}, buffer, function() {});
 
                 book2.loadRaw(buffer, step2);
+
+                shouldThrow(book2.sheetCount, book2);
             }
 
             function step2(err) {
@@ -138,6 +144,8 @@ describe('The book class', function() {
             }
 
             book1.writeRaw(step1);
+
+            shouldThrow(book1.sheetCount, book1);
         });
 
         waitsFor(function() {

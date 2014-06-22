@@ -22,29 +22,51 @@
  * THE SOFTWARE.
  */
 
-#include "worker.h"
+#ifndef BINDINGS_ASYNC_WORKER_H
+#define BINDINGS_ASYNC_WORKER_H
 
-using namespace v8;
+#include <v8.h>
+#include <nan.h>
+#include "util.h"
 
 namespace node_libxl {
 
 
-AsyncWorker::AsyncWorker(NanCallback* callback, Handle<Object> book) :
-    NanAsyncWorker(callback),
-    book(Book::Unwrap(book))
-{
-    NanEscapableScope();
+template<typename T> class AsyncWorker : public NanAsyncWorker {
+    public:
 
-    this->book->StartAsync();
-    SaveToPersistent("book", NanEscapeScope(book));
+        AsyncWorker(NanCallback* callback, v8::Local<v8::Object> that);
+
+        virtual void WorkComplete();
+
+    protected:
+
+        T* that;
+
+    private:
+
+        AsyncWorker(const AsyncWorker&);
+        const AsyncWorker& operator=(const AsyncWorker&);
+};
+
+
+template<typename T> AsyncWorker<T>::AsyncWorker(
+        NanCallback* callback, v8::Local<v8::Object> that) :
+    NanAsyncWorker(callback),
+    that(T::Unwrap(that))
+{
+    util::GetBook(this->that)->StartAsync();
+    SaveToPersistent("that", that);
 }
 
 
-void AsyncWorker::WorkComplete() {
-    book->StopAsync();
+template<typename T> void AsyncWorker<T>::WorkComplete() {
+    util::GetBook(that)->StopAsync();
 
     NanAsyncWorker::WorkComplete();
 }
 
 
 }
+
+#endif // BINDINGS_ASYNC_WORKER_H
