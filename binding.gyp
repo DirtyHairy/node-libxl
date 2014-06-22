@@ -12,7 +12,8 @@
         'src/font.cc',
         'src/book_wrapper.cc',
         'src/string_copy.cc',
-        'src/worker.cc'
+        'src/worker.cc',
+        'src/buffer_copy.cc'
       ],
       'include_dirs': [
         'deps/libxl/include_cpp',

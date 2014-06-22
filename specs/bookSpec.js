@@ -92,6 +92,65 @@ describe('The book class', function() {
         });
     });
 
+    it('book.loadRawSync and book.saveRawSync load and save a book into a buffer, sync mode', function() {
+        var book1 = new xl.Book(xl.BOOK_TYPE_XLS);
+        var sheet = book1.addSheet('foo');
+
+        sheet.writeStr(1, 0, 'bar');
+
+        shouldThrow(book1.writeRawSync, {});
+        var buffer = book1.writeRawSync();
+
+        var book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+        shouldThrow(book2.loadRawSync, book2, 1);
+        shouldThrow(book2.loadRawSync, {}, buffer);
+
+        expect(book2.loadRawSync(buffer)).toBe(book2);
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.loadRaw and book.saveRaw load and save a book into a buffer, async mode', function() {
+        var book;
+
+        runs(function() {
+            var book1 = new xl.Book(xl.BOOK_TYPE_XLS),
+                book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+            var sheet = book1.addSheet('foo');
+
+            sheet.writeStr(1, 0, 'bar');
+            
+            shouldThrow(book1.writeRaw, book1, 1);
+            shouldThrow(book1.writeRaw, {}, function() {});
+
+            function step1(err, buffer) {
+                expect(err).toBeUndefined();
+
+                shouldThrow(book2.loadRaw, book2, buffer, 10);
+                shouldThrow(book2.loadRaw, {}, buffer, function() {});
+
+                book2.loadRaw(buffer, step2);
+            }
+
+            function step2(err) {
+                expect(err).toBeUndefined();
+                book = book2;
+            }
+
+            book1.writeRaw(step1);
+        });
+
+        waitsFor(function() {
+            return !!book;
+        }, 'book to save and load again', 1000);
+
+        runs(function() {
+            expect(book.sheetCount()).toBe(1);
+            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+        });
+    });
+
+
     it('book.addSheet adds a sheet to a book', function() {
         shouldThrow(book.addSheet, book, 10);
         shouldThrow(book.addSheet, book, 'foo', 10);

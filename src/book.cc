@@ -34,6 +34,7 @@
 #include "api_key.h"
 #include "worker.h"
 #include "string_copy.h"
+#include "buffer_copy.h"
 
 using namespace v8;
 
@@ -250,6 +251,56 @@ NAN_METHOD(Book::WriteRawSync) {
 }
 
 
+NAN_METHOD(Book::WriteRaw) {
+    class Worker : public AsyncWorker {
+        public:
+            Worker(NanCallback *callback, Handle<Object> book) :
+                AsyncWorker(callback, book)
+            {}
+
+            virtual void Execute() {
+                const char* data;
+                libxl::Book* libxlBook = book->GetWrapped();
+
+                if (!libxlBook->saveRaw(&data, &size)) {
+                    SetErrorMessage(libxlBook->errorMessage());
+                } else {
+                    buffer = new char[size];
+                    memcpy(buffer, data, size);
+                }
+            }
+
+            virtual void HandleOKCallback() {
+                NanScope();
+
+                Handle<Value> argv[] = {
+                    NanUndefined(),
+                    NanBufferUse(buffer, size)
+                };
+                callback->Call(2, argv);
+            }
+
+        private:
+            char* buffer;
+            unsigned size;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Handle<Function> callback = arguments.GetFunction(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This()));
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Book::LoadRawSync) {
     NanScope();
 
@@ -266,6 +317,45 @@ NAN_METHOD(Book::LoadRawSync) {
     {
         return util::ThrowLibxlError(that);
     }
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::LoadRaw) {
+    class Worker : public AsyncWorker {
+        public:
+            Worker(NanCallback *callback, Handle<Object> book,
+                    Handle<Value> buffer) :
+                AsyncWorker(callback, book),
+                buffer(buffer)
+            {}
+
+            virtual void Execute() {
+                libxl::Book* libxlBook = book->GetWrapped();
+
+                if (!libxlBook->loadRaw(*buffer, buffer.GetSize())) {
+                    SetErrorMessage(libxlBook->errorMessage());
+                }
+            }
+
+        private:
+            BufferCopy buffer;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Handle<Value> buffer = arguments.GetBuffer(0);
+    Handle<Function> callback = arguments.GetFunction(1);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(
+        new NanCallback(callback), args.This(), buffer));
 
     NanReturnValue(args.This());
 }
@@ -866,8 +956,11 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
     NODE_SET_PROTOTYPE_METHOD(t, "save", Write);
     NODE_SET_PROTOTYPE_METHOD(t, "loadRawSync", LoadRawSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "loadRaw", LoadRaw);
     NODE_SET_PROTOTYPE_METHOD(t, "writeRawSync", WriteRawSync);
     NODE_SET_PROTOTYPE_METHOD(t, "saveRawSync", WriteRawSync);
+    NODE_SET_PROTOTYPE_METHOD(t, "writeRaw", WriteRaw);
+    NODE_SET_PROTOTYPE_METHOD(t, "saveRaw", WriteRaw);
     NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);

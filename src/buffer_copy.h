@@ -22,33 +22,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_STRING_COPY_H
-#define BINDINGS_STRING_COPY_H
+#ifndef BINDINGS_BUFFER_COPY_H
+#define BINDINGS_BUFFER_COPY_H
 
 #include <v8.h>
 
 namespace node_libxl {
 
 
-class StringCopy {
+class BufferCopy {
     public:
 
-        explicit StringCopy(v8::String::Utf8Value& utf8Value);
-        explicit StringCopy(v8::Handle<v8::Value> value);
+        explicit BufferCopy(v8::Handle<v8::Value> buffer);
 
-        ~StringCopy();
+        ~BufferCopy();
 
         char* operator*();
+        size_t GetSize() const;
 
     private:
        
-        StringCopy(const StringCopy&);
-        const StringCopy& operator=(const StringCopy&);
+        BufferCopy(const BufferCopy&);
+        const BufferCopy& operator=(const BufferCopy&);
         
-        char* str;
+        size_t size;
+        char* buffer;
 };
 
 
 }
 
-#endif // BINDINGS_STRING_COPY_H
+#endif // BINDINGS_BUFFER_COPY_H
