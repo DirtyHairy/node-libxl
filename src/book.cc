@@ -147,7 +147,7 @@ NAN_METHOD(Book::Load) {
 
             virtual void Execute() {
                 if (!that->GetWrapped()->load(*filename)) {
-                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+                    RaiseLibxlError();
                 }
             }
 
@@ -202,7 +202,7 @@ NAN_METHOD(Book::Write) {
 
             virtual void Execute() {
                 if (!that->GetWrapped()->save(*filename)) {
-                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+                    RaiseLibxlError();
                 }
             }
         
@@ -258,7 +258,7 @@ NAN_METHOD(Book::WriteRaw) {
                 const char* data;
 
                 if (!that->GetWrapped()->saveRaw(&data, &size)) {
-                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+                    RaiseLibxlError();
                 } else {
                     buffer = new char[size];
                     memcpy(buffer, data, size);
@@ -328,7 +328,7 @@ NAN_METHOD(Book::LoadRaw) {
 
             virtual void Execute() {
                 if (!that->GetWrapped()->loadRaw(*buffer, buffer.GetSize())) {
-                    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+                    RaiseLibxlError();
                 }
             }
 

@@ -104,7 +104,9 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(InsertCol);
         static NAN_METHOD(InsertColAsync);
         static NAN_METHOD(RemoveRow);
+        static NAN_METHOD(RemoveRowAsync);
         static NAN_METHOD(RemoveCol);
+        static NAN_METHOD(RemoveColAsync);
         static NAN_METHOD(CopyCell);
         static NAN_METHOD(FirstRow);
         static NAN_METHOD(LastRow);

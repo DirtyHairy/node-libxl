@@ -41,6 +41,8 @@ template<typename T> class AsyncWorker : public NanAsyncWorker {
 
     protected:
 
+        void RaiseLibxlError();
+
         T* that;
 
     private:
@@ -64,6 +66,11 @@ template<typename T> void AsyncWorker<T>::WorkComplete() {
     util::GetBook(that)->StopAsync();
 
     NanAsyncWorker::WorkComplete();
+}
+
+
+template<typename T> void AsyncWorker<T>::RaiseLibxlError() {
+    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
 }
 
 

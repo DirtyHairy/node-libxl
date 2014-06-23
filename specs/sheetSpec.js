@@ -446,6 +446,50 @@ describe('The sheet class', function() {
         expect(sheet.readStr(4, 4)).toBe('22');
     });
 
+    it('sheet.insertRowAsync and sheet.insertColAsync insert rows and cols in async mode', function() {
+        var sheet = newSheet(),
+            done = false;
+
+        sheet
+            .writeStr(1, 1, '11')
+            .writeStr(1, 2, '12')
+            .writeStr(2, 1, '21')
+            .writeStr(2, 2, '22');
+
+        runs(function() {
+            shouldThrow(sheet.insertRowAsync, sheet, 'a', 2, function() {});
+            shouldThrow(sheet.insertRowAsync, {}, 2, 3, function() {});
+            expect(sheet.insertRowAsync(2, 3, step1)).toBe(sheet);
+            shouldThrow(sheet.name, sheet);
+
+            function step1(err) {
+                expect(err).toBeUndefined();
+
+                shouldThrow(sheet.insertColAsync, sheet, 'a', 2, function() {});
+                shouldThrow(sheet.insertColAsync, {}, 2, 3, function() {});
+                expect(sheet.insertColAsync(2, 3, step2)).toBe(sheet);
+                shouldThrow(sheet.name, sheet);
+            }
+
+            function step2(err) {
+                expect(err).toBeUndefined();
+
+                done = true;
+            }
+        });
+
+        waitsFor(function() {
+            return done;
+        }, 3000, 'insertRowAsync and insertColAsync to terminate');
+
+        runs(function() {
+            expect(sheet.readStr(1, 1)).toBe('11');
+            expect(sheet.readStr(1, 4)).toBe('12');
+            expect(sheet.readStr(4, 1)).toBe('21');
+            expect(sheet.readStr(4, 4)).toBe('22');
+        });
+    });
+
     it('sheet.removeRow and sheet.removeCol remove rows and cols', function() {
         var sheet = newSheet();
 
@@ -468,6 +512,50 @@ describe('The sheet class', function() {
         expect(sheet.readStr(2, 1)).toBe('21');
         expect(sheet.readStr(2, 2)).toBe('22');
     });
+
+    it('sheet.removeRowAsync and sheet.removeColAsync remove rows and cols in async mode', function() {
+        var sheet = newSheet(),
+            done = false;
+
+        sheet
+            .writeStr(1, 1, '11')
+            .writeStr(1, 4, '12')
+            .writeStr(4, 1, '21')
+            .writeStr(4, 4, '22');
+
+        runs(function() {
+            shouldThrow(sheet.removeRowAsync, sheet, 'a', 2, step1);
+            shouldThrow(sheet.removeRowAsync, {}, 2, 3, step1);
+            expect(sheet.removeRowAsync(2, 3, step1)).toBe(sheet);
+            shouldThrow(sheet.name, sheet);
+
+            function step1(err) {
+                expect(err).toBeUndefined();
+
+                shouldThrow(sheet.removeColAsync, sheet, 'a', 2, step2);
+                shouldThrow(sheet.removeColAsync, {}, 2, 3, step2);
+                expect(sheet.removeColAsync(2, 3, step2)).toBe(sheet);
+                shouldThrow(sheet.name, sheet);
+            }
+
+            function step2(err) {
+                expect(err).toBeUndefined();
+                done = true;
+            }
+        });
+
+        waitsFor(function() {
+            return done;
+        }, 3000, 'removeRowAsync and removeColAsync to finish');
+
+        runs(function() {
+            expect(sheet.readStr(1, 1)).toBe('11');
+            expect(sheet.readStr(1, 2)).toBe('12');
+            expect(sheet.readStr(2, 1)).toBe('21');
+            expect(sheet.readStr(2, 2)).toBe('22');
+        });
+    });
+
 
     it('sheet.copyCell copies a cell', function() {
         sheet.writeStr(row, 0, 'baz');
