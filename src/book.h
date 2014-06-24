@@ -85,10 +85,11 @@ class Book : public Wrapper<libxl::Book> {
         static NAN_METHOD(ColorUnpack);
         static NAN_METHOD(ActiveSheet);
         static NAN_METHOD(SetActiveSheet);
-        // TODO PictureSize
-        // TODO GetPicture
-        // TODO AddPicture
-        // TODO AddPicture2
+        static NAN_METHOD(PictureSize);
+        static NAN_METHOD(GetPicture);
+        static NAN_METHOD(GetPictureAsync);
+        static NAN_METHOD(AddPicture);
+        static NAN_METHOD(AddPictureAsync);
         static NAN_METHOD(DefaultFont);
         static NAN_METHOD(SetDefaultFont);
         static NAN_METHOD(RefR1C1);

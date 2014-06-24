@@ -756,6 +756,233 @@ NAN_METHOD(Book::SetActiveSheet) {
 }
 
 
+NAN_METHOD(Book::PictureSize) {
+    NanScope();
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->pictureSize()));
+}
+
+
+NAN_METHOD(Book::GetPicture) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int index = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+
+    const char* data;
+    unsigned size;
+    libxl::PictureType pictureType = that->GetWrapped()
+        ->getPicture(index, &data, &size);
+
+    if (pictureType == libxl::PICTURETYPE_ERROR) {
+        return util::ThrowLibxlError(that);
+    }
+
+    char* buffer = new char[size];
+    memcpy(buffer, data, size);
+
+    Local<Object> result = NanNew<Object>();
+    result->Set(NanNew<String>("type"), NanNew<Integer>(pictureType));
+    result->Set(NanNew<String>("data"), NanBufferUse(buffer, size));
+
+    NanReturnValue(result);
+}
+
+
+NAN_METHOD(Book::GetPictureAsync) {
+    class Worker : public AsyncWorker<Book> {
+        public:
+            Worker(NanCallback* callback, Local<Object> that, int index) :
+                AsyncWorker(callback, that),
+                index(index)
+            {}
+
+            virtual void Execute() {
+                const char* data;
+
+                pictureType = that->GetWrapped()->getPicture(index, &data, &size);
+                if (pictureType == libxl::PICTURETYPE_ERROR) {
+                    RaiseLibxlError();
+                } else {
+                    buffer = new char[size];
+                    memcpy(buffer, data, size);
+                }
+            }
+
+            virtual void HandleOKCallback() {
+                NanScope();
+
+                Handle<Value> argv[] = {
+                    NanUndefined(),
+                    NanNew<Integer>(pictureType),
+                    NanBufferUse(buffer, size)
+                };
+
+                callback->Call(3, argv);
+            }
+
+        private:
+            int index, pictureType;
+            char* buffer;
+            unsigned size;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+    
+    int index = arguments.GetInt(0);
+    Handle<Function> callback = arguments.GetFunction(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), index));
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Book::AddPicture) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    int index;
+
+    if (args[0]->IsString()) {
+
+        String::Utf8Value filename(arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        index = that->GetWrapped()->addPicture(*filename);
+
+    } else if (node::Buffer::HasInstance(args[0])) {
+
+        Handle<Value> buffer = arguments.GetBuffer(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        index = that->GetWrapped()->addPicture2(
+            node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+
+    } else {
+        return NanThrowTypeError("string or buffer required as argument 0");
+    }
+
+    if (index == -1) {
+        return util::ThrowLibxlError(that);
+    }
+
+    NanReturnValue(NanNew<Integer>(index));
+}
+
+
+NAN_METHOD(Book::AddPictureAsync) {
+    class FileWorker : public AsyncWorker<Book> {
+        public:
+            FileWorker(NanCallback* callback, Local<Object> that,
+                    Handle<Value> filename) :
+                AsyncWorker(callback, that),
+                filename(filename)
+            {}
+
+            virtual void Execute() {
+                index = that->GetWrapped()->addPicture(*filename);
+                if (index == -1) {
+                    RaiseLibxlError();
+                }
+            }
+
+            virtual void HandleOKCallback() {
+                NanScope();
+
+                Handle<Value> argv[] = {
+                    NanUndefined(),
+                    NanNew<Integer>(index)
+                };
+
+                callback->Call(2, argv);
+            }
+
+        private:
+            StringCopy filename;
+            int index;
+    };
+
+    class BufferWorker : public AsyncWorker<Book> {
+        public:
+            BufferWorker(NanCallback* callback, Local<Object> that,
+                    Handle<Value> buffer) :
+                AsyncWorker(callback, that),
+                buffer(buffer)
+            {}
+
+            virtual void Execute() {
+                index = that->GetWrapped()->addPicture2(*buffer, buffer.GetSize());
+                if (index == -1) {
+                    RaiseLibxlError();
+                }
+            }
+
+            virtual void HandleOKCallback() {
+                NanScope();
+
+                Handle<Value> argv[] = {
+                    NanUndefined(),
+                    NanNew<Integer>(index)
+                };
+
+                callback->Call(2, argv);
+            }
+
+        private:
+            BufferCopy buffer;
+            int index;
+    };
+
+    NanScope();
+
+    ArgumentHelper arguments(args);
+    Handle<Function> callback = arguments.GetFunction(1);
+
+    Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    if (args[0]->IsString()) {
+
+        Handle<Value> filename = arguments.GetString(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        NanAsyncQueueWorker(new FileWorker(
+            new NanCallback(callback), args.This(), filename));
+
+    } else if (node::Buffer::HasInstance(args[0])) {
+    
+        Handle<Value> buffer = arguments.GetBuffer(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        NanAsyncQueueWorker(new BufferWorker(
+            new NanCallback(callback), args.This(), buffer));
+
+    } else {
+        return NanThrowTypeError("string or buffer required as argument 0");
+    }
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Book::DefaultFont) {
     NanScope();
 
@@ -974,6 +1201,11 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "colorUnpack", ColorUnpack);
     NODE_SET_PROTOTYPE_METHOD(t, "activeSheet", ActiveSheet);
     NODE_SET_PROTOTYPE_METHOD(t, "setActiveSheet", SetActiveSheet);
+    NODE_SET_PROTOTYPE_METHOD(t, "pictureSize", PictureSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "getPicture", GetPicture);
+    NODE_SET_PROTOTYPE_METHOD(t, "getPictureAsync", GetPictureAsync);
+    NODE_SET_PROTOTYPE_METHOD(t, "addPicture", AddPicture);
+    NODE_SET_PROTOTYPE_METHOD(t, "addPictureAsync", AddPictureAsync);
     NODE_SET_PROTOTYPE_METHOD(t, "defaultFont", DefaultFont);
     NODE_SET_PROTOTYPE_METHOD(t, "setDefaultFont", SetDefaultFont);
     NODE_SET_PROTOTYPE_METHOD(t, "refR1C1", RefR1C1);
@@ -1001,9 +1233,18 @@ void Book::Initialize(Handle<Object> exports) {
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);
+
     NODE_DEFINE_CONSTANT(exports, SHEETTYPE_SHEET);
     NODE_DEFINE_CONSTANT(exports, SHEETTYPE_CHART);
     NODE_DEFINE_CONSTANT(exports, SHEETTYPE_UNKNOWN);
+
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_PNG);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_JPEG);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_WMF);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_DIB);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_EMF);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_PICT);
+    NODE_DEFINE_CONSTANT(exports, PICTURETYPE_TIFF);;
 }
 
 
