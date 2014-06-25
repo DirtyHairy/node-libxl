@@ -839,7 +839,7 @@ NAN_METHOD(Book::GetPictureAsync) {
     ArgumentHelper arguments(args);
     
     int index = arguments.GetInt(0);
-    Handle<Function> callback = arguments.GetFunction(0);
+    Handle<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
