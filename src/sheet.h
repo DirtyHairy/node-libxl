@@ -81,10 +81,10 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(GetMerge);
         static NAN_METHOD(SetMerge);
         static NAN_METHOD(DelMerge);
-        // TODO PictureSize
-        // TODO GetPicture
-        // TODO SetPicture
-        // TODO SetPicture2
+        static NAN_METHOD(PictureSize);
+        static NAN_METHOD(GetPicture);
+        static NAN_METHOD(SetPicture);
+        static NAN_METHOD(SetPicture2);
         static NAN_METHOD(GetHorPageBreak);
         static NAN_METHOD(GetHorPageBreakSize);
         static NAN_METHOD(GetVerPageBreak);

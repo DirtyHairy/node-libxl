@@ -711,6 +711,98 @@ NAN_METHOD(Sheet::DelMerge) {
 }
 
 
+NAN_METHOD(Sheet::PictureSize) {
+    NanScope();
+    
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    NanReturnValue(NanNew<Integer>(that->GetWrapped()->pictureSize()));
+}
+
+
+NAN_METHOD(Sheet::GetPicture) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int sheetIndex = arguments.GetInt(0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    int rowTop, colLeft, rowBottom, colRight, width, height,
+        offset_x, offset_y;
+    int bookIndex = that->GetWrapped()->getPicture(sheetIndex,
+        &rowTop, &colLeft, &rowBottom, &colRight, &width, &height, &offset_x,
+        &offset_y);
+
+    if (bookIndex == -1) {
+        return util::ThrowLibxlError(that);
+    }
+
+    Local<Object> result = NanNew<Object>();
+    result->Set(NanNew<String>("bookIndex"),    NanNew<Integer>(bookIndex));
+    result->Set(NanNew<String>("rowTop"),       NanNew<Integer>(rowTop));
+    result->Set(NanNew<String>("colLeft"),      NanNew<Integer>(colLeft));
+    result->Set(NanNew<String>("rowBottom"),    NanNew<Integer>(rowBottom));
+    result->Set(NanNew<String>("colRight"),     NanNew<Integer>(colRight));
+    result->Set(NanNew<String>("width"),        NanNew<Integer>(width));
+    result->Set(NanNew<String>("height"),       NanNew<Integer>(height));
+    result->Set(NanNew<String>("offset_x"),     NanNew<Integer>(offset_x));
+    result->Set(NanNew<String>("offset_y"),     NanNew<Integer>(offset_y));
+
+    NanReturnValue(result);
+}
+
+
+NAN_METHOD(Sheet::SetPicture) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row = arguments.GetInt(0),
+        col = arguments.GetInt(1),
+        id  = arguments.GetInt(2);
+    double scale = arguments.GetDouble(3, 1.);
+    int offset_x = arguments.GetInt(4, 0),
+        offset_y = arguments.GetInt(5, 0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y);
+
+    NanReturnValue(args.This());
+}
+
+
+NAN_METHOD(Sheet::SetPicture2) {
+    NanScope();
+
+    ArgumentHelper arguments(args);
+
+    int row         = arguments.GetInt(0),
+        col         = arguments.GetInt(1),
+        id          = arguments.GetInt(2),
+        width       = arguments.GetInt(3, -1),
+        height      = arguments.GetInt(4, -1),
+        offset_x    = arguments.GetInt(5, 0),
+        offset_y    = arguments.GetInt(6, 0);
+    ASSERT_ARGUMENTS(arguments);
+
+    Sheet* that = Unwrap(args.This());
+    ASSERT_THIS(that);
+
+    that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x,
+        offset_y);
+
+    NanReturnValue(args.This());
+}
+
+
 NAN_METHOD(Sheet::GetHorPageBreak) {
     NanScope();
 
@@ -2148,6 +2240,10 @@ void Sheet::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "getMerge", GetMerge);
     NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
     NODE_SET_PROTOTYPE_METHOD(t, "delMerge", DelMerge);
+    NODE_SET_PROTOTYPE_METHOD(t, "pictureSize", PictureSize);
+    NODE_SET_PROTOTYPE_METHOD(t, "getPicture", GetPicture);
+    NODE_SET_PROTOTYPE_METHOD(t, "setPicture", SetPicture);
+    NODE_SET_PROTOTYPE_METHOD(t, "setPicture2", SetPicture2);
     NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreak", GetHorPageBreak);
     NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreakSize", GetHorPageBreakSize);
     NODE_SET_PROTOTYPE_METHOD(t, "getVerPageBreak", GetVerPageBreak);
