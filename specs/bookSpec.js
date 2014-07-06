@@ -1,6 +1,7 @@
 var xl = require('../lib/libxl'),
     util = require('util'),
     testUtils = require('./testUtils'),
+    fs = require('fs'),
     shouldThrow = testUtils.shouldThrow;
 
 testUtils.initFilesystem();
@@ -335,6 +336,37 @@ describe('The book class', function() {
         shouldThrow(book.setActiveSheet, book, 'a');
         shouldThrow(book.setActiveSheet, {}, 0);
         expect(book.setActiveSheet(0)).toBe(book);
+    });
+
+    it('book.addPicture, book.pictureSize, book.getPicture and book.addPicture ' +
+            'manage the pictures in a book',
+        function()
+    {
+        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+            file = testUtils.getTestPicturePath(),
+            fileBuffer = fs.readFileSync(file);
+
+        shouldThrow(book.pictureSize, {});
+        expect(book.pictureSize()).toBe(0);
+
+        shouldThrow(book.addPicture, book, 1);
+        shouldThrow(book.addPicture, {}, file);
+        expect(book.addPicture(file)).toBe(0);
+        expect(book.pictureSize()).toBe(1);
+
+        shouldThrow(book.getPicture, book, true);
+        shouldThrow(book.getPicture, {}, 0);
+        var pic0 = book.getPicture(0);
+        
+        expect(pic0.type).toBe(xl.PICTURETYPE_PNG);
+        expect(testUtils.compareBuffers(pic0.data, fileBuffer)).toBe(true);
+
+        expect(book.addPicture(fileBuffer)).toBe(1);
+        expect(book.pictureSize()).toBe(2);
+
+        var pic1 = book.getPicture(1);
+        expect(pic1.type).toBe(xl.PICTURETYPE_PNG);
+        expect(testUtils.compareBuffers(pic1.data, fileBuffer)).toBe(true);
     });
 
     it('book.defaultFont returns the default font', function() {

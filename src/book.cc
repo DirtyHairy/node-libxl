@@ -775,6 +775,7 @@ NAN_METHOD(Book::GetPicture) {
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(args.This());
+    ASSERT_THIS(that);
 
     const char* data;
     unsigned size;
