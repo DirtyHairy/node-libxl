@@ -25,7 +25,7 @@
 
 
 var fs = require('fs'),
-    http = require('http'),
+    Ftp = require('ftp'),
     os = require('os'),
     path = require('path'),
     spawn = require('child_process').spawn;
@@ -34,58 +34,159 @@ var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
     dependencyDir = 'deps',
     libxlDir = path.join(dependencyDir, 'libxl'),
-    archiveUrl = 'http://www.libxl.com/download/libxl' + (isMac ? '-mac' : '') + (isWin ? '.zip' : '.tar.gz'),
-    archiveFile = path.join(dependencyDir, path.basename(archiveUrl));
+    ftpHost = 'xlware.com';
 
-var download = function(url, file, callback) {
-  var writer = fs.createWriteStream(file);
-  http.get(url, function(response) {
-    response.pipe(writer);
-    response.on('end', function() {
-      callback();
-    });
-  });
-};
-var execute = function(cmd, args, callback) {
-  spawn(cmd, args).on('close', function(code) {
-    if (0 === code) {
-      callback();
-    } else {
-      process.exit(1);
+var download = function(callback) {
+    var ftpClient = new Ftp();
+
+    function decodeDirectoryEntry(entry) {
+        var match = entry.name.match(/^libxl-(\w+)-([\d\.]+)\.([a-zA-z\.]+)$/);
+        if (match) {
+            return {
+                file: entry.name,
+                system: match[1],
+                version: match[2],
+                suffix: match[3]
+            };
+        }
     }
-  });
+
+    function decodeVersion(file) {
+        return file.version.match(/(\d+)\.(\d+)\.(\d+)/).slice(1, 4);
+    }
+
+    function compareFiles(file1, file2) {
+        function cmp(a, b) {
+            if (a > b) return -1;
+            if (a < b) return  1;
+            return 0;
+        }
+
+        var v1 = decodeVersion(file1), v2 = decodeVersion(file2);
+        return cmp(v1[0], v2[0]) || cmp(v1[1], v2[1]) || cmp(v1[2], v2[2]);
+    }
+
+    function validArchive(file) {
+        if (isWin) {
+            return file.system === "win" && file.suffix === "zip";
+        } else if (isMac) {
+            return file.system === "mac" && file.suffix === "tar.gz";
+        }
+        return file.system === "lin" && file.suffix === "tar.gz";
+    }
+
+    function onError(error) {
+        console.log('Download from FTP failed');
+        throw(error);
+    }
+
+    function onReady() {
+        ftpClient.list(function(error, list) {
+            if (error) onError(error);
+
+            console.log('Connected, receiving directory list...');
+            processDirectoryList(list);
+        });
+    }
+
+    function processDirectoryList(list) {
+        try {
+            if (!list) throw new Error('FTP list failed');
+
+            var candidates = list
+                .map(decodeDirectoryEntry)
+                .filter(validArchive)
+                .sort(compareFiles);
+
+            if (!candidates.length) throw new Error('Failed to identify a suitable download');
+
+            download(candidates[0].file);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    function download(name) {
+        console.log('Downloading ' + name + '...');
+
+        ftpClient.get(name, function(error, stream) {
+            var outfile = path.join(dependencyDir, name),
+                writer = fs.createWriteStream(outfile);
+
+            writer.on('error', onError);
+            stream.on('error', onError);
+            stream.on('end', function() {
+                ftpClient.end();
+
+                console.log('Download complete!');
+
+                callback(outfile);
+            });
+
+            stream.pipe(writer);
+        });
+    }
+
+    ftpClient.on('error', onError);
+    ftpClient.on('ready', onReady);
+
+    console.log('Connecting to ftp://' + ftpHost + '...');
+
+    ftpClient.connect({
+        host: ftpHost
+    });
 };
+
+var execute = function(cmd, args, callback) {
+    spawn(cmd, args).on('close', function(code) {
+        if (0 === code) {
+            callback();
+        } else {
+            process.exit(1);
+        }
+    });
+};
+
 var extractor = function(file, target, callback) {
-  if (isWin) {
-    execute(path.join('tools', '7zip', '7za.exe'), ['x', archiveFile, '-o' + dependencyDir], callback);
-  } else {
-    execute('tar', ['-C', dependencyDir, '-zxf', archiveFile], callback);
-  }
+    console.log('Extracting ' + file + ' ...');
+
+    if (isWin) {
+        execute(path.join('tools', '7zip', '7za.exe'), ['x', file, '-o' + dependencyDir], callback);
+    } else {
+        execute('tar', ['-C', dependencyDir, '-zxf', file], callback);
+    }
 };
+
 var finder = function(dir, pattern) {
   var files = fs.readdirSync(dir),
       i,
       file;
-  for (i = 0; i < files.length; i++) {
-    file = files[i];
-    if (file.match(pattern)) {
-      return path.join(dir, file);
+    for (i = 0; i < files.length; i++) {
+        file = files[i];
+        if (file.match(pattern)) {
+            return path.join(dir, file);
+        }
     }
-  }
-  return null;
+    return null;
 };
 
 if (fs.existsSync(libxlDir)) {
-  process.exit(0);
+    process.exit(0);
 }
 
 if (!fs.existsSync(dependencyDir)) {
-  fs.mkdirSync(dependencyDir);
+    fs.mkdirSync(dependencyDir);
 }
 
-download(archiveUrl, archiveFile, function() {
-  extractor(archiveFile, dependencyDir, function() {
-    fs.unlinkSync(archiveFile);
-    fs.renameSync(finder(dependencyDir, /^libxl/), libxlDir);
-  });
+download(function(archive) {
+    extractor(archive, dependencyDir, function() {
+        fs.unlinkSync(archive);
+
+        var extractedDir = finder(dependencyDir, /^libxl/);
+        console.log('Renaming ' + extractedDir + ' to ' + libxlDir + ' ...');
+
+        fs.renameSync(extractedDir, libxlDir);
+
+        console.log('All done!');
+    });
 });

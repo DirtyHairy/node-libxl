@@ -23,10 +23,11 @@
   "main": "./lib/libxl.js",
   "gypfile": true,
   "scripts": {
-    "preinstall": "node install-libxl.js",
-    "install": "node-gyp rebuild"
+    "install": "node install-libxl.js && node-gyp rebuild"
   },
   "dependencies": {
-    "nan": "~1.2.0"
+
+    "nan": "~1.2.0",
+    "ftp": "~0.3.0"
   }
 }
