@@ -155,6 +155,8 @@ missing are the methods for managing pictures embedded in spreadsheets and
 * Book object creation: Books are **not** created via `xlCreateBook` and
   `xlCreateXMLBook`. Instead, object instances are directly constructed from the
   `xl.Book` constructor via either `new xl.Book(xl.BOOK_TYPE_XLS)` or `new xl.Book(xl.BOOK_TYPE_XLSX)`
+* Accessing the parent book: sheet, format and font objects hold a reference to
+  their parent book that can be accessed via the `book` property
 
 ## Unlocking the API
 
