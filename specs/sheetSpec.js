@@ -14,6 +14,8 @@ describe('The sheet class', function() {
         sheetNameIdx = 0,
         row = 1;
 
+    book.addPicture(testUtils.getTestPicturePath());
+
     function newSheet() {
         return book.addSheet('foo' + (sheetNameIdx++));
     }
@@ -321,6 +323,49 @@ describe('The sheet class', function() {
         sheet.delMerge(row, 0);
 
         shouldThrow(sheet.delMerge, sheet, row, 0);
+    });
+
+    it('sheet.pictureSize returns the number of pictures on a sheet', function() {
+        shouldThrow(sheet.pictureSize, {});
+        sheet.pictureSize();
+    });
+
+    it ('sheet.setPicture and sheet.getPicture add and inspect pictures', function() {
+        shouldThrow(sheet.setPicture, sheet, row, true);
+        shouldThrow(sheet.setPicture, {}, row, 0, 0, 1, 0, 0);
+
+        expect(sheet.setPicture(row, 0, 0, 1, 0, 0)).toBe(sheet);
+
+        var idx = sheet.pictureSize() - 1;
+        shouldThrow(sheet.getPicture, sheet, true);
+        shouldThrow(sheet.getPicture, {}, idx);
+
+        var pic = sheet.getPicture(idx);
+        expect(pic.rowTop).toBe(row);
+        expect(pic.colLeft).toBe(0);
+        expect(pic.width).toBe(testUtils.testPictureWidth);
+        expect(pic.height).toBe(testUtils.testPictureHeight);
+        expect(pic.hasOwnProperty('rowBottom')).toBe(true);
+        expect(pic.hasOwnProperty('colRight')).toBe(true);
+
+        row = pic.rowBottom + 1;
+    });
+
+    it ('sheet.setPicture2 adds pictures by width and height instead of scale', function() {
+        shouldThrow(sheet.setPicture2, sheet, row, true);
+        shouldThrow(sheet.setPicture2, {}, row, 0, 0, 100, 100, 0, 0);
+
+        expect(sheet.setPicture2(row, 0, 0, 100, 200, 0, 0)).toBe(sheet);
+
+        var idx = sheet.pictureSize() - 1;
+
+        var pic = sheet.getPicture(idx);
+        expect(pic.rowTop).toBe(row);
+        expect(pic.colLeft).toBe(0);
+        expect(pic.width).toBe(100);
+        expect(pic.height).toBe(200);
+        expect(pic.hasOwnProperty('rowBottom')).toBe(true);
+        expect(pic.hasOwnProperty('colRight')).toBe(true);
     });
 
     it('sheet.getHorPageBreak, sheet.setHorPageBreak and sheet.horPageBreakSize' +

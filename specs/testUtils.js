@@ -39,5 +39,8 @@ module.exports = {
         }
 
         return true;
-    }
+    },
+
+    testPictureWidth: 640,
+    testPictureHeight: 480
 };
