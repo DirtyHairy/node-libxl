@@ -71,11 +71,21 @@ or
 
     xlsBook.writeSync('file.xls');
 
+or
+    xlsBook.write('file.xls', callback);
+
 and read back via
 
     xlsBook.loadSync('file.xls');
 
-(async operations are not implemented atm).
+or
+    xlsBook.load('file.xls', callback);
+
+where `callback` will be called after the operation has completed, receiving an
+optional error object as argument if anything goes wrong.
+
+**IMPORTANT:** See below for additional notes on the async implementation
+of libxl calls.
 
 The Javascript API closely follows the C++ API described in the
 [libxl documentation](http://www.libxl.com/documentation.html).
@@ -109,24 +119,22 @@ silently converting the string to a number.
 
 ## Coverage
 
-The bindings cover the libxl API almost completely. The only functions still
-missing are the methods for managing pictures embedded in spreadsheets and
-`book.loadRaw` / `book.saveRaw`.
+The bindings cover the current (version 3.5.4) libxl API completely.
 
-## Differences w.r.t. the C++ API
+## Implementation details and differences w.r.t. the C++ API
 
-### Not implemented yet
+### Async versions of libxl calls
 
-* `book.loadRaw`
-* `book.saveRaw`
-* `book.pictureSize`
-* `book.getPicture`
-* `book.addPicture`
-* `book.addPicture2`
-* `sheet.pictureSize`
-* `sheet.getPicture`
-* `sheet.addPicture`
-* `sheet.addPicture2`
+The async versions of libxl calls implement the standard Node.js API for
+async functions: a callback is passed at last argument which is called once the
+operation has finished. The first argument of the callback is an error object,
+which is `undefined` if the operation completed without errors. Any results are
+passed as additional arguments to the callback.
+
+**IMPORTANT:** While an async operation is pending, other operations (sync or
+async) on the same book object (and its descendants like sheets, formats and
+fonts) are not allowed and will throw an exception. However, multiple
+simultaneous operations on different books are allowed.
 
 ### Interface differences
 
