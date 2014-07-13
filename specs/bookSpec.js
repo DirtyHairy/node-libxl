@@ -338,7 +338,7 @@ describe('The book class', function() {
         expect(book.setActiveSheet(0)).toBe(book);
     });
 
-    it('book.addPicture, book.pictureSize, book.getPicture and book.addPicture ' +
+    it('book.addPicture, book.pictureSize and book.getPicture ' +
             'manage the pictures in a book',
         function()
     {
@@ -367,6 +367,73 @@ describe('The book class', function() {
         var pic1 = book.getPicture(1);
         expect(pic1.type).toBe(xl.PICTURETYPE_PNG);
         expect(testUtils.compareBuffers(pic1.data, fileBuffer)).toBe(true);
+    });
+
+    it('book.addPictureAsync and boook.addPictureAsync provide async picture management',
+        function()
+    {
+        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+            file = testUtils.getTestPicturePath(),
+            fileBuffer = fs.readFileSync(file),
+            buffer1, buffer2;
+
+        runs(function() {
+            function addFromFile(callback) {
+                shouldThrow(book.addPictureAsync, book, file, 1);
+                shouldThrow(book.addPictureAsync, {}, file, function() {});
+
+                book.addPictureAsync(file, function(err, id) {
+                    expect(err).toBeUndefined();
+                    expect(id).toBe(0);
+                    expect(book.pictureSize()).toBe(1);
+
+                    addFromStream();
+                });
+            }
+
+            function addFromStream() {
+                book.addPictureAsync(fileBuffer, function(err, id) {
+                    expect(err).toBeUndefined();
+                    expect(id).toBe(1);
+                    expect(book.pictureSize()).toBe(2);
+
+                    getBuffer1();
+                });
+            }
+
+
+            function getBuffer1() {
+                shouldThrow(book.getPictureAsync, book, 1, 1);
+                shouldThrow(book.getPictureAsync, {}, 1, function() {});
+
+                book.getPictureAsync(0, function(err, type, data) {
+                    expect(err).toBeUndefined();
+                    expect(type).toBe(xl.PICTURETYPE_PNG);
+                    buffer1 = data;
+
+                    getBuffer2();
+                });
+            }
+
+            function getBuffer2() {
+                 book.getPictureAsync(1, function(err, type, data) {
+                    expect(err).toBeUndefined();
+                    expect(type).toBe(xl.PICTURETYPE_PNG);
+                    buffer2 = data;
+                });
+            }
+
+            addFromFile();
+        });
+
+        waitsFor(function() {
+            return buffer1 && buffer2;
+        }, 'pictures to load', 2000);
+
+        runs(function() {
+            expect(testUtils.compareBuffers(buffer1, fileBuffer)).toBe(true);
+            expect(testUtils.compareBuffers(buffer2, fileBuffer)).toBe(true);
+        });
     });
 
     it('book.defaultFont returns the default font', function() {
