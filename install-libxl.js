@@ -81,10 +81,11 @@ var download = function(callback) {
     }
 
     function onReady() {
+        console.log('Connected, receiving directory list...');
+
         ftpClient.list(function(error, list) {
             if (error) onError(error);
 
-            console.log('Connected, receiving directory list...');
             processDirectoryList(list);
         });
     }
