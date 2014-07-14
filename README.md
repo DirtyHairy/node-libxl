@@ -18,7 +18,7 @@ itself is required for building and running the bindings.
 ### Compilation Phase
 
 Before the bindings are compiled, the `install-libxl.js` script pulls the latest
-version of the library from the libxl website and unpacks it in `deps/libxl`.
+version of the library from the XLware FTP server and unpacks it in `deps/libxl`.
 Therefore, **no separate installation of libxl is necessary for building the
 bindings**.
 
@@ -35,7 +35,7 @@ your dynamic library search path. This is achieved by either
 **Copying the library into your system library search path**, e.g. `/usr/lib` on
   Linux.
   
-**Copying the library into the working directory** where you run the scrip which
+**Copying the library into the working directory** where you run the script which
   uses the bindings. The name of the library file is `libxl.so` on Linux,
   `libxl.dylib` on Mac and `libxl.dll` on Windows.
   
@@ -72,6 +72,7 @@ or
     xlsBook.writeSync('file.xls');
 
 or
+
     xlsBook.write('file.xls', callback);
 
 and read back via
@@ -79,6 +80,7 @@ and read back via
     xlsBook.loadSync('file.xls');
 
 or
+
     xlsBook.load('file.xls', callback);
 
 where `callback` will be called after the operation has completed, receiving an
@@ -105,16 +107,15 @@ is possible to chain calls
 
 Errors are handled by throwing exceptions.
 
-Functions that return multiple values
-by reference in C++ (like Book::dateUnpack) return a object with the return
-values as properties.
+Functions that return multiple values by reference in C++ (like
+Book::dateUnpack) return a object with the return values as properties.
 
 See 'Differences...' below for a more detailed description of the methods whose
 behavior differs from their C++ counterpart.
 
 **IMPORTANT:** The Javascript API enforces the types defined in its C++
 counterpart for all function arguments; there is no implicit type casting. For
-example, passing a Number to Sheet::writeStr will throw a TypeError instead of
+example, passing a number to Sheet::writeStr will throw a TypeError instead of
 silently converting the string to a number.
 
 ## Coverage
@@ -123,10 +124,10 @@ The bindings cover the current (version 3.5.4) libxl API completely.
 
 ## Implementation details and differences w.r.t. the C++ API
 
-### Async versions of libxl calls
+### Asynchroneous variants of libxl calls
 
-The async versions of libxl calls implement the standard Node.js API for
-async functions: a callback is passed at last argument which is called once the
+The async variants of libxl calls implement the standard Node.js API for
+async functions: a callback is passed as last argument which is called once the
 operation has finished. The first argument of the callback is an error object,
 which is `undefined` if the operation completed without errors. Any results are
 passed as additional arguments to the callback.
@@ -136,8 +137,33 @@ async) on the same book object (and its descendants like sheets, formats and
 fonts) are not allowed and will throw an exception. However, multiple
 simultaneous operations on different books are allowed.
 
+The following async functions are available:
+
+* `book.write` / `book.save`, `book.load` are implemented asynchroneously. If
+  you need synchroneous behavior you can use `book.loadSync` etc.
+* `book.writeRaw` / `book.saveRaw`, `book.loadRaw` are implemented
+  asynchroneously. `book.saveRaw` and its alias return the book data as second
+  argument to the supplied callback. Use `book.loadRawSync` & friends for
+  synchroneous behavior.
+* `book.addPicture` has a async version `book.addPictureAsync`. The index of the
+  new picture is passed as the second argument to the callback.
+* `book.getPicture` has a async version `book.getPictureAsync`. Picture type and
+  data are passed to the callback as second and third arguments.
+* `sheet.insertRow` and `sheet.insertCol` are very slow and thus are also
+  available as async implementations `sheet.insertRowAsync` and
+  `sheet.insertColAsync`.
+
 ### Interface differences
 
+* `book.write`, `book.writeRaw` and their sync versions are also available as
+  `book.save` etc.
+* `book.loadRaw` / `book.loadRawSync` take a node buffer as argument
+* `book.writeRaw` / `book.writeRawSync` return a node buffer
+* `book.getPicture` returns an object with `type` and `data` properties. The
+  `data` property is a node buffer containing the image data.
+* `book.addPicture` and `book.addPictureAsync` are overloaded and can be called
+   with either a file path or a node buffer, thus implementing both
+  `Book.AddPicture` and `Book.AddPicture2` from the libxl API.
 * `book.dateUnpack`: Returns an object with `year`, `month`,
   `date`, `hour`, `minute`, `seconds` and `mseconds` properties.
 * `book.colorUnpack`: Returns an object with `red`, `green` and `blue`
@@ -166,6 +192,11 @@ simultaneous operations on different books are allowed.
 * Accessing the parent book: sheet, format and font objects hold a reference to
   their parent book that can be accessed via the `book` property
 
+### Enum constants
+
+All C enum constants provided by the library are available as constants on the
+library object, e.g.  `xl.NUMFORMAT_DATE` or `xl.PICTURETYPE_PNG`.
+
 ## Unlocking the API
 
 If you have purchased a licence key from XLware, you can call book.setKey in
@@ -176,7 +207,7 @@ package directory.
 
 # Platform support
 
-The package currently supports Linux, Windows and Mac.
+The package supports Linux, Windows and Mac.
 
 # Tests
 
@@ -187,13 +218,14 @@ installed (via NPM), you can run the suite via
 
 # Reporting bugs
 
-Please report any bugs on the github issue tracker.
+Please report any bugs or feature requests on the github issue tracker.
 
 # Roadmap
 
-Version 0.1 is the first release which covers nearly the full API. For 0.2 (and
-possibly 0.3), I anticipate adding asynchroneous calls for reading and writing
-and implementing the remaining functions.
+As the API is completely covered, I consider the bindings complete. New releases
+will only cover new libxl methods and fix bugs. If you identify parts of
+libxl that are particularily slow, asynchroneous version of those could be added
+as well.
 
 # Credits
 
