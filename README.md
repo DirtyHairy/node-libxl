@@ -225,7 +225,8 @@ Please report any bugs or feature requests on the github issue tracker.
 As the API is completely covered, I consider the bindings complete. New releases
 will only cover new libxl methods and fix bugs. If you identify parts of
 libxl that are particularily slow, asynchroneous version of those could be added
-as well.
+as well. Note that only the latest version branch (0.2.x) is maintained and
+supported.
 
 # Credits
 
