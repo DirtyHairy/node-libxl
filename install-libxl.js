@@ -52,7 +52,7 @@ var download = function(callback) {
     }
 
     function decodeVersion(file) {
-        return file.version.match(/(\d+)\.(\d+)\.(\d+)/).slice(1, 4);
+        return file.version.split('.');
     }
 
     function compareFiles(file1, file2) {
@@ -62,8 +62,17 @@ var download = function(callback) {
             return 0;
         }
 
-        var v1 = decodeVersion(file1), v2 = decodeVersion(file2);
-        return cmp(v1[0], v2[0]) || cmp(v1[1], v2[1]) || cmp(v1[2], v2[2]);
+        var v1 = decodeVersion(file1), v2 = decodeVersion(file2),
+            nibbles = Math.min(v1.length, v2.length),
+            partialResult;
+
+        for (var i = 0; i < nibbles; i++) {
+            partialResult = cmp(v1[i], v2[i]);
+
+            if (partialResult) return partialResult;
+        }
+
+        return v1.length > nibbles ? -1 : 1;
     }
 
     function validArchive(file) {
