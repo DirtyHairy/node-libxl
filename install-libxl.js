@@ -124,7 +124,7 @@ var download = function(callback) {
 
             writer.on('error', onError);
             stream.on('error', onError);
-            stream.on('end', function() {
+            writer.on('close', function() {
                 ftpClient.end();
 
                 console.log('Download complete!');
