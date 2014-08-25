@@ -28,6 +28,7 @@ var fs = require('fs'),
     Ftp = require('ftp'),
     os = require('os'),
     path = require('path'),
+    tmp = require('tmp'),
     spawn = require('child_process').spawn;
 
 var isWin = !!os.platform().match(/^win/),
@@ -119,22 +120,30 @@ var download = function(callback) {
     function download(name) {
         console.log('Downloading ' + name + '...');
 
-        ftpClient.get(name, function(error, stream) {
-            var outfile = path.join(dependencyDir, name),
-                writer = fs.createWriteStream(outfile);
+        tmp.tmpName({
+            postfix: path.basename(name),
+            tries: 10
+        }, function(err, outfile) {
+            if (err) throw err;
 
+            var writer = fs.createWriteStream(outfile);
             writer.on('error', onError);
-            stream.on('error', onError);
             writer.on('close', function() {
                 ftpClient.end();
 
                 console.log('Download complete!');
-
                 callback(outfile);
             });
 
-            stream.pipe(writer);
-        });
+            writer.on('open', function() {
+                ftpClient.get(name, function(error, stream) {
+                    if (error) throw error;
+
+                    stream.on('error', onError);
+                    stream.pipe(writer);
+                });
+            });
+        });        
     }
 
     ftpClient.on('error', onError);
