@@ -40,7 +40,15 @@
         ['OS=="win"', {
           'libraries': [
             '../deps/libxl/lib/libxl.lib'
-          ]
+          ],
+          'msvs_settings':
+          {
+            'VCLinkerTool': {
+                'AdditionalOptions': [
+                    '/FORCE:MULTIPLE'
+                ]
+            }
+          }
         }],
         ['OS=="mac"', {
           'target_name': 'liblibxl',
