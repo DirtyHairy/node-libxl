@@ -1052,7 +1052,7 @@ NAN_METHOD(Sheet::InsertRowAsync) {
         public:
             Worker(NanCallback* callback, Local<Object> that, int rowFirst,
                     int rowLast) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Sheet>(callback, that),
                 rowFirst(rowFirst),
                 rowLast(rowLast)
             {}
@@ -1111,7 +1111,7 @@ NAN_METHOD(Sheet::InsertColAsync) {
         public:
             Worker(NanCallback* callback, Local<Object> that,
                     int colFirst, int colLast) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Sheet>(callback, that),
                 colFirst(colFirst),
                 colLast(colLast)
             {}
@@ -1170,7 +1170,7 @@ NAN_METHOD(Sheet::RemoveRowAsync) {
         public:
             Worker(NanCallback* callback, Local<Object> that,
                     int rowFirst, int rowLast) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Sheet>(callback, that),
                 rowFirst(rowFirst),
                 rowLast(rowLast)
             {}
@@ -1209,7 +1209,7 @@ NAN_METHOD(Sheet::RemoveColAsync) {
         public:
             Worker(NanCallback* callback, Local<Object> that,
                     int colFirst, int colLast) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Sheet>(callback, that),
                 colFirst(colFirst),
                 colLast(colLast)
             {}
