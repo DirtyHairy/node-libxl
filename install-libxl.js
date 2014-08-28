@@ -23,13 +23,14 @@
  * THE SOFTWARE.
  */
 
-
 var fs = require('fs'),
     Ftp = require('ftp'),
     os = require('os'),
     path = require('path'),
     tmp = require('tmp'),
-    spawn = require('child_process').spawn;
+    spawn = require('child_process').spawn,
+    util = require('util'),
+    md5 = require('MD5');
 
 var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
@@ -117,6 +118,57 @@ var download = function(callback) {
         }
     }
 
+    /*
+     * There is a obscure bug concerning ftp.get and stream.pipe, leading to
+     * occasional gobbled chunks at the end of the download
+     *
+     * https://github.com/mscdex/node-ftp/issues/70
+     *
+     * Thus, we handle the download manually and compute MD5 and total size to
+     * get meaningful debug output.
+     */
+    function consumeDownload(instream, outstream, callback) {
+        var chunks = [],
+            instreamTerminated = false,
+            outstreamTerminated = false,
+            buffering = false,
+            chunkIdx = 0,
+            totalSize = 0;
+
+        function write() {
+            return outstream.write(chunks[chunkIdx++]);
+        }
+
+        function terminateOutstream() {
+            if (!outstreamTerminated) outstream.end();
+            outstreamTerminated = true;
+        }
+
+        instream.on('data', function(chunk) {
+            chunks.push(chunk);
+            totalSize += chunk.length;
+            if (!buffering) buffering = !write();
+        });
+
+        instream.on('end', function() {
+            instreamTerminated = true;
+            if (!buffering) terminateOutstream();
+        });
+
+        outstream.on('drain', function() {
+            // Write chunks until the queue is empty or the the writer get
+            // overwhelmed.
+            while ((buffering = chunkIdx < chunks.length) && write());
+
+            // Stop buffering if all chunks have been flushed.
+            if (!buffering && instreamTerminated) terminateOutstream();
+        });
+
+        outstream.on('close', function() {
+            callback(undefined, totalSize, md5(Buffer.concat(chunks), totalSize));
+        });
+    }
+
     function download(name) {
         console.log('Downloading ' + name + '...');
 
@@ -128,21 +180,25 @@ var download = function(callback) {
 
             var writer = fs.createWriteStream(outfile);
             writer.on('error', onError);
-            writer.on('close', function() {
-                ftpClient.end();
 
-                console.log('Download complete!');
-                callback(outfile);
-            });
-
-            writer.on('open', function() {
+            function onOpen() {
                 ftpClient.get(name, function(error, stream) {
                     if (error) throw error;
 
                     stream.on('error', onError);
-                    stream.pipe(writer);
+                    consumeDownload(stream, writer, function(err, bytes, hash) {
+                        if (err) throw err;
+
+                        ftpClient.end();
+
+                        console.log(util.format('Download complete - %s bytes, MD5: %s',
+                            bytes, hash));
+                        callback(outfile);
+                    });
                 });
-            });
+            }
+
+            writer.on('open', onOpen);
         });        
     }
 
@@ -190,6 +246,7 @@ var finder = function(dir, pattern) {
 };
 
 if (fs.existsSync(libxlDir)) {
+    console.log('Libxl already downloaded, nothing to do');
     process.exit(0);
 }
 
