@@ -141,7 +141,7 @@ NAN_METHOD(Book::Load) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 filename(filename)
             {}
 
@@ -196,7 +196,7 @@ NAN_METHOD(Book::Write) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 filename(filename)
             {}
 
@@ -251,7 +251,7 @@ NAN_METHOD(Book::WriteRaw) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(NanCallback *callback, Local<Object> that) :
-                AsyncWorker(callback, that)
+                AsyncWorker<Book>(callback, that)
             {}
 
             virtual void Execute() {
@@ -322,7 +322,7 @@ NAN_METHOD(Book::LoadRaw) {
         public:
             Worker(NanCallback *callback, Local<Object> that,
                     Handle<Value> buffer) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 buffer(buffer)
             {}
 
@@ -801,7 +801,7 @@ NAN_METHOD(Book::GetPictureAsync) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(NanCallback* callback, Local<Object> that, int index) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 index(index)
             {}
 
@@ -894,7 +894,7 @@ NAN_METHOD(Book::AddPictureAsync) {
         public:
             FileWorker(NanCallback* callback, Local<Object> that,
                     Handle<Value> filename) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 filename(filename)
             {}
 
@@ -925,7 +925,7 @@ NAN_METHOD(Book::AddPictureAsync) {
         public:
             BufferWorker(NanCallback* callback, Local<Object> that,
                     Handle<Value> buffer) :
-                AsyncWorker(callback, that),
+                AsyncWorker<Book>(callback, that),
                 buffer(buffer)
             {}
 
