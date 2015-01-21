@@ -1221,10 +1221,10 @@ void Book::Initialize(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(t, "setKey", SetKey);
 
     #ifdef INCLUDE_API_KEY
-        exports->Set(NanNew<String>("apiKeyCompiledIn"), NanTrue(),
+        CSNanObjectSetWithAttributes(exports, NanNew<String>("apiKeyCompiledIn"), NanTrue(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #else
-        exports->Set(NanNew<String>("apiKeyCompiledIn"), NanFalse(),
+        CSNanObjectSetWithAttributes(exports, NanNew<String>("apiKeyCompiledIn"), NanFalse(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #endif
 

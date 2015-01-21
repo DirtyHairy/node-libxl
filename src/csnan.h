@@ -36,4 +36,16 @@
 
 #endif
 
+#if (NODE_MODULE_VERSION >= 42)
+
+#define CSNanObjectSetWithAttributes(Object,Key,Value,Attribs) \
+    Object->ForceSet(Key,Value,Attribs);
+
+#else
+
+#define CSNanObjectSetWithAttributes(Object,Key,Value,Attribs) \
+    Object->Set(Key,Value,Attribs);
+
+#endif
+
 #endif //BINDINGS_CSNAN_H

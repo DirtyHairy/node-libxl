@@ -1,7 +1,8 @@
 # What it is
 
 Node.js bindings for [libxl](http://www.libxl.com/). Both Node 0.10 and Node
-0.11 starting with 0.11.13 are supported.
+0.11 starting with 0.11.13 are supported. Iojs starting with version 1.0.3 is
+supported as well (older versions might work).
 
 # Compilation and Installation
 
