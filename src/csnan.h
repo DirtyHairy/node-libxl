@@ -36,7 +36,7 @@
 
 #endif
 
-#if (NODE_MODULE_VERSION >= 42)
+#if (NODE_MODULE_VERSION > 14 || (NODE_MODULE_VERSION == 14 && (NODE_MINOR_VERSION > 11 || NODE_PATCH_VERSION > 14)))
 
 #define CSNanObjectSetWithAttributes(Object,Key,Value,Attribs) \
     Object->ForceSet(Key,Value,Attribs);
