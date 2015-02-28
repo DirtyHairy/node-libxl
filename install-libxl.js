@@ -36,7 +36,7 @@ var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
     dependencyDir = 'deps',
     libxlDir = path.join(dependencyDir, 'libxl'),
-    ftpHost = 'xlware.com';
+    ftpHost = 'libxl.com';
 
 var download = function(callback) {
     var ftpClient = new Ftp();
