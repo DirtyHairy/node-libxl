@@ -18,7 +18,8 @@
     "url": "https://github.com/DirtyHairy/node-libxl/issues"
   },
   "engines": {
-    "node": ">=0.10"
+    "node": ">=0.10",
+    "iojs": ">=1.0.0"
   },
   "main": "./lib/libxl.js",
   "gypfile": true,
@@ -27,8 +28,7 @@
   },
   "dependencies": {
     "nan": "~1.5.1",
-    "ftp": "~0.3.0",
-    "tmp": "~0.0.24",
-    "MD5": "~1.2.1"
+    "request": "^2.53.0",
+    "tar": "^1.0.3"
   }
 }
