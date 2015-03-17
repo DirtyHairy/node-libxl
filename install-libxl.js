@@ -39,7 +39,8 @@ var isWin = !!os.platform().match(/^win/),
     ftpHost = 'libxl.com';
 
 var download = function(callback) {
-    var ftpClient = new Ftp();
+    var ftpClient = new Ftp(),
+        downloadComplete = false;
 
     function decodeDirectoryEntry(entry) {
         var match = entry.name.match(/^libxl-(\w+)-([\d\.]+)\.([a-zA-z\.]+)$/);
@@ -87,8 +88,12 @@ var download = function(callback) {
     }
 
     function onError(error) {
-        console.log('Download from FTP failed');
-        throw(error);
+        if (downloadComplete) {
+            console.log('WARNING: late FTP error: ' + error.message);
+        } else {
+            console.log('Download from FTP failed');
+            throw(error);
+        }
     }
 
     function onReady() {
@@ -190,6 +195,7 @@ var download = function(callback) {
                         if (err) throw err;
 
                         ftpClient.end();
+                        downloadComplete = true;
 
                         console.log(util.format('Download complete - %s bytes, MD5: %s',
                             bytes, hash));
