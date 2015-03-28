@@ -7,4 +7,4 @@ install:
     - node ./install-libxl.js
 script:
     - ./node_modules/.bin/node-gyp rebuild
-    - LD_LIBRARY_PATH="`pwd`/deps/libxl/lib64" ./node-modules/.bin/jasmine-node ./specs
+    - LD_LIBRARY_PATH="`pwd`/deps/libxl/lib64" ./node_modules/.bin/jasmine-node ./specs
