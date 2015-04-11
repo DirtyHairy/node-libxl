@@ -79,6 +79,8 @@ var download = function(callback) {
     }
 
     function validArchive(file) {
+        if (!file) return false;
+
         if (isWin) {
             return file.system === "win" && file.suffix === "zip";
         } else if (isMac) {
