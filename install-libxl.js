@@ -28,11 +28,11 @@ var fs = require('fs'),
     os = require('os'),
     path = require('path'),
     tmp = require('tmp'),
-    spawn = require('child_process').spawn,
     util = require('util'),
     md5 = require('MD5'),
     zlib = require('zlib'),
     tar = require('tar');
+    AdmZip = require('adm-zip');
 
 var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
@@ -236,21 +236,11 @@ var downloadIfNecessary = function(callback) {
     }
 };
 
-var execute = function(cmd, args, callback) {
-    spawn(cmd, args).on('close', function(code) {
-        if (0 === code) {
-            callback();
-        } else {
-            callback(new Error('execute failed'));
-        }
-    });
-};
-
 var extractor = function(file, target, callback) {
     console.log('Extracting ' + file + ' ...');
 
     if (file.match(/\.zip$/)) {
-        execute(path.join('tools', '7zip', '7za.exe'), ['x', file, '-o' + dependencyDir], callback);
+        extractZip(file, target, callback);
     } else if (file.match(/\.tar\.gz/)) {
         extractTgz(file, target, callback);
     } else {
@@ -274,6 +264,19 @@ var extractTgz = function(archive, destination, callback) {
     });
 
     decompressedStream.pipe(untarStream);
+};
+
+var extractZip = function(archive, destination, callback) {
+    var zip;
+
+    try {
+        zip = new AdmZip(archive);
+        zip.extractAllTo(destination);
+
+        callback();
+    } catch (e) {
+        callback(e);
+    }
 };
 
 var finder = function(dir, pattern) {
