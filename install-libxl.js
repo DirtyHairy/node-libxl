@@ -36,7 +36,8 @@ var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
     dependencyDir = 'deps',
     libxlDir = path.join(dependencyDir, 'libxl'),
-    ftpHost = 'libxl.com';
+    ftpHost = 'libxl.com',
+    archiveEnv = 'NODE_LIBXL_SDK_ARCHIVE';
 
 var download = function(callback) {
     var ftpClient = new Ftp(),
@@ -220,12 +221,25 @@ var download = function(callback) {
     });
 };
 
+var downloadIfNecessary = function(callback) {
+    var suppliedArchive = process.env[archiveEnv];
+
+    if (suppliedArchive) {
+        console.log(util.format('Automatic download overriden by %s, using archive "%s"...',
+            archiveEnv, suppliedArchive
+        ));
+        callback(suppliedArchive);
+    } else {
+        download(callback);
+    }
+};
+
 var execute = function(cmd, args, callback) {
     spawn(cmd, args).on('close', function(code) {
         if (0 === code) {
             callback();
         } else {
-            process.exit(1);
+            callback(new Error('execute failed'));
         }
     });
 };
@@ -233,7 +247,7 @@ var execute = function(cmd, args, callback) {
 var extractor = function(file, target, callback) {
     console.log('Extracting ' + file + ' ...');
 
-    if (isWin) {
+    if (file.match(/\.zip$/)) {
         execute(path.join('tools', '7zip', '7za.exe'), ['x', file, '-o' + dependencyDir], callback);
     } else {
         execute('tar', ['-C', dependencyDir, '-zxf', file], callback);
@@ -262,9 +276,14 @@ if (!fs.existsSync(dependencyDir)) {
     fs.mkdirSync(dependencyDir);
 }
 
-download(function(archive) {
-    extractor(archive, dependencyDir, function() {
-        fs.unlinkSync(archive);
+downloadIfNecessary(function(archive) {
+    extractor(archive, dependencyDir, function(e) {
+        if (e) {
+            console.error('Extraction failed');
+            process.exit(1);
+        }
+
+        if (!process.env[archiveEnv]) fs.unlinkSync(archive);
 
         var extractedDir = finder(dependencyDir, /^libxl/);
         console.log('Renaming ' + extractedDir + ' to ' + libxlDir + ' ...');
