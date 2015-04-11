@@ -30,7 +30,9 @@ var fs = require('fs'),
     tmp = require('tmp'),
     spawn = require('child_process').spawn,
     util = require('util'),
-    md5 = require('MD5');
+    md5 = require('MD5'),
+    zlib = require('zlib'),
+    tar = require('tar');
 
 var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
@@ -249,9 +251,29 @@ var extractor = function(file, target, callback) {
 
     if (file.match(/\.zip$/)) {
         execute(path.join('tools', '7zip', '7za.exe'), ['x', file, '-o' + dependencyDir], callback);
+    } else if (file.match(/\.tar\.gz/)) {
+        extractTgz(file, target, callback);
     } else {
-        execute('tar', ['-C', dependencyDir, '-zxf', file], callback);
+        callback(new Error('unnown archive format'));
     }
+};
+
+var extractTgz = function(archive, destination, callback) {
+    var fileStream = fs.createReadStream(archive),
+        decompressedStream = fileStream.pipe(zlib.createGunzip()),
+        untarStream = tar.Extract({path: destination});
+
+    untarStream.on('end', function() {
+        callback();
+    });
+    
+    [fileStream, decompressedStream, untarStream].forEach(function(stream) {
+        stream.on('error', function(e) {
+         callback(e);
+        });
+    });
+
+    decompressedStream.pipe(untarStream);
 };
 
 var finder = function(dir, pattern) {
@@ -279,7 +301,7 @@ if (!fs.existsSync(dependencyDir)) {
 downloadIfNecessary(function(archive) {
     extractor(archive, dependencyDir, function(e) {
         if (e) {
-            console.error('Extraction failed');
+            console.error(e.message);
             process.exit(1);
         }
 
