@@ -24,10 +24,10 @@ version of the library from the XLware FTP server and unpacks it in `deps/libxl`
 Therefore, **no separate installation of libxl is necessary for building the
 bindings**.
 
-However, if you want to compile and run against a particular version of libxl,
-you can do so by manually unpacking the library archive into `deps/libxl` before
-building the bindings. This will bypass the `install-libxl.js` script and build
-the bindings against that specific version of the library.
+If you want to compile the bindings against a particular version of the library
+or if, for some reason, the automatic download fails, you can point the install
+script to a locally downloaded archive of the SDK by setting the
+`NODE_LIBXL_SDK_ARCHIVE` environment variable.
 
 ### Runtime
 

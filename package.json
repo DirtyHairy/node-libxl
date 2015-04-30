@@ -2,7 +2,7 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": "Node bindings for the libxl library for reading and writing excel (XLS and XLSX) spreadsheets.",
   "keywords": [
     "excel",
@@ -26,9 +26,11 @@
     "install": "node install-libxl.js && node-gyp rebuild"
   },
   "dependencies": {
-    "nan": "~1.7.0",
+    "MD5": "~1.2.1",
+    "adm-zip": "~0.4.7",
     "ftp": "~0.3.8",
-    "tmp": "~0.0.24",
-    "MD5": "~1.2.1"
+    "nan": "~1.7.0",
+    "tar": "~2.0.1",
+    "tmp": "~0.0.24"
   }
 }
