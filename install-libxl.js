@@ -304,7 +304,7 @@ if (!fs.existsSync(dependencyDir)) {
 downloadIfNecessary(function(archive) {
     extractor(archive, dependencyDir, function(e) {
         if (e) {
-            console.error(e.message);
+            console.error(e.message || 'Extraction failed');
             process.exit(1);
         }
 
