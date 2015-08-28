@@ -15,8 +15,6 @@ install:
     - sudo apt-get install libstdc++-4.8-dev
     - gcc --version
     - npm install
-    - npm install node-gyp jasmine-node
-    - node ./install-libxl.js
+    - npm install jasmine-node
 script:
-    - ./node_modules/.bin/node-gyp rebuild
     - LD_LIBRARY_PATH="`pwd`/deps/libxl/lib64" ./node_modules/.bin/jasmine-node ./specs
