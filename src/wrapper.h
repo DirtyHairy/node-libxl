@@ -41,7 +41,7 @@ template<typename T> class Wrapper : public Nan::ObjectWrap {
         }
 
         static bool InstanceOf(v8::Handle<v8::Value> object);
-        template<typename U> static U* Unwrap(v8::Handle<v8::Value> object);
+        template<typename U> static U* Unwrap(v8::Local<v8::Value> object);
 
     protected:
 
@@ -71,7 +71,7 @@ template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
 
 
 template <typename T> template<typename U>
-    U* Wrapper<T>::Unwrap(v8::Handle<v8::Value> object)
+    U* Wrapper<T>::Unwrap(v8::Local<v8::Value> object)
 {
     if (InstanceOf(object)) {
         return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
