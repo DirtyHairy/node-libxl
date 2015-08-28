@@ -5,9 +5,9 @@ node_js:
     - "0.10"
     - iojs
 install:
+    - gcc --version
     - npm install
     - npm install node-gyp jasmine-node
-    - gcc --version
     - node ./install-libxl.js
 script:
     - ./node_modules/.bin/node-gyp rebuild
