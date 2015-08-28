@@ -34,14 +34,14 @@ namespace node_libxl {
 class BookWrapper{
     public:
 
-        BookWrapper(v8::Handle<v8::Value> bookHandle);
+        BookWrapper(v8::Local<v8::Value> bookHandle);
         ~BookWrapper();
 
         v8::Handle<v8::Value> GetBookHandle();
         Book* GetBook();
     protected:
 
-        v8::Persistent<v8::Value> bookHandle;
+        Nan::Persistent<v8::Value> bookHandle;
 
         // We need to template this in order to unwrap the correct object
         // pointer
@@ -67,11 +67,11 @@ class BookWrapper{
 template<typename T> void BookWrapper::Initialize(
     v8::Handle<v8::FunctionTemplate> constructor)
 {
-    v8::Handle<v8::ObjectTemplate> instanceTemplate =
+    v8::Local<v8::ObjectTemplate> instanceTemplate =
         constructor->InstanceTemplate();
     
-    instanceTemplate->SetAccessor(
-        NanNew<v8::String>("book"),
+    Nan::SetAccessor(instanceTemplate, 
+        Nan::New<v8::String>("book").ToLocalChecked(),
         BookAccessor<T>, 
         NULL,
         v8::Handle<v8::Value>(),
@@ -83,15 +83,15 @@ template<typename T> void BookWrapper::Initialize(
 
 template<typename T>  NAN_GETTER(BookWrapper::BookAccessor)
 {
-    NanScope();
+    Nan::HandleScope scope;
 
     BookWrapper* bookWrapper = dynamic_cast<BookWrapper*>(
-        node::ObjectWrap::Unwrap<T>(args.This()));
+        Nan::ObjectWrap::Unwrap<T>(info.This()));
    
     if (bookWrapper) {
-        NanReturnValue(NanNew(bookWrapper->bookHandle));
+        info.GetReturnValue().Set(Nan::New(bookWrapper->bookHandle));
     } else {
-        NanReturnUndefined();
+        return;
     }
 }
 

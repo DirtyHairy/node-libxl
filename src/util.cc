@@ -37,9 +37,9 @@ namespace util {
 
 Handle<Value> ProxyConstructor(
     Handle<Function> constructor,
-    _NAN_METHOD_ARGS_TYPE arguments
+    Nan::NAN_METHOD_ARGS_TYPE arguments
 ) {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
     uint8_t argc = arguments.Length();
     Handle<Value>* argv = new Handle<Value>[argc];
@@ -51,36 +51,36 @@ Handle<Value> ProxyConstructor(
     Local<Value> newInstance = constructor->NewInstance(argc, argv);
     
     delete[] argv;
-    return NanEscapeScope(newInstance);
+    return scope.Escape(newInstance);
 }
 
 
 NAN_METHOD(StubConstructor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Handle<Value> sentry = args[0];
+    Handle<Value> sentry = info[0];
 
-    if (!(  args.IsConstructCall() &&
-            args.Length() == 1 &&
+    if (!(  info.IsConstructCall() &&
+            info.Length() == 1 &&
             sentry->IsExternal() &&
             sentry.As<External>()->Value() == NULL
     )) {
-        return NanThrowTypeError(
+        return Nan::ThrowTypeError(
             "You are not supposed to call this constructor directly");
     }
 
-    NanSetInternalFieldPointer(args.This(), 0, NULL);
+    Nan::SetInternalFieldPointer(info.This(), 0, NULL);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 Handle<Value> CallStubConstructor(Handle<Function> constructor) {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
-    Handle<Value> args[1] = {CSNanNewExternal(NULL)};
+    Handle<Value> info[1] = {CSNanNewExternal(NULL)};
 
-    return NanEscapeScope(constructor->NewInstance(1, args));
+    return scope.Escape(constructor->NewInstance(1, info));
 }
 
 

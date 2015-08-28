@@ -43,20 +43,20 @@ Sheet::Sheet(libxl::Sheet* sheet, Handle<Value> book) :
 {}
 
 
-Handle<Object> Sheet::NewInstance(
+Local<Object> Sheet::NewInstance(
     libxl::Sheet* libxlSheet,
     Handle<Value> book)
 {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
     Sheet* sheet = new Sheet(libxlSheet, book);
 
-    Local<Object> that = NanNew(util::CallStubConstructor(
-        NanNew(constructor)).As<Object>());
+    Local<Object> that = Nan::New(util::CallStubConstructor(
+        Nan::New(constructor)).As<Object>());
 
     sheet->Wrap(that);
 
-    return NanEscapeScope(that);
+    return scope.Escape(that);
 }
 
 
@@ -64,15 +64,15 @@ Handle<Object> Sheet::NewInstance(
 
 
 NAN_METHOD(Sheet::CellType) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::CellType cellType = that->GetWrapped()->cellType(row, col);
@@ -80,36 +80,36 @@ NAN_METHOD(Sheet::CellType) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(NanNew<Integer>(cellType));
+    info.GetReturnValue().Set(Nan::New<Integer>(cellType));
 }
 
 
 NAN_METHOD(Sheet::IsFormula) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isFormula(row, col)));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isFormula(row, col)));
 }
 
 
 NAN_METHOD(Sheet::CellFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = that->GetWrapped()->cellFormat(row, col);
@@ -118,40 +118,40 @@ NAN_METHOD(Sheet::CellFormat) {
     }
 
     
-    NanReturnValue(Format::NewInstance(libxlFormat, that->GetBookHandle()));
+    info.GetReturnValue().Set(Format::NewInstance(libxlFormat, that->GetBookHandle()));
 }
 
 
 NAN_METHOD(Sheet::SetCellFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     ASSERT_SAME_BOOK(that, format);
 
     that->GetWrapped()->setCellFormat(row, col, format->GetWrapped());
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadStr) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = args[2];
+    Handle<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
@@ -161,18 +161,18 @@ NAN_METHOD(Sheet::ReadStr) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanNew<String>("format"),
+        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
-    NanReturnValue(NanNew<String>(value));
+    info.GetReturnValue().Set(Nan::New<String>(value).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::WriteStr) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
@@ -180,7 +180,7 @@ NAN_METHOD(Sheet::WriteStr) {
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -192,38 +192,38 @@ NAN_METHOD(Sheet::WriteStr) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadNum) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = args[2];
+    Handle<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanNew<String>("format"),
+        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
-    NanReturnValue(NanNew<Number>(value));
+    info.GetReturnValue().Set(Nan::New<Number>(value));
 }
 
 
 NAN_METHOD(Sheet::WriteNum) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
@@ -231,7 +231,7 @@ NAN_METHOD(Sheet::WriteNum) {
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -243,38 +243,38 @@ NAN_METHOD(Sheet::WriteNum) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadBool) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = args[2];
+    Handle<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
     bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanNew<String>("format"),
+        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
-    NanReturnValue(NanNew<Boolean>(value));
+    info.GetReturnValue().Set(Nan::New<Boolean>(value));
 }
 
 
 NAN_METHOD(Sheet::WriteBool) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
@@ -282,7 +282,7 @@ NAN_METHOD(Sheet::WriteBool) {
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -294,20 +294,20 @@ NAN_METHOD(Sheet::WriteBool) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadBlank) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = args[2];
+    Handle<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
@@ -315,28 +315,28 @@ NAN_METHOD(Sheet::ReadBlank) {
         return util::ThrowLibxlError(that);
     }
 
-    Handle<Value> formatHandle = Format::NewInstance(libxlFormat,
+    Local<Value> formatHandle = Format::NewInstance(libxlFormat,
         that->GetBookHandle());
     
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanNew<String>("format"), formatHandle);
+        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(), formatHandle);
     }
 
-    NanReturnValue(formatHandle);
+    info.GetReturnValue().Set(formatHandle);
 }
 
 
 NAN_METHOD(Sheet::WriteBlank) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     Format* format = arguments.GetWrapped<Format>(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     ASSERT_SAME_BOOK(that, format);
 
@@ -346,20 +346,20 @@ NAN_METHOD(Sheet::WriteBlank) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadFormula) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = args[2];
+    Handle<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* libxlFormat = NULL;
@@ -369,18 +369,18 @@ NAN_METHOD(Sheet::ReadFormula) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(NanNew<String>("format"),
+        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
-    NanReturnValue(NanNew<String>(value));
+    info.GetReturnValue().Set(Nan::New<String>(value).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::WriteFormula) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
@@ -388,7 +388,7 @@ NAN_METHOD(Sheet::WriteFormula) {
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -400,19 +400,19 @@ NAN_METHOD(Sheet::WriteFormula) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadComment) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* value = that->GetWrapped()->readComment(row, col);
@@ -420,14 +420,14 @@ NAN_METHOD(Sheet::ReadComment) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(NanNew<String>(value));
+    info.GetReturnValue().Set(Nan::New<String>(value).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::WriteComment) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
@@ -437,10 +437,10 @@ NAN_METHOD(Sheet::WriteComment) {
     int height = arguments.GetInt(5, 75);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    if (args[3]->IsString()) {
+    if (info[3]->IsString()) {
         that->GetWrapped()->writeComment(row, col, *value, *author,
             width, height);
     } else {
@@ -448,76 +448,76 @@ NAN_METHOD(Sheet::WriteComment) {
             width, height);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ReadError) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->readError(row, col)));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->readError(row, col)));
 }
 
 
 NAN_METHOD(Sheet::IsDate) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate(row, col)));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate(row, col)));
 }
 
 
 NAN_METHOD(Sheet::ColWidth) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int col = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->colWidth(col)));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->colWidth(col)));
 }
 
 
 NAN_METHOD(Sheet::RowHeight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->rowHeight(row)));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeight(row)));
 }
 
 
 NAN_METHOD(Sheet::SetCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int first = arguments.GetInt(0);
     int last = arguments.GetInt(1);
@@ -526,7 +526,7 @@ NAN_METHOD(Sheet::SetCol) {
     bool hidden = arguments.GetBoolean(4, false);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -538,14 +538,14 @@ NAN_METHOD(Sheet::SetCol) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetRow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     double height = arguments.GetDouble(1);
@@ -553,7 +553,7 @@ NAN_METHOD(Sheet::SetRow) {
     bool hidden = arguments.GetBoolean(3, false);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (format) {
         ASSERT_SAME_BOOK(that, format);
@@ -565,90 +565,90 @@ NAN_METHOD(Sheet::SetRow) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RowHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rowHidden(row)));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rowHidden(row)));
 }
 
 
 NAN_METHOD(Sheet::SetRowHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     bool hidden = arguments.GetBoolean(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setRowHidden(row, hidden)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ColHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int col = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->colHidden(col)));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->colHidden(col)));
 }
 
 
 NAN_METHOD(Sheet::SetColHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int col = arguments.GetInt(0);
     bool hidden = arguments.GetBoolean(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setColHidden(col, hidden)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GetMerge) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast;
@@ -659,20 +659,20 @@ NAN_METHOD(Sheet::GetMerge) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("rowFirst"), NanNew<Integer>(rowFirst));
-    result->Set(NanNew<String>("rowLast"),  NanNew<Integer>(rowLast));
-    result->Set(NanNew<String>("colFirst"), NanNew<Integer>(colFirst));
-    result->Set(NanNew<String>("colLast"),  NanNew<Integer>(colLast));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
+    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::SetMerge) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst = arguments.GetInt(0);
     int rowLast = arguments.GetInt(1);
@@ -680,56 +680,56 @@ NAN_METHOD(Sheet::SetMerge) {
     int colLast = arguments.GetInt(3);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
     
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::DelMerge) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->delMerge(row, col)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::PictureSize) {
-    NanScope();
+    Nan::HandleScope scope;
     
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->pictureSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->pictureSize()));
 }
 
 
 NAN_METHOD(Sheet::GetPicture) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int sheetIndex = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int rowTop, colLeft, rowBottom, colRight, width, height,
@@ -742,25 +742,25 @@ NAN_METHOD(Sheet::GetPicture) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("bookIndex"),    NanNew<Integer>(bookIndex));
-    result->Set(NanNew<String>("rowTop"),       NanNew<Integer>(rowTop));
-    result->Set(NanNew<String>("colLeft"),      NanNew<Integer>(colLeft));
-    result->Set(NanNew<String>("rowBottom"),    NanNew<Integer>(rowBottom));
-    result->Set(NanNew<String>("colRight"),     NanNew<Integer>(colRight));
-    result->Set(NanNew<String>("width"),        NanNew<Integer>(width));
-    result->Set(NanNew<String>("height"),       NanNew<Integer>(height));
-    result->Set(NanNew<String>("offset_x"),     NanNew<Integer>(offset_x));
-    result->Set(NanNew<String>("offset_y"),     NanNew<Integer>(offset_y));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("bookIndex").ToLocalChecked(),    Nan::New<Integer>(bookIndex));
+    result->Set(Nan::New<String>("rowTop").ToLocalChecked(),       Nan::New<Integer>(rowTop));
+    result->Set(Nan::New<String>("colLeft").ToLocalChecked(),      Nan::New<Integer>(colLeft));
+    result->Set(Nan::New<String>("rowBottom").ToLocalChecked(),    Nan::New<Integer>(rowBottom));
+    result->Set(Nan::New<String>("colRight").ToLocalChecked(),     Nan::New<Integer>(colRight));
+    result->Set(Nan::New<String>("width").ToLocalChecked(),        Nan::New<Integer>(width));
+    result->Set(Nan::New<String>("height").ToLocalChecked(),       Nan::New<Integer>(height));
+    result->Set(Nan::New<String>("offset_x").ToLocalChecked(),     Nan::New<Integer>(offset_x));
+    result->Set(Nan::New<String>("offset_y").ToLocalChecked(),     Nan::New<Integer>(offset_y));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::SetPicture) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1),
@@ -770,19 +770,19 @@ NAN_METHOD(Sheet::SetPicture) {
         offset_y = arguments.GetInt(5, 0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetPicture2) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row         = arguments.GetInt(0),
         col         = arguments.GetInt(1),
@@ -793,224 +793,224 @@ NAN_METHOD(Sheet::SetPicture2) {
         offset_y    = arguments.GetInt(6, 0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x,
         offset_y);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GetHorPageBreak) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreak(index)));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreak(index)));
 }
 
 
 NAN_METHOD(Sheet::GetHorPageBreakSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getHorPageBreakSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreakSize()));
 }
 
 
 NAN_METHOD(Sheet::GetVerPageBreak) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreak(index)));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreak(index)));
 }
 
 
 NAN_METHOD(Sheet::GetVerPageBreakSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->getVerPageBreakSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreakSize()));
 }
 
 
 NAN_METHOD(Sheet::SetHorPageBreak) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0);
     bool pagebreak = arguments.GetBoolean(1, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setHorPageBreak(row, pagebreak)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetVerPageBreak) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int col = arguments.GetInt(0);
     bool pagebreak = arguments.GetBoolean(1, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setVerPageBreak(col, pagebreak)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Split) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->split(row, col);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GroupRows) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst = arguments.GetInt(0),
         rowLast = arguments.GetInt(1);
     bool collapsed = arguments.GetBoolean(2, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->groupRows(rowFirst, rowLast, collapsed)) {
         return util::ThrowLibxlError(that);
     };
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GroupCols) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst = arguments.GetInt(0),
         colLast = arguments.GetInt(1);
     bool collapsed = arguments.GetBoolean(2, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->groupCols(colFirst, colLast, collapsed)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GroupSummaryBelow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->groupSummaryBelow()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryBelow()));
 }
 
 
 NAN_METHOD(Sheet::SetGroupSummaryBelow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool summaryBelow = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setGroupSummaryBelow(summaryBelow);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GroupSummaryRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->groupSummaryRight()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryRight()));
 }
 
 
 NAN_METHOD(Sheet::SetGroupSummaryRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool summaryRight = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setGroupSummaryRight(summaryRight);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Clear) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0, 0),
         rowLast     = arguments.GetInt(1, 65535),
@@ -1018,39 +1018,39 @@ NAN_METHOD(Sheet::Clear) {
         colLast     = arguments.GetInt(3, 255);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->clear(rowFirst, rowLast, colFirst, colLast);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::InsertRow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::InsertRowAsync) {
     class Worker : public AsyncWorker<Sheet> {
         public:
-            Worker(NanCallback* callback, Local<Object> that, int rowFirst,
+            Worker(Nan::Callback* callback, Local<Object> that, int rowFirst,
                     int rowLast) :
                 AsyncWorker<Sheet>(callback, that),
                 rowFirst(rowFirst),
@@ -1067,49 +1067,49 @@ NAN_METHOD(Sheet::InsertRowAsync) {
             int rowFirst, rowLast;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1);
     Handle<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback),
-        args.This(), rowFirst, rowLast));
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback),
+        info.This(), rowFirst, rowLast));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::InsertCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst    = arguments.GetInt(0),
         colLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::InsertColAsync) {
     class Worker : public AsyncWorker<Sheet> {
         public:
-            Worker(NanCallback* callback, Local<Object> that,
+            Worker(Nan::Callback* callback, Local<Object> that,
                     int colFirst, int colLast) :
                 AsyncWorker<Sheet>(callback, that),
                 colFirst(colFirst),
@@ -1126,49 +1126,49 @@ NAN_METHOD(Sheet::InsertColAsync) {
             int colFirst, colLast;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst    = arguments.GetInt(0),
         colLast     = arguments.GetInt(1);
     Handle<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(),
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(),
         colFirst, colLast));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RemoveRow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->removeRow(rowFirst, rowLast)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RemoveRowAsync) {
     class Worker : public AsyncWorker<Sheet> {
         public:
-            Worker(NanCallback* callback, Local<Object> that,
+            Worker(Nan::Callback* callback, Local<Object> that,
                     int rowFirst, int rowLast) :
                 AsyncWorker<Sheet>(callback, that),
                 rowFirst(rowFirst),
@@ -1185,29 +1185,29 @@ NAN_METHOD(Sheet::RemoveRowAsync) {
             int rowFirst, rowLast;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst = arguments.GetInt(0),
         rowLast = arguments.GetInt(1);
     Handle<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(),
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(),
         rowFirst, rowLast));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RemoveColAsync) {
     class Worker : public AsyncWorker<Sheet> {
         public:
-            Worker(NanCallback* callback, Local<Object> that,
+            Worker(Nan::Callback* callback, Local<Object> that,
                     int colFirst, int colLast) :
                 AsyncWorker<Sheet>(callback, that),
                 colFirst(colFirst),
@@ -1224,49 +1224,49 @@ NAN_METHOD(Sheet::RemoveColAsync) {
             int colFirst, colLast;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst = arguments.GetInt(0),
         colLast = arguments.GetInt(1);
     Handle<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(),
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(),
         colFirst, colLast));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RemoveCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst    = arguments.GetInt(0),
         colLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->removeCol(colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::CopyCell) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowSrc = arguments.GetInt(0),
         colSrc = arguments.GetInt(1),
@@ -1274,567 +1274,567 @@ NAN_METHOD(Sheet::CopyCell) {
         colDst = arguments.GetInt(3);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->copyCell(rowSrc, colSrc, rowDst, colDst)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::FirstRow) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->firstRow()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstRow()));
 }
 
 
 NAN_METHOD(Sheet::LastRow) {
-    NanScope();
+    Nan::HandleScope scope;
 
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->lastRow()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastRow()));
 }
 
 
 NAN_METHOD(Sheet::FirstCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->firstCol()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstCol()));
 }
 
 NAN_METHOD(Sheet::LastCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->lastCol()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastCol()));
 }
 
 
 NAN_METHOD(Sheet::DisplayGridlines) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->displayGridlines()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->displayGridlines()));
 }
 
 
 NAN_METHOD(Sheet::SetDisplayGridlines) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool displayGridlines = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
     
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setDisplayGridlines(displayGridlines);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::PrintGridlines) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->printGridlines()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printGridlines()));
 }
 
 
 NAN_METHOD(Sheet::SetPrintGridlines) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool printGridlines = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintGridlines(printGridlines);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Zoom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->zoom()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->zoom()));
 }
 
 
 NAN_METHOD(Sheet::SetZoom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int zoom = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setZoom(zoom);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::PrintZoom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->printZoom()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->printZoom()));
 }
 
 
 NAN_METHOD(Sheet::SetPrintZoom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int zoom = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintZoom(zoom);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GetPrintFit) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int wPages, hPages;
 
     if (that->GetWrapped()->getPrintFit(&wPages, &hPages)) {
-        Local<Object> result = NanNew<Object>();
+        Local<Object> result = Nan::New<Object>();
 
-        result->Set(NanNew<String>("wPages"),   NanNew<Integer>(wPages));
-        result->Set(NanNew<String>("hPages"),   NanNew<Integer>(hPages));
+        result->Set(Nan::New<String>("wPages").ToLocalChecked(),   Nan::New<Integer>(wPages));
+        result->Set(Nan::New<String>("hPages").ToLocalChecked(),   Nan::New<Integer>(hPages));
 
-        NanReturnValue(result);
+        info.GetReturnValue().Set(result);
     } else {
-        NanReturnValue(NanFalse());
+        info.GetReturnValue().Set(Nan::False());
     }
 }
 
 
 NAN_METHOD(Sheet::SetPrintFit) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int wPages = arguments.GetInt(0, 1),
         hPages = arguments.GetInt(1, 1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintFit(wPages, hPages);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Landscape) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->landscape()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->landscape()));
 }
 
 
 NAN_METHOD(Sheet::SetLandscape) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool landscape = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setLandscape(landscape);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Paper) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->paper()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->paper()));
 }
 
 
 NAN_METHOD(Sheet::SetPaper) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int paper = arguments.GetInt(0, libxl::PAPER_DEFAULT);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPaper(static_cast<libxl::Paper>(paper));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Header) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<String>(that->GetWrapped()->header()));
+    info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->header()).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::SetHeader) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value header(arguments.GetString(0));
     double margin = arguments.GetDouble(1, 0.5);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setHeader(*header, margin)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::HeaderMargin) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->headerMargin()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->headerMargin()));
 }
 
 
 
 NAN_METHOD(Sheet::Footer) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<String>(that->GetWrapped()->footer()));
+    info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->footer()).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::SetFooter) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value footer(arguments.GetString(0));
     double margin = arguments.GetDouble(1, 0.5);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setFooter(*footer, margin)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::FooterMargin) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->footerMargin()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->footerMargin()));
 }
 
 
 NAN_METHOD(Sheet::HCenter) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->hCenter()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->hCenter()));
 }
 
 
 NAN_METHOD(Sheet::SetHCenter) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool center = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setHCenter(center);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::VCenter) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->vCenter()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->vCenter()));
 }
 
 
 NAN_METHOD(Sheet::SetVCenter) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool center = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setVCenter(center);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::MarginLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->marginLeft()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginLeft()));
 }
 
 
 NAN_METHOD(Sheet::SetMarginLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     double margin = arguments.GetDouble(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setMarginLeft(margin);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::MarginRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->marginRight()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginRight()));
 }
 
 
 NAN_METHOD(Sheet::SetMarginRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     double margin = arguments.GetDouble(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setMarginRight(margin);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::MarginTop) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->marginTop()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginTop()));
 }
 
 
 NAN_METHOD(Sheet::SetMarginTop) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     double margin = arguments.GetDouble(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setMarginTop(margin);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::MarginBottom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->marginBottom()));
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginBottom()));
 }
 
 
 NAN_METHOD(Sheet::SetMarginBottom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     double margin = arguments.GetDouble(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setMarginBottom(margin);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::PrintRowCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->printRowCol()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printRowCol()));
 }
 
 NAN_METHOD(Sheet::SetPrintRowCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool printRowCol = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintRowCol(printRowCol);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetPrintRepeatRows) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintRepeatRows(rowFirst, rowLast);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetPrintRepeatCols) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int colFirst    = arguments.GetInt(0),
         colLast     = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintRepeatCols(colFirst, colLast);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::SetPrintArea) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1),
@@ -1842,49 +1842,49 @@ NAN_METHOD(Sheet::SetPrintArea) {
         colLast     = arguments.GetInt(3);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPrintArea(rowFirst, rowLast, colFirst, colLast);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ClearPrintRepeats) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->clearPrintRepeats();
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::ClearPrintArea) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->clearPrintArea();
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GetNamedRange) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast;
@@ -1896,21 +1896,21 @@ NAN_METHOD(Sheet::GetNamedRange) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("rowFirst"), NanNew<Integer>(rowFirst));
-    result->Set(NanNew<String>("rowLast"),  NanNew<Integer>(rowLast));
-    result->Set(NanNew<String>("colFirst"), NanNew<Integer>(colFirst));
-    result->Set(NanNew<String>("colLast"),  NanNew<Integer>(colLast));
-    result->Set(NanNew<String>("hidden"),   NanNew<Boolean>(hidden));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
+    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
+    result->Set(Nan::New<String>("hidden").ToLocalChecked(),   Nan::New<Boolean>(hidden));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::SetNamedRange) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     int rowFirst    = arguments.GetInt(1),
@@ -1920,7 +1920,7 @@ NAN_METHOD(Sheet::SetNamedRange) {
         scopeId     = arguments.GetInt(5, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setNamedRange(*name,
@@ -1929,20 +1929,20 @@ NAN_METHOD(Sheet::SetNamedRange) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::DelNamedRange) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->delNamedRange(*name,
@@ -1951,29 +1951,29 @@ NAN_METHOD(Sheet::DelNamedRange) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::NamedRangeSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->namedRangeSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->namedRangeSize()));
 }
 
 
 NAN_METHOD(Sheet::NamedRange) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int rowFirst, rowLast, colFirst, colLast, scopeId;
@@ -1986,173 +1986,173 @@ NAN_METHOD(Sheet::NamedRange) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("name"),     NanNew<String> (name));
-    result->Set(NanNew<String>("rowFirst"), NanNew<Integer>(rowFirst));
-    result->Set(NanNew<String>("rowLast"),  NanNew<Integer>(rowLast));
-    result->Set(NanNew<String>("colFirst"), NanNew<Integer>(colFirst));
-    result->Set(NanNew<String>("colLast"),  NanNew<Integer>(colLast));
-    result->Set(NanNew<String>("scopeId"),  NanNew<Integer>(scopeId));
-    result->Set(NanNew<String>("hidden"),   NanNew<Boolean>(hidden));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("name").ToLocalChecked(),     Nan::New<String> (name).ToLocalChecked());
+    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
+    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
+    result->Set(Nan::New<String>("scopeId").ToLocalChecked(),  Nan::New<Integer>(scopeId));
+    result->Set(Nan::New<String>("hidden").ToLocalChecked(),   Nan::New<Boolean>(hidden));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::Name) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<String>(that->GetWrapped()->name()));
+    info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->name()).ToLocalChecked());
 }
 
 
 NAN_METHOD(Sheet::SetName) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setName(*name);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Protect) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->protect()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->protect()));
 }
 
 
 NAN_METHOD(Sheet::SetProtect) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool protect = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setProtect(protect);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::RightToLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rightToLeft()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rightToLeft()));
 }
 
 
 NAN_METHOD(Sheet::SetRightToLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool rightToLeft = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setRightToLeft(rightToLeft);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::Hidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->hidden()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->hidden()));
 }
 
 
 NAN_METHOD(Sheet::SetHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     
     int state = arguments.GetInt(0, libxl::SHEETSTATE_HIDDEN);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setHidden(static_cast<libxl::SheetState>(state))) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::GetTopLeftView) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int row, col;
     that->GetWrapped()->getTopLeftView(&row, &col);
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("row"), NanNew<Integer>(row));
-    result->Set(NanNew<String>("col"), NanNew<Integer>(col));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
+    result->Set(Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::SetTopLeftView) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setTopLeftView(row, col);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Sheet::AddrToRowCol) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value addr(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int row = -1, col = -1;
@@ -2160,20 +2160,20 @@ NAN_METHOD(Sheet::AddrToRowCol) {
 
     that->GetWrapped()->addrToRowCol(*addr, &row, &col, &rowRelative, &colRelative);
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("row"),          NanNew<Integer>(row));
-    result->Set(NanNew<String>("col"),          NanNew<Integer>(col));
-    result->Set(NanNew<String>("rowRelative"),  NanNew<Boolean>(rowRelative));
-    result->Set(NanNew<String>("colRelative"),  NanNew<Boolean>(colRelative));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("row").ToLocalChecked(),          Nan::New<Integer>(row));
+    result->Set(Nan::New<String>("col").ToLocalChecked(),          Nan::New<Integer>(col));
+    result->Set(Nan::New<String>("rowRelative").ToLocalChecked(),  Nan::New<Boolean>(rowRelative));
+    result->Set(Nan::New<String>("colRelative").ToLocalChecked(),  Nan::New<Boolean>(colRelative));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Sheet::RowColToAddr) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int row = arguments.GetInt(0),
         col = arguments.GetInt(1);
@@ -2181,7 +2181,7 @@ NAN_METHOD(Sheet::RowColToAddr) {
          colRelative = arguments.GetBoolean(3, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Sheet* that = Unwrap(args.This());
+    Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* addr = that->GetWrapped()->rowColToAddr(
@@ -2191,7 +2191,7 @@ NAN_METHOD(Sheet::RowColToAddr) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(NanNew<String>(addr));
+    info.GetReturnValue().Set(Nan::New<String>(addr).ToLocalChecked());
 }
 
 
@@ -2201,135 +2201,135 @@ NAN_METHOD(Sheet::RowColToAddr) {
 void Sheet::Initialize(Handle<Object> exports) {
     using namespace libxl;
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
-    t->SetClassName(NanNew<String>("Sheet"));
+    Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(util::StubConstructor);
+    t->SetClassName(Nan::New<String>("Sheet").ToLocalChecked());
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Sheet>(t);
 
-    NODE_SET_PROTOTYPE_METHOD(t, "cellType", CellType);
-    NODE_SET_PROTOTYPE_METHOD(t, "isFormula", IsFormula);
-    NODE_SET_PROTOTYPE_METHOD(t, "cellFormat", CellFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "setCellFormat", SetCellFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "readStr", ReadStr);
-    NODE_SET_PROTOTYPE_METHOD(t, "readString", ReadStr);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeString", WriteStr);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeStr", WriteStr);
-    NODE_SET_PROTOTYPE_METHOD(t, "readNum", ReadNum);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeNum", WriteNum);
-    NODE_SET_PROTOTYPE_METHOD(t, "readBool", ReadBool);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeBool", WriteBool);
-    NODE_SET_PROTOTYPE_METHOD(t, "readBlank", ReadBlank);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeBlank", WriteBlank);
-    NODE_SET_PROTOTYPE_METHOD(t, "readFormula", ReadFormula);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeFormula", WriteFormula);
-    NODE_SET_PROTOTYPE_METHOD(t, "readComment", ReadComment);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeComment", WriteComment);
-    NODE_SET_PROTOTYPE_METHOD(t, "isDate", IsDate);
-    NODE_SET_PROTOTYPE_METHOD(t, "readError", ReadError);
-    NODE_SET_PROTOTYPE_METHOD(t, "colWidth", ColWidth);
-    NODE_SET_PROTOTYPE_METHOD(t, "rowHeight", RowHeight);
-    NODE_SET_PROTOTYPE_METHOD(t, "setCol", SetCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRow", SetRow);
-    NODE_SET_PROTOTYPE_METHOD(t, "rowHidden", RowHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRowHidden", SetRowHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "colHidden", ColHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "setColHidden", SetColHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "getMerge", GetMerge);
-    NODE_SET_PROTOTYPE_METHOD(t, "setMerge", SetMerge);
-    NODE_SET_PROTOTYPE_METHOD(t, "delMerge", DelMerge);
-    NODE_SET_PROTOTYPE_METHOD(t, "pictureSize", PictureSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "getPicture", GetPicture);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPicture", SetPicture);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPicture2", SetPicture2);
-    NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreak", GetHorPageBreak);
-    NODE_SET_PROTOTYPE_METHOD(t, "getHorPageBreakSize", GetHorPageBreakSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "getVerPageBreak", GetVerPageBreak);
-    NODE_SET_PROTOTYPE_METHOD(t, "getVerPageBreakSize", GetVerPageBreakSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "setHorPageBreak", SetHorPageBreak);
-    NODE_SET_PROTOTYPE_METHOD(t, "setVerPageBreak", SetVerPageBreak);
-    NODE_SET_PROTOTYPE_METHOD(t, "split", Split);
-    NODE_SET_PROTOTYPE_METHOD(t, "groupRows", GroupRows);
-    NODE_SET_PROTOTYPE_METHOD(t, "groupCols", GroupCols);
-    NODE_SET_PROTOTYPE_METHOD(t, "groupSummaryBelow", GroupSummaryBelow);
-    NODE_SET_PROTOTYPE_METHOD(t, "setGroupSummaryBelow", SetGroupSummaryBelow);
-    NODE_SET_PROTOTYPE_METHOD(t, "groupSummaryRight", GroupSummaryRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "setGroupSummaryRight", SetGroupSummaryRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "clear", Clear);
-    NODE_SET_PROTOTYPE_METHOD(t, "insertRow", InsertRow);
-    NODE_SET_PROTOTYPE_METHOD(t, "insertRowAsync", InsertRowAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "insertCol", InsertCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "insertColAsync", InsertColAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "removeRow", RemoveRow);
-    NODE_SET_PROTOTYPE_METHOD(t, "removeRowAsync", RemoveRowAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "removeCol", RemoveCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "removeColAsync", RemoveColAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "copyCell", CopyCell);
-    NODE_SET_PROTOTYPE_METHOD(t, "firstRow", FirstRow);
-    NODE_SET_PROTOTYPE_METHOD(t, "lastRow", LastRow);
-    NODE_SET_PROTOTYPE_METHOD(t, "firstCol", FirstCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "lastCol", LastCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "displayGridlines", DisplayGridlines);
-    NODE_SET_PROTOTYPE_METHOD(t, "setDisplayGridlines", SetDisplayGridlines);
-    NODE_SET_PROTOTYPE_METHOD(t, "printGridlines", PrintGridlines);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintGridlines", SetPrintGridlines);
-    NODE_SET_PROTOTYPE_METHOD(t, "zoom", Zoom);
-    NODE_SET_PROTOTYPE_METHOD(t, "setZoom", SetZoom);
-    NODE_SET_PROTOTYPE_METHOD(t, "printZoom", PrintZoom);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintZoom", SetPrintZoom);
-    NODE_SET_PROTOTYPE_METHOD(t, "getPrintFit", GetPrintFit);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintFit", SetPrintFit);
-    NODE_SET_PROTOTYPE_METHOD(t, "landscape", Landscape);
-    NODE_SET_PROTOTYPE_METHOD(t, "setLandscape", SetLandscape);
-    NODE_SET_PROTOTYPE_METHOD(t, "paper", Paper);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPaper", SetPaper);
-    NODE_SET_PROTOTYPE_METHOD(t, "header", Header);
-    NODE_SET_PROTOTYPE_METHOD(t, "setHeader", SetHeader);
-    NODE_SET_PROTOTYPE_METHOD(t, "headerMargin", HeaderMargin);
-    NODE_SET_PROTOTYPE_METHOD(t, "footer", Footer);
-    NODE_SET_PROTOTYPE_METHOD(t, "setFooter", SetFooter);
-    NODE_SET_PROTOTYPE_METHOD(t, "footerMargin", FooterMargin);
-    NODE_SET_PROTOTYPE_METHOD(t, "hCenter", HCenter);
-    NODE_SET_PROTOTYPE_METHOD(t, "setHCenter", SetHCenter);
-    NODE_SET_PROTOTYPE_METHOD(t, "vCenter", VCenter);
-    NODE_SET_PROTOTYPE_METHOD(t, "setVCenter", SetVCenter);
-    NODE_SET_PROTOTYPE_METHOD(t, "marginLeft", MarginLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "setMarginLeft", SetMarginLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "marginRight", MarginRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "setMarginRight", SetMarginRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "marginTop", MarginTop);
-    NODE_SET_PROTOTYPE_METHOD(t, "setMarginTop", SetMarginTop);
-    NODE_SET_PROTOTYPE_METHOD(t, "marginBottom", MarginBottom);
-    NODE_SET_PROTOTYPE_METHOD(t, "setMarginBottom", SetMarginBottom);
-    NODE_SET_PROTOTYPE_METHOD(t, "printRowCol", PrintRowCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintRowCol", SetPrintRowCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintRepeatRows", SetPrintRepeatRows);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintRepeatCols", SetPrintRepeatCols);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPrintArea", SetPrintArea);
-    NODE_SET_PROTOTYPE_METHOD(t, "clearPrintRepeats", ClearPrintRepeats);
-    NODE_SET_PROTOTYPE_METHOD(t, "clearPrintArea", ClearPrintArea);
-    NODE_SET_PROTOTYPE_METHOD(t, "getNamedRange", GetNamedRange);
-    NODE_SET_PROTOTYPE_METHOD(t, "setNamedRange", SetNamedRange);
-    NODE_SET_PROTOTYPE_METHOD(t, "delNamedRange", DelNamedRange);
-    NODE_SET_PROTOTYPE_METHOD(t, "namedRangeSize", NamedRangeSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "namedRange", NamedRange);
-    NODE_SET_PROTOTYPE_METHOD(t, "name", Name);
-    NODE_SET_PROTOTYPE_METHOD(t, "setName",SetName);
-    NODE_SET_PROTOTYPE_METHOD(t, "protect", Protect);
-    NODE_SET_PROTOTYPE_METHOD(t, "setProtect", SetProtect);
-    NODE_SET_PROTOTYPE_METHOD(t, "rightToLeft", RightToLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRightToLeft", SetRightToLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "hidden", Hidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "setHidden", SetHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "getTopLeftView", GetTopLeftView);
-    NODE_SET_PROTOTYPE_METHOD(t, "setTopLeftView", SetTopLeftView);
-    NODE_SET_PROTOTYPE_METHOD(t, "addrToRowCol", AddrToRowCol);
-    NODE_SET_PROTOTYPE_METHOD(t, "rowColToAddr", RowColToAddr);
+    Nan::SetPrototypeMethod(t, "cellType", CellType);
+    Nan::SetPrototypeMethod(t, "isFormula", IsFormula);
+    Nan::SetPrototypeMethod(t, "cellFormat", CellFormat);
+    Nan::SetPrototypeMethod(t, "setCellFormat", SetCellFormat);
+    Nan::SetPrototypeMethod(t, "readStr", ReadStr);
+    Nan::SetPrototypeMethod(t, "readString", ReadStr);
+    Nan::SetPrototypeMethod(t, "writeString", WriteStr);
+    Nan::SetPrototypeMethod(t, "writeStr", WriteStr);
+    Nan::SetPrototypeMethod(t, "readNum", ReadNum);
+    Nan::SetPrototypeMethod(t, "writeNum", WriteNum);
+    Nan::SetPrototypeMethod(t, "readBool", ReadBool);
+    Nan::SetPrototypeMethod(t, "writeBool", WriteBool);
+    Nan::SetPrototypeMethod(t, "readBlank", ReadBlank);
+    Nan::SetPrototypeMethod(t, "writeBlank", WriteBlank);
+    Nan::SetPrototypeMethod(t, "readFormula", ReadFormula);
+    Nan::SetPrototypeMethod(t, "writeFormula", WriteFormula);
+    Nan::SetPrototypeMethod(t, "readComment", ReadComment);
+    Nan::SetPrototypeMethod(t, "writeComment", WriteComment);
+    Nan::SetPrototypeMethod(t, "isDate", IsDate);
+    Nan::SetPrototypeMethod(t, "readError", ReadError);
+    Nan::SetPrototypeMethod(t, "colWidth", ColWidth);
+    Nan::SetPrototypeMethod(t, "rowHeight", RowHeight);
+    Nan::SetPrototypeMethod(t, "setCol", SetCol);
+    Nan::SetPrototypeMethod(t, "setRow", SetRow);
+    Nan::SetPrototypeMethod(t, "rowHidden", RowHidden);
+    Nan::SetPrototypeMethod(t, "setRowHidden", SetRowHidden);
+    Nan::SetPrototypeMethod(t, "colHidden", ColHidden);
+    Nan::SetPrototypeMethod(t, "setColHidden", SetColHidden);
+    Nan::SetPrototypeMethod(t, "getMerge", GetMerge);
+    Nan::SetPrototypeMethod(t, "setMerge", SetMerge);
+    Nan::SetPrototypeMethod(t, "delMerge", DelMerge);
+    Nan::SetPrototypeMethod(t, "pictureSize", PictureSize);
+    Nan::SetPrototypeMethod(t, "getPicture", GetPicture);
+    Nan::SetPrototypeMethod(t, "setPicture", SetPicture);
+    Nan::SetPrototypeMethod(t, "setPicture2", SetPicture2);
+    Nan::SetPrototypeMethod(t, "getHorPageBreak", GetHorPageBreak);
+    Nan::SetPrototypeMethod(t, "getHorPageBreakSize", GetHorPageBreakSize);
+    Nan::SetPrototypeMethod(t, "getVerPageBreak", GetVerPageBreak);
+    Nan::SetPrototypeMethod(t, "getVerPageBreakSize", GetVerPageBreakSize);
+    Nan::SetPrototypeMethod(t, "setHorPageBreak", SetHorPageBreak);
+    Nan::SetPrototypeMethod(t, "setVerPageBreak", SetVerPageBreak);
+    Nan::SetPrototypeMethod(t, "split", Split);
+    Nan::SetPrototypeMethod(t, "groupRows", GroupRows);
+    Nan::SetPrototypeMethod(t, "groupCols", GroupCols);
+    Nan::SetPrototypeMethod(t, "groupSummaryBelow", GroupSummaryBelow);
+    Nan::SetPrototypeMethod(t, "setGroupSummaryBelow", SetGroupSummaryBelow);
+    Nan::SetPrototypeMethod(t, "groupSummaryRight", GroupSummaryRight);
+    Nan::SetPrototypeMethod(t, "setGroupSummaryRight", SetGroupSummaryRight);
+    Nan::SetPrototypeMethod(t, "clear", Clear);
+    Nan::SetPrototypeMethod(t, "insertRow", InsertRow);
+    Nan::SetPrototypeMethod(t, "insertRowAsync", InsertRowAsync);
+    Nan::SetPrototypeMethod(t, "insertCol", InsertCol);
+    Nan::SetPrototypeMethod(t, "insertColAsync", InsertColAsync);
+    Nan::SetPrototypeMethod(t, "removeRow", RemoveRow);
+    Nan::SetPrototypeMethod(t, "removeRowAsync", RemoveRowAsync);
+    Nan::SetPrototypeMethod(t, "removeCol", RemoveCol);
+    Nan::SetPrototypeMethod(t, "removeColAsync", RemoveColAsync);
+    Nan::SetPrototypeMethod(t, "copyCell", CopyCell);
+    Nan::SetPrototypeMethod(t, "firstRow", FirstRow);
+    Nan::SetPrototypeMethod(t, "lastRow", LastRow);
+    Nan::SetPrototypeMethod(t, "firstCol", FirstCol);
+    Nan::SetPrototypeMethod(t, "lastCol", LastCol);
+    Nan::SetPrototypeMethod(t, "displayGridlines", DisplayGridlines);
+    Nan::SetPrototypeMethod(t, "setDisplayGridlines", SetDisplayGridlines);
+    Nan::SetPrototypeMethod(t, "printGridlines", PrintGridlines);
+    Nan::SetPrototypeMethod(t, "setPrintGridlines", SetPrintGridlines);
+    Nan::SetPrototypeMethod(t, "zoom", Zoom);
+    Nan::SetPrototypeMethod(t, "setZoom", SetZoom);
+    Nan::SetPrototypeMethod(t, "printZoom", PrintZoom);
+    Nan::SetPrototypeMethod(t, "setPrintZoom", SetPrintZoom);
+    Nan::SetPrototypeMethod(t, "getPrintFit", GetPrintFit);
+    Nan::SetPrototypeMethod(t, "setPrintFit", SetPrintFit);
+    Nan::SetPrototypeMethod(t, "landscape", Landscape);
+    Nan::SetPrototypeMethod(t, "setLandscape", SetLandscape);
+    Nan::SetPrototypeMethod(t, "paper", Paper);
+    Nan::SetPrototypeMethod(t, "setPaper", SetPaper);
+    Nan::SetPrototypeMethod(t, "header", Header);
+    Nan::SetPrototypeMethod(t, "setHeader", SetHeader);
+    Nan::SetPrototypeMethod(t, "headerMargin", HeaderMargin);
+    Nan::SetPrototypeMethod(t, "footer", Footer);
+    Nan::SetPrototypeMethod(t, "setFooter", SetFooter);
+    Nan::SetPrototypeMethod(t, "footerMargin", FooterMargin);
+    Nan::SetPrototypeMethod(t, "hCenter", HCenter);
+    Nan::SetPrototypeMethod(t, "setHCenter", SetHCenter);
+    Nan::SetPrototypeMethod(t, "vCenter", VCenter);
+    Nan::SetPrototypeMethod(t, "setVCenter", SetVCenter);
+    Nan::SetPrototypeMethod(t, "marginLeft", MarginLeft);
+    Nan::SetPrototypeMethod(t, "setMarginLeft", SetMarginLeft);
+    Nan::SetPrototypeMethod(t, "marginRight", MarginRight);
+    Nan::SetPrototypeMethod(t, "setMarginRight", SetMarginRight);
+    Nan::SetPrototypeMethod(t, "marginTop", MarginTop);
+    Nan::SetPrototypeMethod(t, "setMarginTop", SetMarginTop);
+    Nan::SetPrototypeMethod(t, "marginBottom", MarginBottom);
+    Nan::SetPrototypeMethod(t, "setMarginBottom", SetMarginBottom);
+    Nan::SetPrototypeMethod(t, "printRowCol", PrintRowCol);
+    Nan::SetPrototypeMethod(t, "setPrintRowCol", SetPrintRowCol);
+    Nan::SetPrototypeMethod(t, "setPrintRepeatRows", SetPrintRepeatRows);
+    Nan::SetPrototypeMethod(t, "setPrintRepeatCols", SetPrintRepeatCols);
+    Nan::SetPrototypeMethod(t, "setPrintArea", SetPrintArea);
+    Nan::SetPrototypeMethod(t, "clearPrintRepeats", ClearPrintRepeats);
+    Nan::SetPrototypeMethod(t, "clearPrintArea", ClearPrintArea);
+    Nan::SetPrototypeMethod(t, "getNamedRange", GetNamedRange);
+    Nan::SetPrototypeMethod(t, "setNamedRange", SetNamedRange);
+    Nan::SetPrototypeMethod(t, "delNamedRange", DelNamedRange);
+    Nan::SetPrototypeMethod(t, "namedRangeSize", NamedRangeSize);
+    Nan::SetPrototypeMethod(t, "namedRange", NamedRange);
+    Nan::SetPrototypeMethod(t, "name", Name);
+    Nan::SetPrototypeMethod(t, "setName",SetName);
+    Nan::SetPrototypeMethod(t, "protect", Protect);
+    Nan::SetPrototypeMethod(t, "setProtect", SetProtect);
+    Nan::SetPrototypeMethod(t, "rightToLeft", RightToLeft);
+    Nan::SetPrototypeMethod(t, "setRightToLeft", SetRightToLeft);
+    Nan::SetPrototypeMethod(t, "hidden", Hidden);
+    Nan::SetPrototypeMethod(t, "setHidden", SetHidden);
+    Nan::SetPrototypeMethod(t, "getTopLeftView", GetTopLeftView);
+    Nan::SetPrototypeMethod(t, "setTopLeftView", SetTopLeftView);
+    Nan::SetPrototypeMethod(t, "addrToRowCol", AddrToRowCol);
+    Nan::SetPrototypeMethod(t, "rowColToAddr", RowColToAddr);
 
     t->ReadOnlyPrototype();
-    NanAssignPersistent(constructor, t->GetFunction());
+    constructor.Reset(t->GetFunction());
 
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_EMPTY);
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_NUMBER);

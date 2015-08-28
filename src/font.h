@@ -45,7 +45,7 @@ class Font : public Wrapper<libxl::Font> , public BookWrapper
             return Wrapper<libxl::Font>::Unwrap<Font>(object);
         }
 
-        static v8::Handle<v8::Object> NewInstance(
+        static v8::Local<v8::Object> NewInstance(
             libxl::Font* font,
             v8::Handle<v8::Value> book
         );

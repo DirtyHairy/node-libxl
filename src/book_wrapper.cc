@@ -29,28 +29,28 @@ using namespace v8;
 namespace node_libxl {
 
 
-BookWrapper::BookWrapper(Handle<Value> bookHandle)
+BookWrapper::BookWrapper(Local<Value> bookHandle)
 {
-    NanAssignPersistent(this->bookHandle, bookHandle);
+    this->bookHandle.Reset(bookHandle);
 }
 
 
 BookWrapper::~BookWrapper() {
-    NanDisposePersistent(bookHandle);
+    bookHandle.Reset();
 }
 
 
 v8::Handle<v8::Value> BookWrapper::GetBookHandle() {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
-    return NanEscapeScope(NanNew(bookHandle));
+    return scope.Escape(Nan::New(bookHandle));
 }
 
 
 Book* BookWrapper::GetBook() {
-    NanScope();
+    Nan::HandleScope scope;
 
-    return Book::Unwrap(NanNew(bookHandle));
+    return Book::Unwrap(Nan::New(bookHandle));
 }
 
 

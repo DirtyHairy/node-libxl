@@ -29,8 +29,8 @@
 namespace node_libxl {
 
 
-ArgumentHelper::ArgumentHelper(_NAN_METHOD_ARGS_TYPE args) :
-    arguments(args),
+ArgumentHelper::ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info) :
+    arguments(info),
     exceptionRaised(false)
 {}
 
@@ -83,51 +83,51 @@ bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
 }
 
 
-v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
-    NanEscapableScope();
+v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
+    Nan::EscapableHandleScope scope;
 
     if (!arguments[pos]->IsString()) {
         RaiseException("string required at position", pos);
     }
 
-    return NanEscapeScope(arguments[pos]);
+    return scope.Escape(arguments[pos]);
 }
 
 
-v8::Handle<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
-    NanEscapableScope();
+v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
+    Nan::EscapableHandleScope scope;
 
     if (arguments[pos]->IsUndefined())
-        return NanEscapeScope(NanNew<v8::String>(def));
+        return scope.Escape(Nan::New<v8::String>(def).ToLocalChecked());
 
-    return NanEscapeScope(GetString(pos));
+    return scope.Escape(GetString(pos));
 }
 
 
-v8::Handle<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
-    NanEscapableScope();
+v8::Local<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
+    Nan::EscapableHandleScope scope;
 
     if (!arguments[pos]->IsFunction()) {
         RaiseException("function required at position", pos);
     }
 
-    return NanEscapeScope(arguments[pos].As<v8::Function>());
+    return scope.Escape(arguments[pos].As<v8::Function>());
 }
 
 
-v8::Handle<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
-    NanEscapableScope();
+v8::Local<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
+    Nan::EscapableHandleScope scope;
 
     if (!arguments[pos]->IsObject() || !node::Buffer::HasInstance(arguments[pos])) {
         RaiseException("buffer required at position", pos);
     }
 
-    return NanEscapeScope(arguments[pos]);
+    return scope.Escape(arguments[pos]);
 }
 
 
 void ArgumentHelper::RaiseException(const std::string& message, int32_t pos) {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
     if (HasException()) return;
 
@@ -146,8 +146,8 @@ bool ArgumentHelper::HasException() const {
     return exceptionRaised;
 }
 
-_NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
-    return NanThrowTypeError(exceptionMessage.data());
+Nan::NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
+    return Nan::ThrowTypeError(exceptionMessage.data());
 }
 
 

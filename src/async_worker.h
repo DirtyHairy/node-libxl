@@ -32,10 +32,10 @@
 namespace node_libxl {
 
 
-template<typename T> class AsyncWorker : public NanAsyncWorker {
+template<typename T> class AsyncWorker : public Nan::AsyncWorker {
     public:
 
-        AsyncWorker(NanCallback* callback, v8::Local<v8::Object> that);
+        AsyncWorker(Nan::Callback* callback, v8::Local<v8::Object> that);
 
         virtual void WorkComplete();
 
@@ -53,8 +53,8 @@ template<typename T> class AsyncWorker : public NanAsyncWorker {
 
 
 template<typename T> AsyncWorker<T>::AsyncWorker(
-        NanCallback* callback, v8::Local<v8::Object> that) :
-    NanAsyncWorker(callback),
+        Nan::Callback* callback, v8::Local<v8::Object> that) :
+    Nan::AsyncWorker(callback),
     that(T::Unwrap(that))
 {
     util::GetBook(this->that)->StartAsync();
@@ -65,7 +65,7 @@ template<typename T> AsyncWorker<T>::AsyncWorker(
 template<typename T> void AsyncWorker<T>::WorkComplete() {
     util::GetBook(that)->StopAsync();
 
-    NanAsyncWorker::WorkComplete();
+    Nan::AsyncWorker::WorkComplete();
 }
 
 

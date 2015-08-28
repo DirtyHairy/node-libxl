@@ -45,7 +45,7 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
             return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
         }
 
-        static v8::Handle<v8::Object> NewInstance(
+        static v8::Local<v8::Object> NewInstance(
             libxl::Sheet* sheet,
             v8::Handle<v8::Value> book
         );

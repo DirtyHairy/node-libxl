@@ -35,7 +35,7 @@ namespace node_libxl {
 class ArgumentHelper {
     public:
 
-        ArgumentHelper(_NAN_METHOD_ARGS_TYPE args);
+        ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info);
 
         int GetInt(uint8_t pos);
         int GetInt(uint8_t pos, int def);
@@ -46,22 +46,22 @@ class ArgumentHelper {
         bool GetBoolean(uint8_t pos);
         bool GetBoolean(uint8_t pos, bool def);
 
-        v8::Handle<v8::Value> GetString(uint8_t pos);
-        v8::Handle<v8::Value> GetString(uint8_t pos, const char* def);
+        v8::Local<v8::Value> GetString(uint8_t pos);
+        v8::Local<v8::Value> GetString(uint8_t pos, const char* def);
 
-        v8::Handle<v8::Function> GetFunction(uint8_t pos);
+        v8::Local<v8::Function> GetFunction(uint8_t pos);
 
-        v8::Handle<v8::Value> GetBuffer(uint8_t pos);
+        v8::Local<v8::Value> GetBuffer(uint8_t pos);
 
         template<typename T> T* GetWrapped(uint8_t pos);
         template<typename T> T* GetWrapped(uint8_t pos, T* def);
 
         bool HasException() const;
-        _NAN_METHOD_RETURN_TYPE ThrowException() const;
+        Nan::NAN_METHOD_RETURN_TYPE ThrowException() const;
 
     private:
 
-        _NAN_METHOD_ARGS_TYPE arguments;
+        Nan::NAN_METHOD_ARGS_TYPE arguments;
         std::string exceptionMessage;
         bool exceptionRaised;
 

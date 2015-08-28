@@ -30,11 +30,11 @@
 #define ASSERT_ARGUMENTS(ARGS) if (ARGS.HasException()) \
     return (ARGS.ThrowException())
 
-#define ASSERT_THIS(THIS) if (!THIS) return(NanThrowTypeError("invalid scope")); \
-    if (::node_libxl::util::GetBook(THIS)->AsyncPending()) return(NanThrowError("async operation pending"))
+#define ASSERT_THIS(THIS) if (!THIS) return(Nan::ThrowTypeError("invalid scope")); \
+    if (::node_libxl::util::GetBook(THIS)->AsyncPending()) return(Nan::ThrowError("async operation pending"))
 
 #define ASSERT_SAME_BOOK(BOOK1, BOOK2) if ( \
     !::node_libxl::util::IsSameBook(BOOK1, BOOK2)) \
-    return NanThrowTypeError("parent books differ")
+    return Nan::ThrowTypeError("parent books differ")
 
 #endif // BINDINGS_ASSERT_H
