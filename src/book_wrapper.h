@@ -37,7 +37,7 @@ class BookWrapper{
         BookWrapper(v8::Local<v8::Value> bookHandle);
         ~BookWrapper();
 
-        v8::Handle<v8::Value> GetBookHandle();
+        v8::Local<v8::Value> GetBookHandle();
         Book* GetBook();
     protected:
 
@@ -74,7 +74,7 @@ template<typename T> void BookWrapper::Initialize(
         Nan::New<v8::String>("book").ToLocalChecked(),
         BookAccessor<T>, 
         NULL,
-        v8::Handle<v8::Value>(),
+        v8::Local<v8::Value>(),
         v8::DEFAULT,
         static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)
     );

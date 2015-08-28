@@ -99,7 +99,7 @@ libxl::Book* UnwrapBook(libxl::Book* book) {
 }
 
 
-libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle) {
+libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle) {
     Book* book = Book::Unwrap(bookHandle);
 
     return book ? book->GetWrapped() : NULL;

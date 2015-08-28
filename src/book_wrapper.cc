@@ -40,7 +40,7 @@ BookWrapper::~BookWrapper() {
 }
 
 
-v8::Handle<v8::Value> BookWrapper::GetBookHandle() {
+v8::Local<v8::Value> BookWrapper::GetBookHandle() {
     Nan::EscapableHandleScope scope;
 
     return scope.Escape(Nan::New(bookHandle));

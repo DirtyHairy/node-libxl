@@ -36,7 +36,7 @@ namespace node_libxl {
 
 // Lifecycle
 
-Format::Format(libxl::Format* format, Handle<Value> book) :
+Format::Format(libxl::Format* format, Local<Value> book) :
     Wrapper<libxl::Format>(format),
     BookWrapper(book)
 {}
@@ -44,7 +44,7 @@ Format::Format(libxl::Format* format, Handle<Value> book) :
 
 Local<Object> Format::NewInstance(
     libxl::Format* libxlFormat,
-    Handle<Value> book)
+    Local<Value> book)
 {
     Nan::EscapableHandleScope scope;
 

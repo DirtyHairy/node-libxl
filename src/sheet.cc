@@ -37,7 +37,7 @@ namespace node_libxl {
 
 // Lifecycle
 
-Sheet::Sheet(libxl::Sheet* sheet, Handle<Value> book) :
+Sheet::Sheet(libxl::Sheet* sheet, Local<Value> book) :
     Wrapper<libxl::Sheet>(sheet),
     BookWrapper(book)
 {}
@@ -45,7 +45,7 @@ Sheet::Sheet(libxl::Sheet* sheet, Handle<Value> book) :
 
 Local<Object> Sheet::NewInstance(
     libxl::Sheet* libxlSheet,
-    Handle<Value> book)
+    Local<Value> book)
 {
     Nan::EscapableHandleScope scope;
 
@@ -1073,7 +1073,7 @@ NAN_METHOD(Sheet::InsertRowAsync) {
 
     int rowFirst    = arguments.GetInt(0),
         rowLast     = arguments.GetInt(1);
-    Handle<Function> callback = arguments.GetFunction(2);
+    Local<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -1132,7 +1132,7 @@ NAN_METHOD(Sheet::InsertColAsync) {
 
     int colFirst    = arguments.GetInt(0),
         colLast     = arguments.GetInt(1);
-    Handle<Function> callback = arguments.GetFunction(2);
+    Local<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -1191,7 +1191,7 @@ NAN_METHOD(Sheet::RemoveRowAsync) {
 
     int rowFirst = arguments.GetInt(0),
         rowLast = arguments.GetInt(1);
-    Handle<Function> callback = arguments.GetFunction(2);
+    Local<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -1230,7 +1230,7 @@ NAN_METHOD(Sheet::RemoveColAsync) {
 
     int colFirst = arguments.GetInt(0),
         colLast = arguments.GetInt(1);
-    Handle<Function> callback = arguments.GetFunction(2);
+    Local<Function> callback = arguments.GetFunction(2);
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());

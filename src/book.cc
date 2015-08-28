@@ -159,8 +159,8 @@ NAN_METHOD(Book::Load) {
 
     ArgumentHelper arguments(info);
 
-    Handle<Value> filename = arguments.GetString(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> filename = arguments.GetString(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -214,8 +214,8 @@ NAN_METHOD(Book::Write) {
 
     ArgumentHelper arguments(info);
 
-    Handle<Value> filename = arguments.GetString(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> filename = arguments.GetString(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -284,7 +284,7 @@ NAN_METHOD(Book::WriteRaw) {
 
     ArgumentHelper arguments(info);
 
-    Handle<Function> callback = arguments.GetFunction(0);
+    Local<Function> callback = arguments.GetFunction(0);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -340,8 +340,8 @@ NAN_METHOD(Book::LoadRaw) {
 
     ArgumentHelper arguments(info);
 
-    Handle<Value> buffer = arguments.GetBuffer(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> buffer = arguments.GetBuffer(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -840,7 +840,7 @@ NAN_METHOD(Book::GetPictureAsync) {
     ArgumentHelper arguments(info);
     
     int index = arguments.GetInt(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -955,7 +955,7 @@ NAN_METHOD(Book::AddPictureAsync) {
     Nan::HandleScope scope;
 
     ArgumentHelper arguments(info);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Function> callback = arguments.GetFunction(1);
 
     Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
