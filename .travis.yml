@@ -7,8 +7,8 @@ node_js:
 install:
     - npm install
     - npm install node-gyp jasmine-node
+    - gcc --version
     - node ./install-libxl.js
 script:
-    - gcc --version
     - ./node_modules/.bin/node-gyp rebuild
     - LD_LIBRARY_PATH="`pwd`/deps/libxl/lib64" ./node_modules/.bin/jasmine-node ./specs
