@@ -33,19 +33,19 @@ namespace node_libxl {
 namespace util {
 
 
-v8::Handle<v8::Value> ProxyConstructor(
+v8::Local<v8::Value> ProxyConstructor(
     v8::Handle<v8::Function> constructor,
-    _NAN_METHOD_ARGS_TYPE arguments
+    Nan::NAN_METHOD_ARGS_TYPE arguments
 );
 
 
-template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
+template<typename T> Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
 
 
 NAN_METHOD(StubConstructor);
 
 
-v8::Handle<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
+v8::Local<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
 
 
 Book* GetBook(Book*);
@@ -53,16 +53,16 @@ Book* GetBook(BookWrapper*);
 
 
 libxl::Book* UnwrapBook(libxl::Book* book); 
-libxl::Book* UnwrapBook(v8::Handle<v8::Value> bookHandle);
+libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle);
 libxl::Book* UnwrapBook(Book* book);
 libxl::Book* UnwrapBook(BookWrapper* bookWrapper);
 
-template<typename T> _NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
-    NanScope();
+template<typename T> Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
+    Nan::HandleScope scope;
 
     libxl::Book* book = UnwrapBook(wrappedBook);
 
-    return NanThrowError(book ? book->errorMessage() : "");
+    return Nan::ThrowError(book ? book->errorMessage() : "");
 }
 
 

@@ -55,6 +55,8 @@ flags = [
 '-isystem',
 '../llvm/tools/clang/include',
 '-I',
+'node_modules/nan',
+'-I',
 '.',
 '-I',
 './deps/libxl/include_cpp'

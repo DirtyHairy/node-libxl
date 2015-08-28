@@ -36,26 +36,26 @@ namespace node_libxl {
 // Lifecycle
 
 
-Font::Font(libxl::Font* font, Handle<Value> book) :
+Font::Font(libxl::Font* font, Local<Value> book) :
     Wrapper<libxl::Font>(font),
     BookWrapper(book)
 {}
 
 
-Handle<Object> Font::NewInstance(
+Local<Object> Font::NewInstance(
     libxl::Font* libxlFont,
-    Handle<Value> book)
+    Local<Value> book)
 {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
     Font* font = new Font(libxlFont, book);
 
-    Local<Object> that = NanNew(util::CallStubConstructor(
-        NanNew(constructor)).As<Object>());
+    Local<Object> that = util::CallStubConstructor(
+        Nan::New(constructor)).As<Object>();
 
     font->Wrap(that);
 
-    return NanEscapeScope(that);
+    return scope.Escape(that);
 }
 
 
@@ -63,225 +63,225 @@ Handle<Object> Font::NewInstance(
 
 
 NAN_METHOD(Font::SetSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int size = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setSize(size);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Size) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->size()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->size()));
 }
 
 
 NAN_METHOD(Font::Italic) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->italic()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->italic()));
 }
 
 
 NAN_METHOD(Font::SetItalic){
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool italic = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setItalic(italic);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::StrikeOut) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->strikeOut()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->strikeOut()));
 }
 
 
 NAN_METHOD(Font::SetStrikeOut) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool strikeOut = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setStrikeOut(strikeOut);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Color) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->color()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->color()));
 }
 
 
 NAN_METHOD(Font::SetColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setColor(static_cast<libxl::Color>(color));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Bold) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->bold()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->bold()));
 }
 
 
 NAN_METHOD(Font::SetBold) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool bold = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBold(bold);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Script) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->script()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->script()));
 }
 
 
 NAN_METHOD(Font::SetScript) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int script = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setScript(static_cast<libxl::Script>(script));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Underline) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->underline()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->underline()));
 }
 
 
 NAN_METHOD(Font::SetUnderline) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int underline = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setUnderline(static_cast<libxl::Underline>(underline));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Font::Name) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* name = that->GetWrapped()->name();
     if (!name) {
-        return NanThrowError("Unable to determine font name");
+        return Nan::ThrowError("Unable to determine font name");
     }
 
-    NanReturnValue(NanNew<String>(name));
+    info.GetReturnValue().Set(Nan::New<String>(name).ToLocalChecked());
 }
 
 
 NAN_METHOD(Font::SetName) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Font* that = Unwrap(args.This());
+    Font* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setName(*name)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
@@ -291,33 +291,33 @@ NAN_METHOD(Font::SetName) {
 void Font::Initialize(Handle<Object> exports) {
     using namespace libxl;
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
-    t->SetClassName(NanNew<String>("Font"));
+    Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(util::StubConstructor);
+    t->SetClassName(Nan::New<String>("Font").ToLocalChecked());
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Font>(t);
 
-    NODE_SET_PROTOTYPE_METHOD(t, "setSize", SetSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "size", Size);
-    NODE_SET_PROTOTYPE_METHOD(t, "italic", Italic);
-    NODE_SET_PROTOTYPE_METHOD(t, "setItalic", SetItalic);
-    NODE_SET_PROTOTYPE_METHOD(t, "strikeOut", StrikeOut);
-    NODE_SET_PROTOTYPE_METHOD(t, "setStrikeOut", SetStrikeOut);
-    NODE_SET_PROTOTYPE_METHOD(t, "color", Color);
-    NODE_SET_PROTOTYPE_METHOD(t, "setColor", SetColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "bold", Bold);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBold", SetBold);
-    NODE_SET_PROTOTYPE_METHOD(t, "script", Script);
-    NODE_SET_PROTOTYPE_METHOD(t, "setScript", SetScript);
-    NODE_SET_PROTOTYPE_METHOD(t, "underline", Underline);
-    NODE_SET_PROTOTYPE_METHOD(t, "setUnderline", SetUnderline);
-    NODE_SET_PROTOTYPE_METHOD(t, "name", Name);
-    NODE_SET_PROTOTYPE_METHOD(t, "setName", SetName);
+    Nan::SetPrototypeMethod(t, "setSize", SetSize);
+    Nan::SetPrototypeMethod(t, "size", Size);
+    Nan::SetPrototypeMethod(t, "italic", Italic);
+    Nan::SetPrototypeMethod(t, "setItalic", SetItalic);
+    Nan::SetPrototypeMethod(t, "strikeOut", StrikeOut);
+    Nan::SetPrototypeMethod(t, "setStrikeOut", SetStrikeOut);
+    Nan::SetPrototypeMethod(t, "color", Color);
+    Nan::SetPrototypeMethod(t, "setColor", SetColor);
+    Nan::SetPrototypeMethod(t, "bold", Bold);
+    Nan::SetPrototypeMethod(t, "setBold", SetBold);
+    Nan::SetPrototypeMethod(t, "script", Script);
+    Nan::SetPrototypeMethod(t, "setScript", SetScript);
+    Nan::SetPrototypeMethod(t, "underline", Underline);
+    Nan::SetPrototypeMethod(t, "setUnderline", SetUnderline);
+    Nan::SetPrototypeMethod(t, "name", Name);
+    Nan::SetPrototypeMethod(t, "setName", SetName);
 
     t->ReadOnlyPrototype();
-    NanAssignPersistent(constructor, t->GetFunction());
+    constructor.Reset(t->GetFunction());
 
     NODE_DEFINE_CONSTANT(exports, UNDERLINE_NONE);
     NODE_DEFINE_CONSTANT(exports, UNDERLINE_SINGLE);

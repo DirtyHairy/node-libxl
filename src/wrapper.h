@@ -30,7 +30,7 @@
 namespace node_libxl {
 
 
-template<typename T> class Wrapper : public node::ObjectWrap {
+template<typename T> class Wrapper : public Nan::ObjectWrap {
     public:
 
         Wrapper() : wrapped(NULL) {}
@@ -41,11 +41,11 @@ template<typename T> class Wrapper : public node::ObjectWrap {
         }
 
         static bool InstanceOf(v8::Handle<v8::Value> object);
-        template<typename U> static U* Unwrap(v8::Handle<v8::Value> object);
+        template<typename U> static U* Unwrap(v8::Local<v8::Value> object);
 
     protected:
 
-        static v8::Persistent<v8::Function> constructor;
+        static Nan::Persistent<v8::Function> constructor;
         T* wrapped;
 
     private:
@@ -58,23 +58,23 @@ template<typename T> class Wrapper : public node::ObjectWrap {
 // Implementation
 
 
-template<typename T> v8::Persistent<v8::Function> Wrapper<T>::constructor;
+template<typename T> Nan::Persistent<v8::Function> Wrapper<T>::constructor;
 
 
 template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
-    NanScope();
+    Nan::HandleScope scope;
 
     return object->IsObject() &&
         object.As<v8::Object>()->GetPrototype()->StrictEquals(
-            NanNew(constructor)->Get(NanNew<v8::String>("prototype")));
+            Nan::New(constructor)->Get(Nan::New<v8::String>("prototype").ToLocalChecked()));
 }
 
 
 template <typename T> template<typename U>
-    U* Wrapper<T>::Unwrap(v8::Handle<v8::Value> object)
+    U* Wrapper<T>::Unwrap(v8::Local<v8::Value> object)
 {
     if (InstanceOf(object)) {
-        return node::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
+        return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
     } else {
         return NULL;
     }

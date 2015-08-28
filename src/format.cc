@@ -36,26 +36,26 @@ namespace node_libxl {
 
 // Lifecycle
 
-Format::Format(libxl::Format* format, Handle<Value> book) :
+Format::Format(libxl::Format* format, Local<Value> book) :
     Wrapper<libxl::Format>(format),
     BookWrapper(book)
 {}
 
 
-Handle<Object> Format::NewInstance(
+Local<Object> Format::NewInstance(
     libxl::Format* libxlFormat,
-    Handle<Value> book)
+    Local<Value> book)
 {
-    NanEscapableScope();
+    Nan::EscapableHandleScope scope;
 
     Format* format = new Format(libxlFormat, book);
 
     Local<Object> that = 
-        NanNew(util::CallStubConstructor(NanNew(constructor)).As<Object>());
+        util::CallStubConstructor(Nan::New(constructor)).As<Object>();
 
     format->Wrap(that);
 
-    return NanEscapeScope(that);
+    return scope.Escape(that);
 }
 
 
@@ -63,9 +63,9 @@ Handle<Object> Format::NewInstance(
 
 
 NAN_METHOD(Format::Font) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Font* font = that->GetWrapped()->font();
@@ -73,649 +73,649 @@ NAN_METHOD(Format::Font) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(Font::NewInstance(font, that->GetBookHandle()));
+    info.GetReturnValue().Set(Font::NewInstance(font, that->GetBookHandle()));
 }
 
 
 NAN_METHOD(Format::SetFont) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     node_libxl::Font* font = arguments.GetWrapped<node_libxl::Font>(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setFont(font->GetWrapped())) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::SetNumFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     
     int format = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setNumFormat(format);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::NumFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->numFormat()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->numFormat()));
 }
 
 
 NAN_METHOD(Format::AlignH) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignH()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->alignH()));
 }
 
 
 NAN_METHOD(Format::SetAlignH) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int align = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignH(static_cast<libxl::AlignH>(align));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::AlignV) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->alignV()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->alignV()));
 }
 
 
 NAN_METHOD(Format::SetAlignV) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int align = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignV(static_cast<libxl::AlignV>(align));
     
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::GetWrap) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->wrap()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->wrap()));
 }
 
 
 NAN_METHOD(Format::SetWrap) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     bool wrap = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setWrap(wrap);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::Rotation) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->rotation()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->rotation()));
 }
 
 
 NAN_METHOD(Format::SetRotation) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int rotation = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->setRotation(rotation)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::Indent) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->indent()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->indent()));
 }
 
 
 NAN_METHOD(Format::SetIndent) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int indent = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setIndent(indent);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 NAN_METHOD(Format::ShrinkToFit) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->shrinkToFit()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->shrinkToFit()));
 }
 
 
 NAN_METHOD(Format::SetShrinkToFit) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool shrink = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setShrinkToFit(shrink);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::SetBorder) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorder(static_cast<libxl::BorderStyle>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::SetBorderColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderColor(static_cast<libxl::Color>(color));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeft()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderLeft()));
 }
 
 
 NAN_METHOD(Format::SetBorderLeft) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderLeft(static_cast<libxl::BorderStyle>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRight()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderRight()));
 }
 
 
 NAN_METHOD(Format::SetBorderRight) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderRight(static_cast<libxl::BorderStyle>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderTop) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTop()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderTop()));
 }
 
 
 NAN_METHOD(Format::SetBorderTop) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderTop(static_cast<libxl::BorderStyle>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderBottom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottom()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderBottom()));
 }
 
 
 NAN_METHOD(Format::SetBorderBottom) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderBottom(static_cast<libxl::BorderStyle>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderLeftColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderLeftColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderLeftColor()));
 }
 
 
 NAN_METHOD(Format::SetBorderLeftColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderLeftColor(static_cast<libxl::Color>(color));
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderRightColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderRightColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderRightColor()));
 }
 
 
 NAN_METHOD(Format::SetBorderRightColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderRightColor(static_cast<libxl::Color>(color));
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderTopColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderTopColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderTopColor()));
 }
 
 
 NAN_METHOD(Format::SetBorderTopColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderTopColor(static_cast<libxl::Color>(color));
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderBottomColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderBottomColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderBottomColor()));
 }
 
 
 NAN_METHOD(Format::SetBorderBottomColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderBottomColor(static_cast<libxl::Color>(color));
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderDiagonal) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonal()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderDiagonal()));
 }
 
 
 NAN_METHOD(Format::SetBorderDiagonal) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderDiagonal(static_cast<libxl::BorderDiagonal>(border));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::BorderDiagonalColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->borderDiagonalColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderDiagonalColor()));
 }
 
 
 NAN_METHOD(Format::SetBorderDiagonalColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setBorderDiagonalColor(static_cast<libxl::Color>(color));
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::FillPattern) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->fillPattern()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->fillPattern()));
 }
 
 
 NAN_METHOD(Format::SetFillPattern) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int pattern = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setFillPattern(static_cast<libxl::FillPattern>(pattern));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::PatternBackgroundColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternBackgroundColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->patternBackgroundColor()));
 }
 
 
 NAN_METHOD(Format::SetPatternBackgroundColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternBackgroundColor(static_cast<libxl::Color>(color));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::PatternForegroundColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->patternForegroundColor()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->patternForegroundColor()));
 }
 
 
 NAN_METHOD(Format::SetPatternForegroundColor) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int color = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setPatternForegroundColor(static_cast<libxl::Color>(color));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::Locked) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->locked()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->locked()));
 }
 
 
 NAN_METHOD(Format::SetLocked) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool locked = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setLocked(locked);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Format::Hidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->hidden()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->hidden()));
 }
 
 
 NAN_METHOD(Format::SetHidden) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     
     bool hidden = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Format* that = Unwrap(args.This());
+    Format* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setHidden(hidden);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
@@ -724,65 +724,65 @@ NAN_METHOD(Format::SetHidden) {
 
 void Format::Initialize(Handle<Object> exports) {
     using namespace libxl;
-    NanScope();
+    Nan::HandleScope scope;
 
-    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(util::StubConstructor);
-    t->SetClassName(NanNew<String>("Format"));
+    Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(util::StubConstructor);
+    t->SetClassName(Nan::New<String>("Format").ToLocalChecked());
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
     BookWrapper::Initialize<Format>(t);
 
-    NODE_SET_PROTOTYPE_METHOD(t, "font", Font);
-    NODE_SET_PROTOTYPE_METHOD(t, "setFont", SetFont);
-    NODE_SET_PROTOTYPE_METHOD(t, "setNumFormat", SetNumFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "numFormat", NumFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "alignH", AlignH);
-    NODE_SET_PROTOTYPE_METHOD(t, "setAlignH", SetAlignH);
-    NODE_SET_PROTOTYPE_METHOD(t, "alignV", AlignV);
-    NODE_SET_PROTOTYPE_METHOD(t, "setAlignV", SetAlignV);
-    NODE_SET_PROTOTYPE_METHOD(t, "wrap", GetWrap);
-    NODE_SET_PROTOTYPE_METHOD(t, "setWrap", SetWrap);
-    NODE_SET_PROTOTYPE_METHOD(t, "rotation", Rotation);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRotation", SetRotation);
-    NODE_SET_PROTOTYPE_METHOD(t, "indent", Indent);
-    NODE_SET_PROTOTYPE_METHOD(t, "setIndent", SetIndent);
-    NODE_SET_PROTOTYPE_METHOD(t, "shrinkToFit", ShrinkToFit);
-    NODE_SET_PROTOTYPE_METHOD(t, "setShrinkToFit", SetShrinkToFit);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorder", SetBorder);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderColor", SetBorderColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderLeft", BorderLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeft", SetBorderLeft);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderRight", BorderRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderRight", SetBorderRight);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderTop", BorderTop);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTop", SetBorderTop);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderBottom", BorderBottom);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottom", SetBorderBottom);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderLeftColor", BorderLeftColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderLeftColor", SetBorderLeftColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderRightColor", BorderRightColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderRightColor", SetBorderRightColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderTopColor", BorderTopColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderTopColor", SetBorderTopColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderBottomColor", BorderBottomColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderBottomColor", SetBorderBottomColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonal", BorderDiagonal);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonal", SetBorderDiagonal);
-    NODE_SET_PROTOTYPE_METHOD(t, "borderDiagonalColor", BorderDiagonalColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setBorderDiagonalColor", SetBorderDiagonalColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "fillPattern", FillPattern);
-    NODE_SET_PROTOTYPE_METHOD(t, "setFillPattern", SetFillPattern);
-    NODE_SET_PROTOTYPE_METHOD(t, "patternBackgroundColor", PatternBackgroundColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPatternBackgroundColor", SetPatternBackgroundColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "patternForegroundColor", PatternForegroundColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "setPatternForegroundColor", SetPatternForegroundColor);
-    NODE_SET_PROTOTYPE_METHOD(t, "hidden", Hidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "setHidden", SetHidden);
-    NODE_SET_PROTOTYPE_METHOD(t, "locked", Locked);
-    NODE_SET_PROTOTYPE_METHOD(t, "setLocked", SetLocked);
+    Nan::SetPrototypeMethod(t, "font", Font);
+    Nan::SetPrototypeMethod(t, "setFont", SetFont);
+    Nan::SetPrototypeMethod(t, "setNumFormat", SetNumFormat);
+    Nan::SetPrototypeMethod(t, "numFormat", NumFormat);
+    Nan::SetPrototypeMethod(t, "alignH", AlignH);
+    Nan::SetPrototypeMethod(t, "setAlignH", SetAlignH);
+    Nan::SetPrototypeMethod(t, "alignV", AlignV);
+    Nan::SetPrototypeMethod(t, "setAlignV", SetAlignV);
+    Nan::SetPrototypeMethod(t, "wrap", GetWrap);
+    Nan::SetPrototypeMethod(t, "setWrap", SetWrap);
+    Nan::SetPrototypeMethod(t, "rotation", Rotation);
+    Nan::SetPrototypeMethod(t, "setRotation", SetRotation);
+    Nan::SetPrototypeMethod(t, "indent", Indent);
+    Nan::SetPrototypeMethod(t, "setIndent", SetIndent);
+    Nan::SetPrototypeMethod(t, "shrinkToFit", ShrinkToFit);
+    Nan::SetPrototypeMethod(t, "setShrinkToFit", SetShrinkToFit);
+    Nan::SetPrototypeMethod(t, "setBorder", SetBorder);
+    Nan::SetPrototypeMethod(t, "setBorderColor", SetBorderColor);
+    Nan::SetPrototypeMethod(t, "borderLeft", BorderLeft);
+    Nan::SetPrototypeMethod(t, "setBorderLeft", SetBorderLeft);
+    Nan::SetPrototypeMethod(t, "borderRight", BorderRight);
+    Nan::SetPrototypeMethod(t, "setBorderRight", SetBorderRight);
+    Nan::SetPrototypeMethod(t, "borderTop", BorderTop);
+    Nan::SetPrototypeMethod(t, "setBorderTop", SetBorderTop);
+    Nan::SetPrototypeMethod(t, "borderBottom", BorderBottom);
+    Nan::SetPrototypeMethod(t, "setBorderBottom", SetBorderBottom);
+    Nan::SetPrototypeMethod(t, "borderLeftColor", BorderLeftColor);
+    Nan::SetPrototypeMethod(t, "setBorderLeftColor", SetBorderLeftColor);
+    Nan::SetPrototypeMethod(t, "borderRightColor", BorderRightColor);
+    Nan::SetPrototypeMethod(t, "setBorderRightColor", SetBorderRightColor);
+    Nan::SetPrototypeMethod(t, "borderTopColor", BorderTopColor);
+    Nan::SetPrototypeMethod(t, "setBorderTopColor", SetBorderTopColor);
+    Nan::SetPrototypeMethod(t, "borderBottomColor", BorderBottomColor);
+    Nan::SetPrototypeMethod(t, "setBorderBottomColor", SetBorderBottomColor);
+    Nan::SetPrototypeMethod(t, "borderDiagonal", BorderDiagonal);
+    Nan::SetPrototypeMethod(t, "setBorderDiagonal", SetBorderDiagonal);
+    Nan::SetPrototypeMethod(t, "borderDiagonalColor", BorderDiagonalColor);
+    Nan::SetPrototypeMethod(t, "setBorderDiagonalColor", SetBorderDiagonalColor);
+    Nan::SetPrototypeMethod(t, "fillPattern", FillPattern);
+    Nan::SetPrototypeMethod(t, "setFillPattern", SetFillPattern);
+    Nan::SetPrototypeMethod(t, "patternBackgroundColor", PatternBackgroundColor);
+    Nan::SetPrototypeMethod(t, "setPatternBackgroundColor", SetPatternBackgroundColor);
+    Nan::SetPrototypeMethod(t, "patternForegroundColor", PatternForegroundColor);
+    Nan::SetPrototypeMethod(t, "setPatternForegroundColor", SetPatternForegroundColor);
+    Nan::SetPrototypeMethod(t, "hidden", Hidden);
+    Nan::SetPrototypeMethod(t, "setHidden", SetHidden);
+    Nan::SetPrototypeMethod(t, "locked", Locked);
+    Nan::SetPrototypeMethod(t, "setLocked", SetLocked);
 
     t->ReadOnlyPrototype();
-    NanAssignPersistent(constructor, t->GetFunction());
+    constructor.Reset(t->GetFunction());
 
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_GENERAL);
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_NUMBER);

@@ -49,7 +49,7 @@ class Book : public Wrapper<libxl::Book> {
 
         static void Initialize(v8::Handle<v8::Object> exports);
 
-        static Book* Unwrap(v8::Handle<v8::Value> object) {
+        static Book* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Book>::Unwrap<Book>(object);
         }
 

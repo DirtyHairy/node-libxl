@@ -56,14 +56,14 @@ Book::~Book() {
 
 
 NAN_METHOD(Book::New) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    if (!args.IsConstructCall()) {
-        NanReturnValue(NanNew(
-            util::ProxyConstructor(NanNew(constructor), args)));
+    if (!info.IsConstructCall()) {
+        info.GetReturnValue().Set(
+            util::ProxyConstructor(Nan::New(constructor), info));
     }
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int type = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
@@ -78,11 +78,11 @@ NAN_METHOD(Book::New) {
             libxlBook = xlCreateXMLBook();
             break;
         default:
-            return NanThrowTypeError("invalid book type");
+            return Nan::ThrowTypeError("invalid book type");
     }
 
     if (!libxlBook) {
-        return NanThrowError("unknown error");
+        return Nan::ThrowError("unknown error");
     }
 
     libxlBook->setLocale("UTF-8");
@@ -91,9 +91,9 @@ NAN_METHOD(Book::New) {
     #endif
 
     Book* book = new Book(libxlBook);
-    book->Wrap(args.This());
+    book->Wrap(info.This());
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
@@ -119,28 +119,28 @@ bool Book::AsyncPending() {
 
 
 NAN_METHOD(Book::LoadSync){
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value filename(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->load(*filename)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::Load) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
+            Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
                 AsyncWorker<Book>(callback, that),
                 filename(filename)
             {}
@@ -155,32 +155,32 @@ NAN_METHOD(Book::Load) {
             StringCopy filename;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
-    Handle<Value> filename = arguments.GetString(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> filename = arguments.GetString(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), filename));
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::WriteSync) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value filename(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Book* libxlBook = that->GetWrapped();
@@ -188,14 +188,14 @@ NAN_METHOD(Book::WriteSync) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::Write) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback* callback, Local<Object> that, Handle<Value> filename) :
+            Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
                 AsyncWorker<Book>(callback, that),
                 filename(filename)
             {}
@@ -210,27 +210,27 @@ NAN_METHOD(Book::Write) {
             StringCopy filename;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
-    Handle<Value> filename = arguments.GetString(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> filename = arguments.GetString(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), filename));
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::WriteRawSync) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* data;
@@ -243,14 +243,14 @@ NAN_METHOD(Book::WriteRawSync) {
     char* buffer = new char[size];
     memcpy(buffer, data, size);
 
-    NanReturnValue(NanBufferUse(buffer, size));
+    info.GetReturnValue().Set(Nan::NewBuffer(buffer, size).ToLocalChecked());
 }
 
 
 NAN_METHOD(Book::WriteRaw) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback *callback, Local<Object> that) :
+            Worker(Nan::Callback *callback, Local<Object> that) :
                 AsyncWorker<Book>(callback, that)
             {}
 
@@ -266,11 +266,11 @@ NAN_METHOD(Book::WriteRaw) {
             }
 
             virtual void HandleOKCallback() {
-                NanScope();
+                Nan::HandleScope scope;
 
-                Handle<Value> argv[] = {
-                    NanUndefined(),
-                    NanBufferUse(buffer, size)
+                Local<Value> argv[] = {
+                    Nan::Undefined(),
+                    Nan::NewBuffer(buffer, size).ToLocalChecked()
                 };
                 callback->Call(2, argv);
             }
@@ -280,31 +280,31 @@ NAN_METHOD(Book::WriteRaw) {
             unsigned size;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
-    Handle<Function> callback = arguments.GetFunction(0);
+    Local<Function> callback = arguments.GetFunction(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This()));
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This()));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::LoadRawSync) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     Handle<Value> buffer = arguments.GetBuffer(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->loadRaw(
@@ -313,14 +313,14 @@ NAN_METHOD(Book::LoadRawSync) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::LoadRaw) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback *callback, Local<Object> that,
+            Worker(Nan::Callback *callback, Local<Object> that,
                     Handle<Value> buffer) :
                 AsyncWorker<Book>(callback, that),
                 buffer(buffer)
@@ -336,35 +336,35 @@ NAN_METHOD(Book::LoadRaw) {
             BufferCopy buffer;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
-    Handle<Value> buffer = arguments.GetBuffer(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Value> buffer = arguments.GetBuffer(0);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(
-        new NanCallback(callback), args.This(), buffer));
+    Nan::AsyncQueueWorker(new Worker(
+        new Nan::Callback(callback), info.This(), buffer));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::AddSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     Sheet* parentSheet = arguments.GetWrapped<Sheet>(1, NULL);
     ASSERT_ARGUMENTS(arguments);
 
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (parentSheet) {
         ASSERT_SAME_BOOK(parentSheet, that);
@@ -378,15 +378,15 @@ NAN_METHOD(Book::AddSheet) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    NanReturnValue(Sheet::NewInstance(
-        libxlSheet, args.This()));
+    info.GetReturnValue().Set(Sheet::NewInstance(
+        libxlSheet, info.This()));
 }
 
 
 NAN_METHOD(Book::InsertSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     String::Utf8Value name(arguments.GetString(1));
@@ -394,7 +394,7 @@ NAN_METHOD(Book::InsertSheet) {
     ASSERT_ARGUMENTS(arguments);
 
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
     if (parentSheet) {
         ASSERT_SAME_BOOK(parentSheet, that);
@@ -407,19 +407,19 @@ NAN_METHOD(Book::InsertSheet) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(Sheet::NewInstance(libxlSheet, args.This()));
+    info.GetReturnValue().Set(Sheet::NewInstance(libxlSheet, info.This()));
 }
 
 
 NAN_METHOD(Book::GetSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Sheet* sheet = that->GetWrapped()->getSheet(index);
@@ -427,64 +427,64 @@ NAN_METHOD(Book::GetSheet) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(Sheet::NewInstance(sheet, args.This()));
+    info.GetReturnValue().Set(Sheet::NewInstance(sheet, info.This()));
 }
 
 
 NAN_METHOD(Book::SheetType) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetType(index)));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->sheetType(index)));
 }
 
 
 NAN_METHOD(Book::DelSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (!that->GetWrapped()->delSheet(index)) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::SheetCount) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->sheetCount()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->sheetCount()));
 }
 
 
 NAN_METHOD(Book::AddFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     node_libxl::Format* parentFormat =
         arguments.GetWrapped<node_libxl::Format>(0, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (parentFormat) {
@@ -499,21 +499,21 @@ NAN_METHOD(Book::AddFormat) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    NanReturnValue(NanNew(
-        Format::NewInstance(libxlFormat, args.This())));
+    info.GetReturnValue().Set(
+        Format::NewInstance(libxlFormat, info.This()));
 }
 
 
 NAN_METHOD(Book::AddFont) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     node_libxl::Font* parentFont =
         arguments.GetWrapped<node_libxl::Font>(0, NULL);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     if (parentFont) {
@@ -528,20 +528,20 @@ NAN_METHOD(Book::AddFont) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    NanReturnValue(NanNew(
-        Font::NewInstance(libxlFont, args.This())));
+    info.GetReturnValue().Set(
+        Font::NewInstance(libxlFont, info.This()));
 }
 
 
 NAN_METHOD(Book::AddCustomNumFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value description(arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
     
     libxl::Book* libxlBook = that->GetWrapped();
@@ -551,19 +551,19 @@ NAN_METHOD(Book::AddCustomNumFormat) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    NanReturnValue(NanNew<Number>(format));
+    info.GetReturnValue().Set(Nan::New<Number>(format));
 }
 
 
 NAN_METHOD(Book::CustomNumFormat) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* formatString = that->GetWrapped()->customNumFormat(index);
@@ -571,19 +571,19 @@ NAN_METHOD(Book::CustomNumFormat) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(NanNew<String>(formatString));
+    info.GetReturnValue().Set(Nan::New<String>(formatString).ToLocalChecked());
 }
 
 
 NAN_METHOD(Book::Format) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Format* format = that->GetWrapped()->format(index);
@@ -591,29 +591,29 @@ NAN_METHOD(Book::Format) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(Format::NewInstance(format, args.This()));
+    info.GetReturnValue().Set(Format::NewInstance(format, info.This()));
 }
 
 
 NAN_METHOD(Book::FormatSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->formatSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->formatSize()));
 }
 
 
 NAN_METHOD(Book::Font) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     libxl::Font* font = that->GetWrapped()->font(index);
@@ -621,23 +621,23 @@ NAN_METHOD(Book::Font) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(Font::NewInstance(font, args.This()));
+    info.GetReturnValue().Set(Font::NewInstance(font, info.This()));
 }
 
 NAN_METHOD(Book::FontSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->fontSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->fontSize()));
 }
 
 
 NAN_METHOD(Book::DatePack) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int year        = arguments.GetInt(0),
         month       = arguments.GetInt(1),
@@ -648,23 +648,23 @@ NAN_METHOD(Book::DatePack) {
         msecond     = arguments.GetInt(6, 0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Number>(that->GetWrapped()->datePack(
+    info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->datePack(
         year, month, day, hour, minute, second, msecond)));
 }
 
 
 NAN_METHOD(Book::DateUnpack) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     double value = arguments.GetDouble(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int year, month, day, hour, minute, second, msecond;
@@ -674,107 +674,107 @@ NAN_METHOD(Book::DateUnpack) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("year"),      NanNew<Integer>(year));
-    result->Set(NanNew<String>("month"),     NanNew<Integer>(month));
-    result->Set(NanNew<String>("day"),       NanNew<Integer>(day));
-    result->Set(NanNew<String>("hour"),      NanNew<Integer>(hour));
-    result->Set(NanNew<String>("minute"),    NanNew<Integer>(minute));
-    result->Set(NanNew<String>("second"),    NanNew<Integer>(second));
-    result->Set(NanNew<String>("msecond"),   NanNew<Integer>(msecond));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("year").ToLocalChecked(),      Nan::New<Integer>(year));
+    result->Set(Nan::New<String>("month").ToLocalChecked(),     Nan::New<Integer>(month));
+    result->Set(Nan::New<String>("day").ToLocalChecked(),       Nan::New<Integer>(day));
+    result->Set(Nan::New<String>("hour").ToLocalChecked(),      Nan::New<Integer>(hour));
+    result->Set(Nan::New<String>("minute").ToLocalChecked(),    Nan::New<Integer>(minute));
+    result->Set(Nan::New<String>("second").ToLocalChecked(),    Nan::New<Integer>(second));
+    result->Set(Nan::New<String>("msecond").ToLocalChecked(),   Nan::New<Integer>(msecond));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Book::ColorPack) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int red     = arguments.GetInt(0),
         green   = arguments.GetInt(1),
         blue    = arguments.GetInt(2);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->colorPack(red, green, blue)));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->colorPack(red, green, blue)));
 }
 
 
 NAN_METHOD(Book::ColorUnpack) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int value = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    Local<Object> result = NanNew<Object>();
+    Local<Object> result = Nan::New<Object>();
     int red, green, blue;
 
     that->GetWrapped()->colorUnpack(
         static_cast<libxl::Color>(value), &red, &green, &blue);
 
-    result->Set(NanNew<String>("red"),   NanNew<Integer>(red));
-    result->Set(NanNew<String>("green"), NanNew<Integer>(green));
-    result->Set(NanNew<String>("blue"),  NanNew<Integer>(blue));
+    result->Set(Nan::New<String>("red").ToLocalChecked(),   Nan::New<Integer>(red));
+    result->Set(Nan::New<String>("green").ToLocalChecked(), Nan::New<Integer>(green));
+    result->Set(Nan::New<String>("blue").ToLocalChecked(),  Nan::New<Integer>(blue));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Book::ActiveSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->activeSheet()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->activeSheet()));
 }
 
 
 NAN_METHOD(Book::SetActiveSheet) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setActiveSheet(index);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::PictureSize) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->pictureSize()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->pictureSize()));
 }
 
 
 NAN_METHOD(Book::GetPicture) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     const char* data;
@@ -789,18 +789,18 @@ NAN_METHOD(Book::GetPicture) {
     char* buffer = new char[size];
     memcpy(buffer, data, size);
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("type"), NanNew<Integer>(pictureType));
-    result->Set(NanNew<String>("data"), NanBufferUse(buffer, size));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("type").ToLocalChecked(), Nan::New<Integer>(pictureType));
+    result->Set(Nan::New<String>("data").ToLocalChecked(), Nan::NewBuffer(buffer, size).ToLocalChecked());
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Book::GetPictureAsync) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(NanCallback* callback, Local<Object> that, int index) :
+            Worker(Nan::Callback* callback, Local<Object> that, int index) :
                 AsyncWorker<Book>(callback, that),
                 index(index)
             {}
@@ -818,12 +818,12 @@ NAN_METHOD(Book::GetPictureAsync) {
             }
 
             virtual void HandleOKCallback() {
-                NanScope();
+                Nan::HandleScope scope;
 
-                Handle<Value> argv[] = {
-                    NanUndefined(),
-                    NanNew<Integer>(pictureType),
-                    NanBufferUse(buffer, size)
+                Local<Value> argv[] = {
+                    Nan::Undefined(),
+                    Nan::New<Integer>(pictureType),
+                    Nan::NewBuffer(buffer, size).ToLocalChecked()
                 };
 
                 callback->Call(3, argv);
@@ -835,41 +835,41 @@ NAN_METHOD(Book::GetPictureAsync) {
             unsigned size;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
     
     int index = arguments.GetInt(0);
-    Handle<Function> callback = arguments.GetFunction(1);
+    Local<Function> callback = arguments.GetFunction(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanAsyncQueueWorker(new Worker(new NanCallback(callback), args.This(), index));
+    Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), index));
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::AddPicture) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int index;
 
-    if (args[0]->IsString()) {
+    if (info[0]->IsString()) {
 
         String::Utf8Value filename(arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
         index = that->GetWrapped()->addPicture(*filename);
 
-    } else if (node::Buffer::HasInstance(args[0])) {
+    } else if (node::Buffer::HasInstance(info[0])) {
 
         Handle<Value> buffer = arguments.GetBuffer(0);
         ASSERT_ARGUMENTS(arguments);
@@ -878,21 +878,21 @@ NAN_METHOD(Book::AddPicture) {
             node::Buffer::Data(buffer), node::Buffer::Length(buffer));
 
     } else {
-        return NanThrowTypeError("string or buffer required as argument 0");
+        return Nan::ThrowTypeError("string or buffer required as argument 0");
     }
 
     if (index == -1) {
         return util::ThrowLibxlError(that);
     }
 
-    NanReturnValue(NanNew<Integer>(index));
+    info.GetReturnValue().Set(Nan::New<Integer>(index));
 }
 
 
 NAN_METHOD(Book::AddPictureAsync) {
     class FileWorker : public AsyncWorker<Book> {
         public:
-            FileWorker(NanCallback* callback, Local<Object> that,
+            FileWorker(Nan::Callback* callback, Local<Object> that,
                     Handle<Value> filename) :
                 AsyncWorker<Book>(callback, that),
                 filename(filename)
@@ -906,11 +906,11 @@ NAN_METHOD(Book::AddPictureAsync) {
             }
 
             virtual void HandleOKCallback() {
-                NanScope();
+                Nan::HandleScope scope;
 
-                Handle<Value> argv[] = {
-                    NanUndefined(),
-                    NanNew<Integer>(index)
+                Local<Value> argv[] = {
+                    Nan::Undefined(),
+                    Nan::New<Integer>(index)
                 };
 
                 callback->Call(2, argv);
@@ -923,7 +923,7 @@ NAN_METHOD(Book::AddPictureAsync) {
 
     class BufferWorker : public AsyncWorker<Book> {
         public:
-            BufferWorker(NanCallback* callback, Local<Object> that,
+            BufferWorker(Nan::Callback* callback, Local<Object> that,
                     Handle<Value> buffer) :
                 AsyncWorker<Book>(callback, that),
                 buffer(buffer)
@@ -937,11 +937,11 @@ NAN_METHOD(Book::AddPictureAsync) {
             }
 
             virtual void HandleOKCallback() {
-                NanScope();
+                Nan::HandleScope scope;
 
-                Handle<Value> argv[] = {
-                    NanUndefined(),
-                    NanNew<Integer>(index)
+                Local<Value> argv[] = {
+                    Nan::Undefined(),
+                    Nan::New<Integer>(index)
                 };
 
                 callback->Call(2, argv);
@@ -952,42 +952,42 @@ NAN_METHOD(Book::AddPictureAsync) {
             int index;
     };
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
-    Handle<Function> callback = arguments.GetFunction(1);
+    ArgumentHelper arguments(info);
+    Local<Function> callback = arguments.GetFunction(1);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    if (args[0]->IsString()) {
+    if (info[0]->IsString()) {
 
         Handle<Value> filename = arguments.GetString(0);
         ASSERT_ARGUMENTS(arguments);
 
-        NanAsyncQueueWorker(new FileWorker(
-            new NanCallback(callback), args.This(), filename));
+        Nan::AsyncQueueWorker(new FileWorker(
+            new Nan::Callback(callback), info.This(), filename));
 
-    } else if (node::Buffer::HasInstance(args[0])) {
+    } else if (node::Buffer::HasInstance(info[0])) {
     
         Handle<Value> buffer = arguments.GetBuffer(0);
         ASSERT_ARGUMENTS(arguments);
 
-        NanAsyncQueueWorker(new BufferWorker(
-            new NanCallback(callback), args.This(), buffer));
+        Nan::AsyncQueueWorker(new BufferWorker(
+            new Nan::Callback(callback), info.This(), buffer));
 
     } else {
-        return NanThrowTypeError("string or buffer required as argument 0");
+        return Nan::ThrowTypeError("string or buffer required as argument 0");
     }
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::DefaultFont) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     int size;
@@ -997,164 +997,164 @@ NAN_METHOD(Book::DefaultFont) {
         return util::ThrowLibxlError(that);
     }
 
-    Local<Object> result = NanNew<Object>();
-    result->Set(NanNew<String>("name"), NanNew<String>(name));
-    result->Set(NanNew<String>("size"), NanNew<Integer>(size));
+    Local<Object> result = Nan::New<Object>();
+    result->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(name).ToLocalChecked());
+    result->Set(Nan::New<String>("size").ToLocalChecked(), Nan::New<Integer>(size));
 
-    NanReturnValue(result);
+    info.GetReturnValue().Set(result);
 }
 
 
 NAN_METHOD(Book::SetDefaultFont) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value name(arguments.GetString(0));
     int size = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setDefaultFont(*name, size);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::RefR1C1) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->refR1C1()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->refR1C1()));
 }
 
 NAN_METHOD(Book::SetRefR1C1) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool refR1C1 = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setRefR1C1(refR1C1);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::RgbMode) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->rgbMode()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rgbMode()));
 }
 
 
 NAN_METHOD(Book::SetRgbMode) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool rgbMode = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setRgbMode(rgbMode);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::BiffVersion) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Integer>(that->GetWrapped()->biffVersion()));
+    info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->biffVersion()));
 }
 
 
 NAN_METHOD(Book::IsDate1904) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isDate1904()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate1904()));
 }
 
 
 NAN_METHOD(Book::SetDate1904) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool date1904 = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setDate1904(date1904);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::IsTemplate) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
-    NanReturnValue(NanNew<Boolean>(that->GetWrapped()->isTemplate()));
+    info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isTemplate()));
 }
 
 
 NAN_METHOD(Book::SetTemplate) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     bool isTemplate = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setTemplate(isTemplate);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Book::SetKey) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    ArgumentHelper arguments(args);
+    ArgumentHelper arguments(info);
 
     String::Utf8Value   name(arguments.GetString(0)),
                         key(arguments.GetString(1));
     ASSERT_ARGUMENTS(arguments);
 
-    Book* that = Unwrap(args.This());
+    Book* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
     that->GetWrapped()->setKey(*name, *key);
 
-    NanReturnValue(args.This());
+    info.GetReturnValue().Set(info.This());
 }
 
 
@@ -1164,73 +1164,73 @@ NAN_METHOD(Book::SetKey) {
 void Book::Initialize(Handle<Object> exports) {
     using namespace libxl;
 
-    NanScope();
+    Nan::HandleScope scope;
 
-    Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
-    t->SetClassName(NanNew<String>("Book"));
+    Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(New);
+    t->SetClassName(Nan::New<String>("Book").ToLocalChecked());
     t->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NODE_SET_PROTOTYPE_METHOD(t, "loadSync", LoadSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeSync", WriteSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "saveSync", WriteSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "write", Write);
-    NODE_SET_PROTOTYPE_METHOD(t, "save", Write);
-    NODE_SET_PROTOTYPE_METHOD(t, "loadRawSync", LoadRawSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "loadRaw", LoadRaw);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeRawSync", WriteRawSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "saveRawSync", WriteRawSync);
-    NODE_SET_PROTOTYPE_METHOD(t, "writeRaw", WriteRaw);
-    NODE_SET_PROTOTYPE_METHOD(t, "saveRaw", WriteRaw);
-    NODE_SET_PROTOTYPE_METHOD(t, "addSheet", AddSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "insertSheet", InsertSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "getSheet", GetSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "sheetType", SheetType);
-    NODE_SET_PROTOTYPE_METHOD(t, "delSheet", DelSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "sheetCount", SheetCount);
-    NODE_SET_PROTOTYPE_METHOD(t, "addFormat", AddFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "addFont", AddFont);
-    NODE_SET_PROTOTYPE_METHOD(t, "addCustomNumFormat", AddCustomNumFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "customNumFormat", CustomNumFormat);
-    NODE_SET_PROTOTYPE_METHOD(t, "format", Format);
-    NODE_SET_PROTOTYPE_METHOD(t, "formatSize", FormatSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "font", Font);
-    NODE_SET_PROTOTYPE_METHOD(t, "fontSize", FontSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "datePack", DatePack);
-    NODE_SET_PROTOTYPE_METHOD(t, "dateUnpack", DateUnpack);
-    NODE_SET_PROTOTYPE_METHOD(t, "colorPack", ColorPack);
-    NODE_SET_PROTOTYPE_METHOD(t, "colorUnpack", ColorUnpack);
-    NODE_SET_PROTOTYPE_METHOD(t, "activeSheet", ActiveSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "setActiveSheet", SetActiveSheet);
-    NODE_SET_PROTOTYPE_METHOD(t, "pictureSize", PictureSize);
-    NODE_SET_PROTOTYPE_METHOD(t, "getPicture", GetPicture);
-    NODE_SET_PROTOTYPE_METHOD(t, "getPictureAsync", GetPictureAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "addPicture", AddPicture);
-    NODE_SET_PROTOTYPE_METHOD(t, "addPictureAsync", AddPictureAsync);
-    NODE_SET_PROTOTYPE_METHOD(t, "defaultFont", DefaultFont);
-    NODE_SET_PROTOTYPE_METHOD(t, "setDefaultFont", SetDefaultFont);
-    NODE_SET_PROTOTYPE_METHOD(t, "refR1C1", RefR1C1);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRefR1C1", SetRefR1C1);
-    NODE_SET_PROTOTYPE_METHOD(t, "rgbMode", RgbMode);
-    NODE_SET_PROTOTYPE_METHOD(t, "setRgbMode", SetRgbMode);
-    NODE_SET_PROTOTYPE_METHOD(t, "biffVersion", BiffVersion);
-    NODE_SET_PROTOTYPE_METHOD(t, "isDate1904", IsDate1904);
-    NODE_SET_PROTOTYPE_METHOD(t, "setDate1904", SetDate1904);
-    NODE_SET_PROTOTYPE_METHOD(t, "isTemplate", IsTemplate);
-    NODE_SET_PROTOTYPE_METHOD(t, "setTemplate", SetTemplate);
-    NODE_SET_PROTOTYPE_METHOD(t, "setKey", SetKey);
+    Nan::SetPrototypeMethod(t, "loadSync", LoadSync);
+    Nan::SetPrototypeMethod(t, "load", Load);
+    Nan::SetPrototypeMethod(t, "writeSync", WriteSync);
+    Nan::SetPrototypeMethod(t, "saveSync", WriteSync);
+    Nan::SetPrototypeMethod(t, "write", Write);
+    Nan::SetPrototypeMethod(t, "save", Write);
+    Nan::SetPrototypeMethod(t, "loadRawSync", LoadRawSync);
+    Nan::SetPrototypeMethod(t, "loadRaw", LoadRaw);
+    Nan::SetPrototypeMethod(t, "writeRawSync", WriteRawSync);
+    Nan::SetPrototypeMethod(t, "saveRawSync", WriteRawSync);
+    Nan::SetPrototypeMethod(t, "writeRaw", WriteRaw);
+    Nan::SetPrototypeMethod(t, "saveRaw", WriteRaw);
+    Nan::SetPrototypeMethod(t, "addSheet", AddSheet);
+    Nan::SetPrototypeMethod(t, "insertSheet", InsertSheet);
+    Nan::SetPrototypeMethod(t, "getSheet", GetSheet);
+    Nan::SetPrototypeMethod(t, "sheetType", SheetType);
+    Nan::SetPrototypeMethod(t, "delSheet", DelSheet);
+    Nan::SetPrototypeMethod(t, "sheetCount", SheetCount);
+    Nan::SetPrototypeMethod(t, "addFormat", AddFormat);
+    Nan::SetPrototypeMethod(t, "addFont", AddFont);
+    Nan::SetPrototypeMethod(t, "addCustomNumFormat", AddCustomNumFormat);
+    Nan::SetPrototypeMethod(t, "customNumFormat", CustomNumFormat);
+    Nan::SetPrototypeMethod(t, "format", Format);
+    Nan::SetPrototypeMethod(t, "formatSize", FormatSize);
+    Nan::SetPrototypeMethod(t, "font", Font);
+    Nan::SetPrototypeMethod(t, "fontSize", FontSize);
+    Nan::SetPrototypeMethod(t, "datePack", DatePack);
+    Nan::SetPrototypeMethod(t, "dateUnpack", DateUnpack);
+    Nan::SetPrototypeMethod(t, "colorPack", ColorPack);
+    Nan::SetPrototypeMethod(t, "colorUnpack", ColorUnpack);
+    Nan::SetPrototypeMethod(t, "activeSheet", ActiveSheet);
+    Nan::SetPrototypeMethod(t, "setActiveSheet", SetActiveSheet);
+    Nan::SetPrototypeMethod(t, "pictureSize", PictureSize);
+    Nan::SetPrototypeMethod(t, "getPicture", GetPicture);
+    Nan::SetPrototypeMethod(t, "getPictureAsync", GetPictureAsync);
+    Nan::SetPrototypeMethod(t, "addPicture", AddPicture);
+    Nan::SetPrototypeMethod(t, "addPictureAsync", AddPictureAsync);
+    Nan::SetPrototypeMethod(t, "defaultFont", DefaultFont);
+    Nan::SetPrototypeMethod(t, "setDefaultFont", SetDefaultFont);
+    Nan::SetPrototypeMethod(t, "refR1C1", RefR1C1);
+    Nan::SetPrototypeMethod(t, "setRefR1C1", SetRefR1C1);
+    Nan::SetPrototypeMethod(t, "rgbMode", RgbMode);
+    Nan::SetPrototypeMethod(t, "setRgbMode", SetRgbMode);
+    Nan::SetPrototypeMethod(t, "biffVersion", BiffVersion);
+    Nan::SetPrototypeMethod(t, "isDate1904", IsDate1904);
+    Nan::SetPrototypeMethod(t, "setDate1904", SetDate1904);
+    Nan::SetPrototypeMethod(t, "isTemplate", IsTemplate);
+    Nan::SetPrototypeMethod(t, "setTemplate", SetTemplate);
+    Nan::SetPrototypeMethod(t, "setKey", SetKey);
 
     #ifdef INCLUDE_API_KEY
-        CSNanObjectSetWithAttributes(exports, NanNew<String>("apiKeyCompiledIn"), NanTrue(),
+        CSNanObjectSetWithAttributes(exports, Nan::New<String>("apiKeyCompiledIn").ToLocalChecked(), Nan::True(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #else
-        CSNanObjectSetWithAttributes(exports, NanNew<String>("apiKeyCompiledIn"), NanFalse(),
+        CSNanObjectSetWithAttributes(exports, Nan::New<String>("apiKeyCompiledIn").ToLocalChecked(), Nan::False(),
             static_cast<PropertyAttribute>(ReadOnly|DontDelete));
     #endif
 
     t->ReadOnlyPrototype();
-    NanAssignPersistent(constructor, t->GetFunction());
-    exports->Set(NanNew<String>("Book"), NanNew(constructor));
+    constructor.Reset(t->GetFunction());
+    exports->Set(Nan::New<String>("Book").ToLocalChecked(), Nan::New(constructor));
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);

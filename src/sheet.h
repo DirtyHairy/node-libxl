@@ -37,17 +37,17 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
 {
     public:
 
-        Sheet(libxl::Sheet* sheet, v8::Handle<v8::Value> book);
+        Sheet(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Handle<v8::Object> exports);
         
-        static Sheet* Unwrap(v8::Handle<v8::Value> object) {
+        static Sheet* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
         }
 
-        static v8::Handle<v8::Object> NewInstance(
+        static v8::Local<v8::Object> NewInstance(
             libxl::Sheet* sheet,
-            v8::Handle<v8::Value> book
+            v8::Local<v8::Value> book
         );
 
     protected:
