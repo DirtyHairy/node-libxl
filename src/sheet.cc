@@ -51,8 +51,8 @@ Local<Object> Sheet::NewInstance(
 
     Sheet* sheet = new Sheet(libxlSheet, book);
 
-    Local<Object> that = Nan::New(util::CallStubConstructor(
-        Nan::New(constructor)).As<Object>());
+    Local<Object> that = util::CallStubConstructor(
+        Nan::New(constructor)).As<Object>();
 
     sheet->Wrap(that);
 

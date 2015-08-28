@@ -51,7 +51,7 @@ Local<Object> Format::NewInstance(
     Format* format = new Format(libxlFormat, book);
 
     Local<Object> that = 
-        Nan::New(util::CallStubConstructor(Nan::New(constructor)).As<Object>());
+        util::CallStubConstructor(Nan::New(constructor)).As<Object>();
 
     format->Wrap(that);
 

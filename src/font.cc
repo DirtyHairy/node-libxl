@@ -50,8 +50,8 @@ Local<Object> Font::NewInstance(
 
     Font* font = new Font(libxlFont, book);
 
-    Local<Object> that = Nan::New(util::CallStubConstructor(
-        Nan::New(constructor)).As<Object>());
+    Local<Object> that = util::CallStubConstructor(
+        Nan::New(constructor)).As<Object>();
 
     font->Wrap(that);
 

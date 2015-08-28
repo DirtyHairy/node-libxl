@@ -59,8 +59,8 @@ NAN_METHOD(Book::New) {
     Nan::HandleScope scope;
 
     if (!info.IsConstructCall()) {
-        info.GetReturnValue().Set(Nan::New(
-            util::ProxyConstructor(Nan::New(constructor), info)));
+        info.GetReturnValue().Set(
+            util::ProxyConstructor(Nan::New(constructor), info));
     }
 
     ArgumentHelper arguments(info);
@@ -499,8 +499,8 @@ NAN_METHOD(Book::AddFormat) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    info.GetReturnValue().Set(Nan::New(
-        Format::NewInstance(libxlFormat, info.This())));
+    info.GetReturnValue().Set(
+        Format::NewInstance(libxlFormat, info.This()));
 }
 
 
@@ -528,8 +528,8 @@ NAN_METHOD(Book::AddFont) {
         return util::ThrowLibxlError(libxlBook);
     }
 
-    info.GetReturnValue().Set(Nan::New(
-        Font::NewInstance(libxlFont, info.This())));
+    info.GetReturnValue().Set(
+        Font::NewInstance(libxlFont, info.This()));
 }
 
 

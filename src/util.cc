@@ -35,7 +35,7 @@ using namespace v8;
 namespace node_libxl {
 namespace util {
 
-Handle<Value> ProxyConstructor(
+Local<Value> ProxyConstructor(
     Handle<Function> constructor,
     Nan::NAN_METHOD_ARGS_TYPE arguments
 ) {
@@ -75,7 +75,7 @@ NAN_METHOD(StubConstructor) {
 }
 
 
-Handle<Value> CallStubConstructor(Handle<Function> constructor) {
+Local<Value> CallStubConstructor(Handle<Function> constructor) {
     Nan::EscapableHandleScope scope;
 
     Handle<Value> info[1] = {CSNanNewExternal(NULL)};
