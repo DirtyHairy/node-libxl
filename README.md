@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/DirtyHairy/node-libxl.svg?branch=release-0.2)](https://travis-ci.org/DirtyHairy/node-libxl)
+[![npm version](https://badge.fury.io/js/libxl.svg)](https://badge.fury.io/js/libxl)
 # What it is
 
 Node.js bindings for [libxl](http://www.libxl.com/). Node 0.12 and Node 0.10 are
