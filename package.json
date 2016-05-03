@@ -26,9 +26,9 @@
     "install": "node install-libxl.js && node-gyp rebuild"
   },
   "dependencies": {
-    "md5": "~2.0.0",
     "adm-zip": "~0.4.7",
     "ftp": "~0.3.10",
+    "md5": "~2.0.0",
     "nan": "~2.3.2",
     "tar": "~2.2.1",
     "tmp": "~0.0.28"
