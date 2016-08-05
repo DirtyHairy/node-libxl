@@ -18,8 +18,8 @@
  * Bump nan, fixes build on node 6.0.
  * Bump npm dependency versions.
 
- ## 0.2.19
+## 0.2.19
 
-  * Allow formats belonging to a different book as templates for addFormat (see
+ * Allow formats belonging to a different book as templates for addFormat (see
     [https://github.com/DirtyHairy/node-libxl/issues/10](issue #10).
-  * Bump dependency versions.
+ * Bump dependency versions.
