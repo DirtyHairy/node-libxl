@@ -21,5 +21,5 @@
 ## 0.2.19
 
  * Allow formats belonging to a different book as templates for addFormat (see
-    [https://github.com/DirtyHairy/node-libxl/issues/10](issue #10)).
+    [issue #10](https://github.com/DirtyHairy/node-libxl/issues/10)).
  * Bump dependency versions.
