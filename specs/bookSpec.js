@@ -124,7 +124,7 @@ describe('The book class', function() {
             var sheet = book1.addSheet('foo');
 
             sheet.writeStr(1, 0, 'bar');
-            
+
             shouldThrow(book1.writeRaw, book1, 1);
             shouldThrow(book1.writeRaw, {}, function() {});
 
@@ -229,6 +229,21 @@ describe('The book class', function() {
         book.addFormat();
         // TODO add a check for format inheritance once format has been
         // completed
+    });
+
+    it('book.addFormat can use a format belonging to a different book as a template', function() {
+        var otherBook = new xl.Book(xl.BOOK_TYPE_XLS),
+            format1 = otherBook.addFormat(),
+            format2 = book.addFormat(format1);
+    });
+
+    it ('book.addFormat will throw if an async operation is pending on the template\'s parent book', function() {
+        var otherBook = new xl.Book(xl.BOOK_TYPE_XLS),
+            format1 = otherBook.addFormat();
+
+        otherBook.saveRaw(function() {}, function() {});
+
+        shouldThrow(book.addFormat, book, format1);
     });
 
     it('book.addFont adds a font', function() {
@@ -357,7 +372,7 @@ describe('The book class', function() {
         shouldThrow(book.getPicture, book, true);
         shouldThrow(book.getPicture, {}, 0);
         var pic0 = book.getPicture(0);
-        
+
         expect(pic0.type).toBe(xl.PICTURETYPE_PNG);
         expect(testUtils.compareBuffers(pic0.data, fileBuffer)).toBe(true);
 
