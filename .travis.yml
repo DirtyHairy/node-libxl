@@ -4,17 +4,15 @@ node_js:
     - "4"
     - "0.12"
     - "0.10"
+env:
+    - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 install:
-    - gcc --version
-    # install gcc-4.8 with c++11 support: https://github.com/travis-ci-tester/travis-test-gcc-cxx-11
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt-get update
-    - sudo apt-get install g++-4.8
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90
-    # https://github.com/travis-ci-tester/travis-test-clang-cxx-11
-    - sudo apt-get install libstdc++-4.8-dev
-    - gcc --version
     - npm install
     - npm install jasmine-node
 script:
