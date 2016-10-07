@@ -1,3 +1,6 @@
 deps
 build
 .clang_complete
+.ycm_extra_conf.pyc
+node_modules
+specs/output

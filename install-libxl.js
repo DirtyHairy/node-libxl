@@ -24,202 +24,100 @@
  */
 
 var fs = require('fs'),
-    Ftp = require('ftp'),
     os = require('os'),
     path = require('path'),
     tmp = require('tmp'),
     util = require('util'),
     md5 = require('md5'),
     zlib = require('zlib'),
-    tar = require('tar');
+    tar = require('tar'),
+    http = require('http'),
     AdmZip = require('adm-zip');
 
 var isWin = !!os.platform().match(/^win/),
     isMac = !!os.platform().match(/^darwin/),
     dependencyDir = 'deps',
     libxlDir = path.join(dependencyDir, 'libxl'),
-    ftpHost = 'libxl.com',
     archiveEnv = 'NODE_LIBXL_SDK_ARCHIVE';
 
 var download = function(callback) {
-    var ftpClient = new Ftp(),
-        downloadComplete = false;
-
-    function decodeDirectoryEntry(entry) {
-        var match = entry.name.match(/^libxl-(\w+)-([\d\.]+)\.([a-zA-z\.]+)$/);
-        if (match) {
-            return {
-                file: entry.name,
-                system: match[1],
-                version: match[2],
-                suffix: match[3]
-            };
-        }
-    }
-
-    function decodeVersion(file) {
-        return file.version.split('.');
-    }
-
-    function compareFiles(file1, file2) {
-        function cmp(a, b) {
-            if (a > b) return -1;
-            if (a < b) return  1;
-            return 0;
-        }
-
-        var v1 = decodeVersion(file1), v2 = decodeVersion(file2),
-            nibbles = Math.min(v1.length, v2.length),
-            partialResult;
-
-        for (var i = 0; i < nibbles; i++) {
-            partialResult = cmp(v1[i], v2[i]);
-
-            if (partialResult) return partialResult;
-        }
-
-        return v1.length > nibbles ? -1 : 1;
-    }
-
-    function validArchive(file) {
-        if (!file) return false;
-
+    function getPlaform() {
         if (isWin) {
-            return file.system === "win" && file.suffix === "zip";
-        } else if (isMac) {
-            return file.system === "mac" && file.suffix === "tar.gz";
-        }
-        return file.system === "lin" && file.suffix === "tar.gz";
-    }
-
-    function onError(error) {
-        if (downloadComplete) {
-            console.log('WARNING: late FTP error: ' + error.message);
-        } else {
-            console.log('Download from FTP failed');
-            throw(error);
-        }
-    }
-
-    function onReady() {
-        console.log('Connected, receiving directory list...');
-
-        ftpClient.list(function(error, list) {
-            if (error) onError(error);
-
-            processDirectoryList(list);
-        });
-    }
-
-    function processDirectoryList(list) {
-        try {
-            if (!list) throw new Error('FTP list failed');
-
-            var candidates = list
-                .map(decodeDirectoryEntry)
-                .filter(validArchive)
-                .sort(compareFiles);
-
-            if (!candidates.length) throw new Error('Failed to identify a suitable download');
-
-            download(candidates[0].file);
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-    /*
-     * There is a obscure bug concerning ftp.get and stream.pipe, leading to
-     * occasional gobbled chunks at the end of the download
-     *
-     * https://github.com/mscdex/node-ftp/issues/70
-     *
-     * Thus, we handle the download manually and compute MD5 and total size to
-     * get meaningful debug output.
-     */
-    function consumeDownload(instream, outstream, callback) {
-        var chunks = [],
-            instreamTerminated = false,
-            outstreamTerminated = false,
-            buffering = false,
-            chunkIdx = 0,
-            totalSize = 0;
-
-        function write() {
-            return outstream.write(chunks[chunkIdx++]);
+            return 'win';
         }
 
-        function terminateOutstream() {
-            if (!outstreamTerminated) outstream.end();
-            outstreamTerminated = true;
+        if (isMac) {
+            return 'mac';
         }
 
-        instream.on('data', function(chunk) {
-            chunks.push(chunk);
-            totalSize += chunk.length;
-            if (!buffering) buffering = !write();
-        });
-
-        instream.on('end', function() {
-            instreamTerminated = true;
-            if (!buffering) terminateOutstream();
-        });
-
-        outstream.on('drain', function() {
-            // Write chunks until the queue is empty or the the writer get
-            // overwhelmed.
-            while ((buffering = chunkIdx < chunks.length) && write());
-
-            // Stop buffering if all chunks have been flushed.
-            if (!buffering && instreamTerminated) terminateOutstream();
-        });
-
-        outstream.on('close', function() {
-            callback(undefined, totalSize, md5(Buffer.concat(chunks), totalSize));
-        });
+        return 'lin';
     }
 
-    function download(name) {
-        console.log('Downloading ' + name + '...');
+    function getArchiveName() {
+        return util.format('libxl-%s-latest.%s', getPlaform(), isWin ? 'zip' : 'tar.gz');
+    }
 
-        tmp.tmpName({
-            postfix: path.basename(name),
-            tries: 10
-        }, function(err, outfile) {
-            if (err) throw err;
+    function downloadToFile(filename, callback) {
+        var writer;
 
-            var writer = fs.createWriteStream(outfile);
-            writer.on('error', onError);
+        function dieOnError(e) {
+            console.log(util.format('unable to download the libxl SDK: %s', e.message));
+            console.log(util.format(
+                '\nplease download libxl manually from http://www.libxl.com and point the environment variable %s to the downloaded file',
+                archiveEnv
+            ));
 
-            function onOpen() {
-                ftpClient.get(name, function(error, stream) {
-                    if (error) throw error;
+            process.exit(1);
+        }
 
-                    stream.on('error', onError);
-                    consumeDownload(stream, writer, function(err, bytes, hash) {
-                        if (err) throw err;
+        function onOpen() {
+            var url = util.format('http://www.libxl.com/download/%s', getArchiveName());
 
-                        ftpClient.end();
-                        downloadComplete = true;
+            console.log('Downloading ' + url);
 
-                        console.log(util.format('Download complete - %s bytes, MD5: %s',
-                            bytes, hash));
-                        callback(outfile);
-                    });
+            http.get(url, function(response) {
+                if (response.statusCode !== 200) {
+                    dieOnError(new Error(util.format('request failed: %s %s', response.statusCode, response.statusMessage)));
+                }
+
+                response.on('error', dieOnError);
+
+                writer.on('finish', function() {
+                    callback(filename);
                 });
+
+                response.pipe(writer);
+            }).on('error', dieOnError);
+        }
+
+        writer = fs.createWriteStream(filename);
+        writer.on('error', dieOnError);
+        writer.on('open', onOpen);
+    }
+
+    function calculateMd5(filename, callback) {
+        fs.readFile(filename, function(err, buffer) {
+            if (err) {
+                throw err;
             }
 
-            writer.on('open', onOpen);
-        });        
+            callback(md5(buffer));
+        });
     }
 
-    ftpClient.on('error', onError);
-    ftpClient.on('ready', onReady);
+    function onDownloadComplete(archive) {
+        calculateMd5(archive, function(md5) {
+            console.log(util.format('successfully downloaded %s, MD5: %s', archive, md5));
 
-    console.log('Connecting to ftp://' + ftpHost + '...');
+            callback(archive);
+        });
+    }
 
-    ftpClient.connect({
-        host: ftpHost
+    tmp.tmpName({
+        postfix: path.basename(getArchiveName()),
+        tries: 10
+    }, function(err, outfile) {
+        downloadToFile(outfile, onDownloadComplete);
     });
 };
 
