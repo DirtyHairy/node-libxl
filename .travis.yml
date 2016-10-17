@@ -17,3 +17,9 @@ install:
     - npm install jasmine-node
 script:
     - LD_LIBRARY_PATH="`pwd`/deps/libxl/lib64" ./node_modules/.bin/jasmine-node ./specs
+notifications:
+    email:
+        on_sucess: change
+        on_error: always
+        recipients:
+            - cnspeckn@googlemail.com
