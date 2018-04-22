@@ -9,6 +9,7 @@
     "libxl",
     "spreadsheet"
   ],
+  "files": ["install-libxl.js", "demo.js", "specs", "lib", "src", "binding.gyp"],
   "homepage": "https://github.com/DirtyHairy/node-libxl",
   "repository": {
     "type": "git",
