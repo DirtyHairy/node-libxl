@@ -28,8 +28,8 @@
   "dependencies": {
     "adm-zip": "~0.4.7",
     "md5": "~2.2.1",
-    "nan": "~2.4.0",
-    "tar": "~2.2.1",
+    "nan": "~2.10.0",
+    "tar": "~4.4.1",
     "tmp": "~0.0.29"
   },
   "devDependencies": {
