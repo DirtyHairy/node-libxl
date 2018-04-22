@@ -2,7 +2,7 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.2.20",
+  "version": "0.3.0",
   "description": "Node bindings for the libxl library for reading and writing excel (XLS and XLSX) spreadsheets.",
   "keywords": [
     "excel",
@@ -18,7 +18,7 @@
     "url": "https://github.com/DirtyHairy/node-libxl/issues"
   },
   "engines": {
-    "node": ">=0.10"
+    "node": ">=4.0.0"
   },
   "main": "./lib/libxl.js",
   "gypfile": true,

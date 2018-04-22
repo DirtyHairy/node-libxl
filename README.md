@@ -2,9 +2,8 @@
 [![npm version](https://badge.fury.io/js/libxl.svg)](https://badge.fury.io/js/libxl)
 # What it is
 
-Node.js bindings for [libxl](http://www.libxl.com/). Node 0.12 and Node 0.10 are
-both supported, Node 0.11.13 and higher work, too.  Iojs starting with version
-1.0.3 is supported as well (older versions might work).
+Node.js bindings for [libxl](http://www.libxl.com/). Node versions starting from 4.0.0
+are supported (see 'Platform and Node.js support' below for details).
 
 # Compilation and Installation
 
@@ -37,16 +36,16 @@ your dynamic library search path. This is achieved by either
 
 **Copying the library into your system library search path**, e.g. `/usr/lib` on
   Linux.
-  
+
 **Copying the library into the working directory** where you run the script which
   uses the bindings. The name of the library file is `libxl.so` on Linux,
   `libxl.dylib` on Mac and `libxl.dll` on Windows.
-  
+
 **Properly setting the `LD_LIBRARY_PATH` (Linux) or `DYLD_LIBRARY_PATH` (Mac)**
   environment variable. For example, the following command will execute the
   `demo.js` script in the package directory without requiring libxl to be
   installed separately
-  
+
     LD_LIBRARY_PATH="`pwd`/deps/libxl/lib:`pwd`/deps/libxl/lib64:$LD_LIBRARY_PATH" node demo.js
 
 
@@ -208,9 +207,24 @@ bindings by modifying `api_key.h` and rebuilding the library via `node-gyp
 rebuild` (you'll have to install node-gyp for this) or `npm install` in the
 package directory.
 
-# Platform support
+# Platform and Node.js support
+
+## Platforms
 
 The package supports Linux, Windows and Mac.
+
+## Node.js
+
+The current branch (0.3.x) supports all current versions of Node.js starting with 4.0.0.
+If you need support for older Node versions, use the 0.2.x branch --- this supports
+Node.js down to version 0.10.0.
+
+## Restrictions
+
+Some of the newer parts of the libxl API are currently unsupported. Nag me to implement
+them if you miss anything (or provide a pull request).
+
+The async hooks API introduced with Node.js 9 is currently unsupported.
 
 # Tests
 
@@ -228,7 +242,7 @@ Please report any bugs or feature requests on the github issue tracker.
 As the API is completely covered, I consider the bindings complete. New releases
 will only cover new libxl methods and fix bugs. If you identify parts of
 libxl that are particularily slow, asynchroneous version of those could be added
-as well. Note that only the latest version branch (0.2.x) is maintained and
+as well. Note that only the latest version branch (0.3.x) is maintained and
 supported.
 
 # Credits
