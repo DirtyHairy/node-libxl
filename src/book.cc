@@ -141,7 +141,7 @@ NAN_METHOD(Book::Load) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-book-load"),
                 filename(filename)
             {}
 
@@ -196,7 +196,7 @@ NAN_METHOD(Book::Write) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-book-write"),
                 filename(filename)
             {}
 
@@ -251,7 +251,7 @@ NAN_METHOD(Book::WriteRaw) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(Nan::Callback *callback, Local<Object> that) :
-                AsyncWorker<Book>(callback, that)
+                AsyncWorker<Book>(callback, that, "node-libxl-book-write-raw")
             {}
 
             virtual void Execute() {
@@ -272,7 +272,8 @@ NAN_METHOD(Book::WriteRaw) {
                     Nan::Undefined(),
                     Nan::NewBuffer(buffer, size).ToLocalChecked()
                 };
-                callback->Call(2, argv);
+
+                callback->Call(2, argv, async_resource);
             }
 
         private:
@@ -322,7 +323,7 @@ NAN_METHOD(Book::LoadRaw) {
         public:
             Worker(Nan::Callback *callback, Local<Object> that,
                     Handle<Value> buffer) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-book-load-raw"),
                 buffer(buffer)
             {}
 
@@ -801,7 +802,7 @@ NAN_METHOD(Book::GetPictureAsync) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(Nan::Callback* callback, Local<Object> that, int index) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-book-get-picture-async"),
                 index(index)
             {}
 
@@ -826,7 +827,7 @@ NAN_METHOD(Book::GetPictureAsync) {
                     Nan::NewBuffer(buffer, size).ToLocalChecked()
                 };
 
-                callback->Call(3, argv);
+                callback->Call(3, argv, async_resource);
             }
 
         private:
@@ -894,7 +895,7 @@ NAN_METHOD(Book::AddPictureAsync) {
         public:
             FileWorker(Nan::Callback* callback, Local<Object> that,
                     Handle<Value> filename) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-add-picture-async-file"),
                 filename(filename)
             {}
 
@@ -913,7 +914,7 @@ NAN_METHOD(Book::AddPictureAsync) {
                     Nan::New<Integer>(index)
                 };
 
-                callback->Call(2, argv);
+                callback->Call(2, argv, async_resource);
             }
 
         private:
@@ -925,7 +926,7 @@ NAN_METHOD(Book::AddPictureAsync) {
         public:
             BufferWorker(Nan::Callback* callback, Local<Object> that,
                     Handle<Value> buffer) :
-                AsyncWorker<Book>(callback, that),
+                AsyncWorker<Book>(callback, that, "node-libxl-add-picture-async-file"),
                 buffer(buffer)
             {}
 
@@ -944,7 +945,7 @@ NAN_METHOD(Book::AddPictureAsync) {
                     Nan::New<Integer>(index)
                 };
 
-                callback->Call(2, argv);
+                callback->Call(2, argv, async_resource);
             }
 
         private:
