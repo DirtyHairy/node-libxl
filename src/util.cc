@@ -48,7 +48,7 @@ Local<Value> ProxyConstructor(
         argv[i] = arguments[i];
     }
 
-    Local<Value> newInstance = constructor->NewInstance(argc, argv);
+    Local<Value> newInstance = CSNanNewInstance(constructor, argc, argv);
 
     delete[] argv;
     return scope.Escape(newInstance);
@@ -80,7 +80,7 @@ Local<Value> CallStubConstructor(Handle<Function> constructor) {
 
     Handle<Value> info[1] = {CSNanNewExternal(NULL)};
 
-    return scope.Escape(constructor->NewInstance(1, info));
+    return scope.Escape(CSNanNewInstance(constructor, 1, info));
 }
 
 

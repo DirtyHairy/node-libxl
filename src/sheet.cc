@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -117,7 +117,7 @@ NAN_METHOD(Sheet::CellFormat) {
         return util::ThrowLibxlError(that);
     }
 
-    
+
     info.GetReturnValue().Set(Format::NewInstance(libxlFormat, that->GetBookHandle()));
 }
 
@@ -176,7 +176,7 @@ NAN_METHOD(Sheet::WriteStr) {
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    String::Utf8Value value(arguments.GetString(2));
+    CSNanUtf8Value(value, arguments.GetString(2));
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
@@ -210,7 +210,7 @@ NAN_METHOD(Sheet::ReadNum) {
 
     libxl::Format* libxlFormat = NULL;
     double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
-    
+
     if (formatRef->IsObject() && libxlFormat) {
         formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
@@ -261,7 +261,7 @@ NAN_METHOD(Sheet::ReadBool) {
 
     libxl::Format* libxlFormat = NULL;
     bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
-    
+
     if (formatRef->IsObject() && libxlFormat) {
         formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
             Format::NewInstance(libxlFormat, that->GetBookHandle()));
@@ -317,7 +317,7 @@ NAN_METHOD(Sheet::ReadBlank) {
 
     Local<Value> formatHandle = Format::NewInstance(libxlFormat,
         that->GetBookHandle());
-    
+
     if (formatRef->IsObject() && libxlFormat) {
         formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(), formatHandle);
     }
@@ -686,7 +686,7 @@ NAN_METHOD(Sheet::SetMerge) {
     if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
         return util::ThrowLibxlError(that);
     }
-    
+
     info.GetReturnValue().Set(info.This());
 }
 
@@ -713,7 +713,7 @@ NAN_METHOD(Sheet::DelMerge) {
 
 NAN_METHOD(Sheet::PictureSize) {
     Nan::HandleScope scope;
-    
+
     Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
@@ -832,7 +832,7 @@ NAN_METHOD(Sheet::GetVerPageBreak) {
     Nan::HandleScope scope;
 
     ArgumentHelper arguments(info);
-    
+
     int index = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
@@ -1342,7 +1342,7 @@ NAN_METHOD(Sheet::SetDisplayGridlines) {
 
     bool displayGridlines = arguments.GetBoolean(0, true);
     ASSERT_ARGUMENTS(arguments);
-    
+
     Sheet* that = Unwrap(info.This());
     ASSERT_THIS(that);
 
@@ -2094,7 +2094,7 @@ NAN_METHOD(Sheet::SetHidden) {
     Nan::HandleScope scope;
 
     ArgumentHelper arguments(info);
-    
+
     int state = arguments.GetInt(0, libxl::SHEETSTATE_HIDDEN);
     ASSERT_ARGUMENTS(arguments);
 
@@ -2470,7 +2470,7 @@ void Sheet::Initialize(Handle<Object> exports) {
 
     NODE_DEFINE_CONSTANT(exports, SHEETSTATE_VISIBLE);
     NODE_DEFINE_CONSTANT(exports, SHEETSTATE_HIDDEN);
-    NODE_DEFINE_CONSTANT(exports, SHEETSTATE_VERYHIDDEN);    
+    NODE_DEFINE_CONSTANT(exports, SHEETSTATE_VERYHIDDEN);
 }
 
 
