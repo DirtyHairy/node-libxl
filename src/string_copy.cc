@@ -37,7 +37,11 @@ StringCopy::StringCopy(String::Utf8Value& utf8Value) {
 
 
 StringCopy::StringCopy(Handle<Value> value) {
-    String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), value);
+    #if NODE_MAJOR_VERSION >= 8
+        String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), value);
+    #else
+        String::Utf8Value utf8Value(value);
+    #endif
 
     str = new char[strlen(*utf8Value) + 1];
     strcpy(str, *utf8Value);
