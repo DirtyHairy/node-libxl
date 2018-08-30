@@ -384,7 +384,7 @@ NAN_METHOD(Sheet::WriteFormula) {
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    String::Utf8Value value(arguments.GetString(2));
+    CSNanUtf8Value(value, arguments.GetString(2));
     Format* format = arguments.GetWrapped<Format>(3, NULL);
     ASSERT_ARGUMENTS(arguments);
 
@@ -431,8 +431,8 @@ NAN_METHOD(Sheet::WriteComment) {
 
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    String::Utf8Value value(arguments.GetString(2));
-    String::Utf8Value author(arguments.GetString(3, ""));
+    CSNanUtf8Value (value, arguments.GetString(2));
+    CSNanUtf8Value (author, arguments.GetString(3, ""));
     int width = arguments.GetInt(4, 129);
     int height = arguments.GetInt(5, 75);
     ASSERT_ARGUMENTS(arguments);
@@ -1541,7 +1541,7 @@ NAN_METHOD(Sheet::SetHeader) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value header(arguments.GetString(0));
+    CSNanUtf8Value(header, arguments.GetString(0));
     double margin = arguments.GetDouble(1, 0.5);
     ASSERT_ARGUMENTS(arguments);
 
@@ -1582,7 +1582,7 @@ NAN_METHOD(Sheet::SetFooter) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value footer(arguments.GetString(0));
+    CSNanUtf8Value(footer, arguments.GetString(0));
     double margin = arguments.GetDouble(1, 0.5);
     ASSERT_ARGUMENTS(arguments);
 
@@ -1880,7 +1880,7 @@ NAN_METHOD(Sheet::GetNamedRange) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
@@ -1912,7 +1912,7 @@ NAN_METHOD(Sheet::SetNamedRange) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     int rowFirst    = arguments.GetInt(1),
         rowLast     = arguments.GetInt(2),
         colFirst    = arguments.GetInt(3),
@@ -1938,7 +1938,7 @@ NAN_METHOD(Sheet::DelNamedRange) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
     ASSERT_ARGUMENTS(arguments);
 
@@ -2014,7 +2014,7 @@ NAN_METHOD(Sheet::SetName) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -2149,7 +2149,7 @@ NAN_METHOD(Sheet::AddrToRowCol) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value addr(arguments.GetString(0));
+    CSNanUtf8Value(addr, arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());

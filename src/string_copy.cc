@@ -37,7 +37,7 @@ StringCopy::StringCopy(String::Utf8Value& utf8Value) {
 
 
 StringCopy::StringCopy(Handle<Value> value) {
-    CSNanUtf8Value(utf8Value, value);
+    String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), value);
 
     str = new char[strlen(*utf8Value) + 1];
     strcpy(str, *utf8Value);

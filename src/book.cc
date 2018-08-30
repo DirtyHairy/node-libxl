@@ -123,7 +123,7 @@ NAN_METHOD(Book::LoadSync){
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value filename(arguments.GetString(0));
+    CSNanUtf8Value(filename, arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -177,7 +177,7 @@ NAN_METHOD(Book::WriteSync) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value filename(arguments.GetString(0));
+    CSNanUtf8Value(filename, arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -359,7 +359,7 @@ NAN_METHOD(Book::AddSheet) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     Sheet* parentSheet = arguments.GetWrapped<Sheet>(1, NULL);
     ASSERT_ARGUMENTS(arguments);
 
@@ -389,7 +389,7 @@ NAN_METHOD(Book::InsertSheet) {
     ArgumentHelper arguments(info);
 
     int index = arguments.GetInt(0);
-    String::Utf8Value name(arguments.GetString(1));
+    CSNanUtf8Value(name, arguments.GetString(1));
     Sheet* parentSheet = arguments.GetWrapped<Sheet>(2, NULL);
     ASSERT_ARGUMENTS(arguments);
 
@@ -538,7 +538,7 @@ NAN_METHOD(Book::AddCustomNumFormat) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value description(arguments.GetString(0));
+    CSNanUtf8Value(description, arguments.GetString(0));
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -864,7 +864,7 @@ NAN_METHOD(Book::AddPicture) {
 
     if (info[0]->IsString()) {
 
-        String::Utf8Value filename(arguments.GetString(0));
+        CSNanUtf8Value(filename, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
         index = that->GetWrapped()->addPicture(*filename);
@@ -1010,7 +1010,7 @@ NAN_METHOD(Book::SetDefaultFont) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value name(arguments.GetString(0));
+    CSNanUtf8Value(name, arguments.GetString(0));
     int size = arguments.GetInt(1);
     ASSERT_ARGUMENTS(arguments);
 
@@ -1145,8 +1145,8 @@ NAN_METHOD(Book::SetKey) {
 
     ArgumentHelper arguments(info);
 
-    String::Utf8Value   name(arguments.GetString(0)),
-                        key(arguments.GetString(1));
+    CSNanUtf8Value(name, arguments.GetString(0));
+    CSNanUtf8Value(key, arguments.GetString(1));
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
