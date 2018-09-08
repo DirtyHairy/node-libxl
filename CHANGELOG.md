@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.1
+
+ * Fix build on node 10
+ * Fix deprecation warnings
+ * Properly support async context and hooks
+
+## 0.3.0
+
+ * Build fixes for node 9
+ * Remove support for node < 4 + io.js
+ * Adapt to tar API changes
+
 ## 0.2.15
 
  * Bump nan, fixes build on io.js 2.0.2
