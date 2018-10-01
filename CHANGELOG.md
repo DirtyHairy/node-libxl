@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+ * Fix build on node version 8.0 -- 8.9
+
 ## 0.3.1
 
  * Fix build on node 10
