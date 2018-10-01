@@ -42,7 +42,7 @@
     #define CSNanNewInstance(handle, argv, argc) (handle)->NewInstance(argv, argc)
 #endif
 
-#if NODE_MAJOR_VERSION >= 8
+#if NODE_MAJOR_VERSION > 8 || (NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION >= 10)
     #define CSNanUtf8Value(name, value) String::Utf8Value name(v8::Isolate::GetCurrent(), value)
 #else
     #define CSNanUtf8Value(name, value) String::Utf8Value name(value)
