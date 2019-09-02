@@ -30,7 +30,7 @@ using namespace v8;
 
 namespace node_libxl {
 
-BufferCopy::BufferCopy(Handle<Value> buffer) :
+BufferCopy::BufferCopy(Local<Value> buffer) :
     size(node::Buffer::Length(buffer)),
     buffer(new char[size])
 {

@@ -140,7 +140,7 @@ NAN_METHOD(Book::LoadSync){
 NAN_METHOD(Book::Load) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename) :
                 AsyncWorker<Book>(callback, that, "node-libxl-book-load"),
                 filename(filename)
             {}
@@ -195,7 +195,7 @@ NAN_METHOD(Book::WriteSync) {
 NAN_METHOD(Book::Write) {
     class Worker : public AsyncWorker<Book> {
         public:
-            Worker(Nan::Callback* callback, Local<Object> that, Handle<Value> filename) :
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename) :
                 AsyncWorker<Book>(callback, that, "node-libxl-book-write"),
                 filename(filename)
             {}
@@ -302,7 +302,7 @@ NAN_METHOD(Book::LoadRawSync) {
 
     ArgumentHelper arguments(info);
 
-    Handle<Value> buffer = arguments.GetBuffer(0);
+    Local<Value> buffer = arguments.GetBuffer(0);
     ASSERT_ARGUMENTS(arguments);
 
     Book* that = Unwrap(info.This());
@@ -322,7 +322,7 @@ NAN_METHOD(Book::LoadRaw) {
     class Worker : public AsyncWorker<Book> {
         public:
             Worker(Nan::Callback *callback, Local<Object> that,
-                    Handle<Value> buffer) :
+                    Local<Value> buffer) :
                 AsyncWorker<Book>(callback, that, "node-libxl-book-load-raw"),
                 buffer(buffer)
             {}
@@ -676,13 +676,13 @@ NAN_METHOD(Book::DateUnpack) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("year").ToLocalChecked(),      Nan::New<Integer>(year));
-    result->Set(Nan::New<String>("month").ToLocalChecked(),     Nan::New<Integer>(month));
-    result->Set(Nan::New<String>("day").ToLocalChecked(),       Nan::New<Integer>(day));
-    result->Set(Nan::New<String>("hour").ToLocalChecked(),      Nan::New<Integer>(hour));
-    result->Set(Nan::New<String>("minute").ToLocalChecked(),    Nan::New<Integer>(minute));
-    result->Set(Nan::New<String>("second").ToLocalChecked(),    Nan::New<Integer>(second));
-    result->Set(Nan::New<String>("msecond").ToLocalChecked(),   Nan::New<Integer>(msecond));
+    Nan::Set(result, Nan::New<String>("year").ToLocalChecked(), Nan::New<Integer>(year));
+    Nan::Set(result, Nan::New<String>("month").ToLocalChecked(), Nan::New<Integer>(month));
+    Nan::Set(result, Nan::New<String>("day").ToLocalChecked(), Nan::New<Integer>(day));
+    Nan::Set(result, Nan::New<String>("hour").ToLocalChecked(), Nan::New<Integer>(hour));
+    Nan::Set(result, Nan::New<String>("minute").ToLocalChecked(), Nan::New<Integer>(minute));
+    Nan::Set(result, Nan::New<String>("second").ToLocalChecked(), Nan::New<Integer>(second));
+    Nan::Set(result, Nan::New<String>("msecond").ToLocalChecked(), Nan::New<Integer>(msecond));
 
     info.GetReturnValue().Set(result);
 }
@@ -722,9 +722,9 @@ NAN_METHOD(Book::ColorUnpack) {
     that->GetWrapped()->colorUnpack(
         static_cast<libxl::Color>(value), &red, &green, &blue);
 
-    result->Set(Nan::New<String>("red").ToLocalChecked(),   Nan::New<Integer>(red));
-    result->Set(Nan::New<String>("green").ToLocalChecked(), Nan::New<Integer>(green));
-    result->Set(Nan::New<String>("blue").ToLocalChecked(),  Nan::New<Integer>(blue));
+    Nan::Set(result, Nan::New<String>("red").ToLocalChecked(), Nan::New<Integer>(red));
+    Nan::Set(result, Nan::New<String>("green").ToLocalChecked(), Nan::New<Integer>(green));
+    Nan::Set(result, Nan::New<String>("blue").ToLocalChecked(), Nan::New<Integer>(blue));
 
     info.GetReturnValue().Set(result);
 }
@@ -791,8 +791,8 @@ NAN_METHOD(Book::GetPicture) {
     memcpy(buffer, data, size);
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("type").ToLocalChecked(), Nan::New<Integer>(pictureType));
-    result->Set(Nan::New<String>("data").ToLocalChecked(), Nan::NewBuffer(buffer, size).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("type").ToLocalChecked(), Nan::New<Integer>(pictureType));
+    Nan::Set(result, Nan::New<String>("data").ToLocalChecked(), Nan::NewBuffer(buffer, size).ToLocalChecked());
 
     info.GetReturnValue().Set(result);
 }
@@ -872,7 +872,7 @@ NAN_METHOD(Book::AddPicture) {
 
     } else if (node::Buffer::HasInstance(info[0])) {
 
-        Handle<Value> buffer = arguments.GetBuffer(0);
+        Local<Value> buffer = arguments.GetBuffer(0);
         ASSERT_ARGUMENTS(arguments);
 
         index = that->GetWrapped()->addPicture2(
@@ -894,7 +894,7 @@ NAN_METHOD(Book::AddPictureAsync) {
     class FileWorker : public AsyncWorker<Book> {
         public:
             FileWorker(Nan::Callback* callback, Local<Object> that,
-                    Handle<Value> filename) :
+                    Local<Value> filename) :
                 AsyncWorker<Book>(callback, that, "node-libxl-add-picture-async-file"),
                 filename(filename)
             {}
@@ -925,7 +925,7 @@ NAN_METHOD(Book::AddPictureAsync) {
     class BufferWorker : public AsyncWorker<Book> {
         public:
             BufferWorker(Nan::Callback* callback, Local<Object> that,
-                    Handle<Value> buffer) :
+                    Local<Value> buffer) :
                 AsyncWorker<Book>(callback, that, "node-libxl-add-picture-async-file"),
                 buffer(buffer)
             {}
@@ -963,7 +963,7 @@ NAN_METHOD(Book::AddPictureAsync) {
 
     if (info[0]->IsString()) {
 
-        Handle<Value> filename = arguments.GetString(0);
+        Local<Value> filename = arguments.GetString(0);
         ASSERT_ARGUMENTS(arguments);
 
         Nan::AsyncQueueWorker(new FileWorker(
@@ -971,7 +971,7 @@ NAN_METHOD(Book::AddPictureAsync) {
 
     } else if (node::Buffer::HasInstance(info[0])) {
 
-        Handle<Value> buffer = arguments.GetBuffer(0);
+        Local<Value> buffer = arguments.GetBuffer(0);
         ASSERT_ARGUMENTS(arguments);
 
         Nan::AsyncQueueWorker(new BufferWorker(
@@ -999,8 +999,8 @@ NAN_METHOD(Book::DefaultFont) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(name).ToLocalChecked());
-    result->Set(Nan::New<String>("size").ToLocalChecked(), Nan::New<Integer>(size));
+    Nan::Set(result, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(name).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("size").ToLocalChecked(), Nan::New<Integer>(size));
 
     info.GetReturnValue().Set(result);
 }
@@ -1162,7 +1162,7 @@ NAN_METHOD(Book::SetKey) {
 // Init
 
 
-void Book::Initialize(Handle<Object> exports) {
+void Book::Initialize(Local<Object> exports) {
     using namespace libxl;
 
     Nan::HandleScope scope;
@@ -1230,8 +1230,8 @@ void Book::Initialize(Handle<Object> exports) {
     #endif
 
     t->ReadOnlyPrototype();
-    constructor.Reset(t->GetFunction());
-    exports->Set(Nan::New<String>("Book").ToLocalChecked(), Nan::New(constructor));
+    constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
+    Nan::Set(exports, Nan::New<String>("Book").ToLocalChecked(), Nan::New(constructor));
 
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLS);
     NODE_DEFINE_CONSTANT(exports, BOOK_TYPE_XLSX);

@@ -36,13 +36,13 @@ namespace node_libxl {
 namespace util {
 
 Local<Value> ProxyConstructor(
-    Handle<Function> constructor,
+    Local<Function> constructor,
     Nan::NAN_METHOD_ARGS_TYPE arguments
 ) {
     Nan::EscapableHandleScope scope;
 
     uint8_t argc = arguments.Length();
-    Handle<Value>* argv = new Handle<Value>[argc];
+    Local<Value>* argv = new Local<Value>[argc];
 
     for (uint8_t i = 0; i < argc; i++) {
         argv[i] = arguments[i];
@@ -58,7 +58,7 @@ Local<Value> ProxyConstructor(
 NAN_METHOD(StubConstructor) {
     Nan::HandleScope scope;
 
-    Handle<Value> sentry = info[0];
+    Local<Value> sentry = info[0];
 
     if (!(  info.IsConstructCall() &&
             info.Length() == 1 &&
@@ -75,10 +75,10 @@ NAN_METHOD(StubConstructor) {
 }
 
 
-Local<Value> CallStubConstructor(Handle<Function> constructor) {
+Local<Value> CallStubConstructor(Local<Function> constructor) {
     Nan::EscapableHandleScope scope;
 
-    Handle<Value> info[1] = {CSNanNewExternal(NULL)};
+    Local<Value> info[1] = {CSNanNewExternal(NULL)};
 
     return scope.Escape(CSNanNewInstance(constructor, 1, info));
 }

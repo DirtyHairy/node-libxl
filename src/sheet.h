@@ -39,7 +39,7 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
 
         Sheet(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 
-        static void Initialize(v8::Handle<v8::Object> exports);
+        static void Initialize(v8::Local<v8::Object> exports);
         
         static Sheet* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);

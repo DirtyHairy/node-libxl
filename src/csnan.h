@@ -35,17 +35,10 @@
         (Object)->DefineOwnProperty(context, Key, Value, Attribs).FromJust();       \
   } while (0)
 
-#if NODE_MAJOR_VERSION >= 6
-    #define CSNanNewInstance(handle, argv, argc) \
-        (handle)->NewInstance((handle)->GetIsolate()->GetCurrentContext(), argv, argc).ToLocalChecked()
-#else
-    #define CSNanNewInstance(handle, argv, argc) (handle)->NewInstance(argv, argc)
-#endif
 
-#if NODE_MAJOR_VERSION > 8 || (NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION >= 10)
-    #define CSNanUtf8Value(name, value) String::Utf8Value name(v8::Isolate::GetCurrent(), value)
-#else
-    #define CSNanUtf8Value(name, value) String::Utf8Value name(value)
-#endif
+#define CSNanNewInstance(handle, argv, argc) \
+    (handle)->NewInstance((handle)->GetIsolate()->GetCurrentContext(), argv, argc).ToLocalChecked()
+
+#define CSNanUtf8Value(name, value) String::Utf8Value name(v8::Isolate::GetCurrent(), value)
 
 #endif //BINDINGS_CSNAN_H

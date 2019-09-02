@@ -288,7 +288,7 @@ NAN_METHOD(Font::SetName) {
 // Init
 
 
-void Font::Initialize(Handle<Object> exports) {
+void Font::Initialize(Local<Object> exports) {
     using namespace libxl;
 
     Nan::HandleScope scope;
@@ -317,7 +317,7 @@ void Font::Initialize(Handle<Object> exports) {
     Nan::SetPrototypeMethod(t, "setName", SetName);
 
     t->ReadOnlyPrototype();
-    constructor.Reset(t->GetFunction());
+    constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
 
     NODE_DEFINE_CONSTANT(exports, UNDERLINE_NONE);
     NODE_DEFINE_CONSTANT(exports, UNDERLINE_SINGLE);

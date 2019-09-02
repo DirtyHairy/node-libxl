@@ -39,7 +39,7 @@ class Font : public Wrapper<libxl::Font> , public BookWrapper
 
         Font(libxl::Font* font, v8::Local<v8::Value> book);
 
-        static void Initialize(v8::Handle<v8::Object> exports);
+        static void Initialize(v8::Local<v8::Object> exports);
         
         static Font* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Font>::Unwrap<Font>(object);

@@ -148,7 +148,7 @@ NAN_METHOD(Sheet::ReadStr) {
     ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = info[2];
+    Local<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -161,8 +161,7 @@ NAN_METHOD(Sheet::ReadStr) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
-            Format::NewInstance(libxlFormat, that->GetBookHandle()));
+        Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(), Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
     info.GetReturnValue().Set(Nan::New<String>(value).ToLocalChecked());
@@ -202,7 +201,7 @@ NAN_METHOD(Sheet::ReadNum) {
     ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = info[2];
+    Local<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -212,8 +211,7 @@ NAN_METHOD(Sheet::ReadNum) {
     double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
-            Format::NewInstance(libxlFormat, that->GetBookHandle()));
+        Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(), Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
     info.GetReturnValue().Set(Nan::New<Number>(value));
@@ -253,7 +251,7 @@ NAN_METHOD(Sheet::ReadBool) {
     ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = info[2];
+    Local<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -263,8 +261,7 @@ NAN_METHOD(Sheet::ReadBool) {
     bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
-            Format::NewInstance(libxlFormat, that->GetBookHandle()));
+        Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(), Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
     info.GetReturnValue().Set(Nan::New<Boolean>(value));
@@ -304,7 +301,7 @@ NAN_METHOD(Sheet::ReadBlank) {
     ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = info[2];
+    Local<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -319,7 +316,7 @@ NAN_METHOD(Sheet::ReadBlank) {
         that->GetBookHandle());
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(), formatHandle);
+        Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(), formatHandle);
     }
 
     info.GetReturnValue().Set(formatHandle);
@@ -356,7 +353,7 @@ NAN_METHOD(Sheet::ReadFormula) {
     ArgumentHelper arguments(info);
     int row = arguments.GetInt(0);
     int col = arguments.GetInt(1);
-    Handle<Value> formatRef = info[2];
+    Local<Value> formatRef = info[2];
     ASSERT_ARGUMENTS(arguments);
 
     Sheet* that = Unwrap(info.This());
@@ -369,8 +366,7 @@ NAN_METHOD(Sheet::ReadFormula) {
     }
 
     if (formatRef->IsObject() && libxlFormat) {
-        formatRef.As<Object>()->Set(Nan::New<String>("format").ToLocalChecked(),
-            Format::NewInstance(libxlFormat, that->GetBookHandle()));
+        Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(), Format::NewInstance(libxlFormat, that->GetBookHandle()));
     }
 
     info.GetReturnValue().Set(Nan::New<String>(value).ToLocalChecked());
@@ -660,10 +656,10 @@ NAN_METHOD(Sheet::GetMerge) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
-    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
-    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
-    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
+    Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+    Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
 
     info.GetReturnValue().Set(result);
 }
@@ -743,15 +739,15 @@ NAN_METHOD(Sheet::GetPicture) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("bookIndex").ToLocalChecked(),    Nan::New<Integer>(bookIndex));
-    result->Set(Nan::New<String>("rowTop").ToLocalChecked(),       Nan::New<Integer>(rowTop));
-    result->Set(Nan::New<String>("colLeft").ToLocalChecked(),      Nan::New<Integer>(colLeft));
-    result->Set(Nan::New<String>("rowBottom").ToLocalChecked(),    Nan::New<Integer>(rowBottom));
-    result->Set(Nan::New<String>("colRight").ToLocalChecked(),     Nan::New<Integer>(colRight));
-    result->Set(Nan::New<String>("width").ToLocalChecked(),        Nan::New<Integer>(width));
-    result->Set(Nan::New<String>("height").ToLocalChecked(),       Nan::New<Integer>(height));
-    result->Set(Nan::New<String>("offset_x").ToLocalChecked(),     Nan::New<Integer>(offset_x));
-    result->Set(Nan::New<String>("offset_y").ToLocalChecked(),     Nan::New<Integer>(offset_y));
+    Nan::Set(result, Nan::New<String>("bookIndex").ToLocalChecked(), Nan::New<Integer>(bookIndex));
+    Nan::Set(result, Nan::New<String>("rowTop").ToLocalChecked(), Nan::New<Integer>(rowTop));
+    Nan::Set(result, Nan::New<String>("colLeft").ToLocalChecked(), Nan::New<Integer>(colLeft));
+    Nan::Set(result, Nan::New<String>("rowBottom").ToLocalChecked(), Nan::New<Integer>(rowBottom));
+    Nan::Set(result, Nan::New<String>("colRight").ToLocalChecked(), Nan::New<Integer>(colRight));
+    Nan::Set(result, Nan::New<String>("width").ToLocalChecked(), Nan::New<Integer>(width));
+    Nan::Set(result, Nan::New<String>("height").ToLocalChecked(), Nan::New<Integer>(height));
+    Nan::Set(result, Nan::New<String>("offset_x").ToLocalChecked(), Nan::New<Integer>(offset_x));
+    Nan::Set(result, Nan::New<String>("offset_y").ToLocalChecked(), Nan::New<Integer>(offset_y));
 
     info.GetReturnValue().Set(result);
 }
@@ -1444,8 +1440,8 @@ NAN_METHOD(Sheet::GetPrintFit) {
     if (that->GetWrapped()->getPrintFit(&wPages, &hPages)) {
         Local<Object> result = Nan::New<Object>();
 
-        result->Set(Nan::New<String>("wPages").ToLocalChecked(),   Nan::New<Integer>(wPages));
-        result->Set(Nan::New<String>("hPages").ToLocalChecked(),   Nan::New<Integer>(hPages));
+        Nan::Set(result, Nan::New<String>("wPages").ToLocalChecked(), Nan::New<Integer>(wPages));
+        Nan::Set(result, Nan::New<String>("hPages").ToLocalChecked(), Nan::New<Integer>(hPages));
 
         info.GetReturnValue().Set(result);
     } else {
@@ -1897,11 +1893,12 @@ NAN_METHOD(Sheet::GetNamedRange) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
-    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
-    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
-    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
-    result->Set(Nan::New<String>("hidden").ToLocalChecked(),   Nan::New<Boolean>(hidden));
+
+    Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+    Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+    Nan::Set(result, Nan::New<String>("hidden").ToLocalChecked(), Nan::New<Boolean>(hidden));
 
     info.GetReturnValue().Set(result);
 }
@@ -1987,13 +1984,14 @@ NAN_METHOD(Sheet::NamedRange) {
     }
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("name").ToLocalChecked(),     Nan::New<String> (name).ToLocalChecked());
-    result->Set(Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
-    result->Set(Nan::New<String>("rowLast").ToLocalChecked(),  Nan::New<Integer>(rowLast));
-    result->Set(Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
-    result->Set(Nan::New<String>("colLast").ToLocalChecked(),  Nan::New<Integer>(colLast));
-    result->Set(Nan::New<String>("scopeId").ToLocalChecked(),  Nan::New<Integer>(scopeId));
-    result->Set(Nan::New<String>("hidden").ToLocalChecked(),   Nan::New<Boolean>(hidden));
+
+    Nan::Set(result, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(name).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(), Nan::New<Integer>(rowFirst));
+    Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+    Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(), Nan::New<Integer>(colFirst));
+    Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+    Nan::Set(result, Nan::New<String>("scopeId").ToLocalChecked(), Nan::New<Integer>(scopeId));
+    Nan::Set(result, Nan::New<String>("hidden").ToLocalChecked(), Nan::New<Boolean>(hidden));
 
     info.GetReturnValue().Set(result);
 }
@@ -2119,8 +2117,9 @@ NAN_METHOD(Sheet::GetTopLeftView) {
     that->GetWrapped()->getTopLeftView(&row, &col);
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
-    result->Set(Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
+
+    Nan::Set(result, Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
+    Nan::Set(result, Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
 
     info.GetReturnValue().Set(result);
 }
@@ -2161,10 +2160,10 @@ NAN_METHOD(Sheet::AddrToRowCol) {
     that->GetWrapped()->addrToRowCol(*addr, &row, &col, &rowRelative, &colRelative);
 
     Local<Object> result = Nan::New<Object>();
-    result->Set(Nan::New<String>("row").ToLocalChecked(),          Nan::New<Integer>(row));
-    result->Set(Nan::New<String>("col").ToLocalChecked(),          Nan::New<Integer>(col));
-    result->Set(Nan::New<String>("rowRelative").ToLocalChecked(),  Nan::New<Boolean>(rowRelative));
-    result->Set(Nan::New<String>("colRelative").ToLocalChecked(),  Nan::New<Boolean>(colRelative));
+    Nan::Set(result, Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
+    Nan::Set(result, Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
+    Nan::Set(result, Nan::New<String>("rowRelative").ToLocalChecked(), Nan::New<Boolean>(rowRelative));
+    Nan::Set(result, Nan::New<String>("colRelative").ToLocalChecked(), Nan::New<Boolean>(colRelative));
 
     info.GetReturnValue().Set(result);
 }
@@ -2198,7 +2197,7 @@ NAN_METHOD(Sheet::RowColToAddr) {
 // Init
 
 
-void Sheet::Initialize(Handle<Object> exports) {
+void Sheet::Initialize(Local<Object> exports) {
     using namespace libxl;
 
     Nan::HandleScope scope;
@@ -2329,7 +2328,7 @@ void Sheet::Initialize(Handle<Object> exports) {
     Nan::SetPrototypeMethod(t, "rowColToAddr", RowColToAddr);
 
     t->ReadOnlyPrototype();
-    constructor.Reset(t->GetFunction());
+    constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
 
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_EMPTY);
     NODE_DEFINE_CONSTANT(exports, CELLTYPE_NUMBER);

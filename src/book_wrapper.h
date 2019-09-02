@@ -46,7 +46,7 @@ class BookWrapper{
         // We need to template this in order to unwrap the correct object
         // pointer
         template<typename T> static void Initialize (
-            v8::Handle<v8::FunctionTemplate> constructor
+            v8::Local<v8::FunctionTemplate> constructor
         );
 
     private:
@@ -65,7 +65,7 @@ class BookWrapper{
 
 
 template<typename T> void BookWrapper::Initialize(
-    v8::Handle<v8::FunctionTemplate> constructor)
+    v8::Local<v8::FunctionTemplate> constructor)
 {
     v8::Local<v8::ObjectTemplate> instanceTemplate =
         constructor->InstanceTemplate();

@@ -34,7 +34,7 @@ class StringCopy {
     public:
 
         explicit StringCopy(v8::String::Utf8Value& utf8Value);
-        explicit StringCopy(v8::Handle<v8::Value> value);
+        explicit StringCopy(v8::Local<v8::Value> value);
 
         ~StringCopy();
 

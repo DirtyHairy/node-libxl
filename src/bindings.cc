@@ -31,7 +31,7 @@
 using namespace v8;
 using namespace node_libxl;
 
-void Initialize(Handle<Object> exports) {
+void Initialize(Local<Object> exports) {
     Book::Initialize(exports);
     Sheet::Initialize(exports);
     Format::Initialize(exports);

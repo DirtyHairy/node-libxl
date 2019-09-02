@@ -34,7 +34,7 @@ namespace util {
 
 
 v8::Local<v8::Value> ProxyConstructor(
-    v8::Handle<v8::Function> constructor,
+    v8::Local<v8::Function> constructor,
     Nan::NAN_METHOD_ARGS_TYPE arguments
 );
 
@@ -45,7 +45,7 @@ template<typename T> Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
 NAN_METHOD(StubConstructor);
 
 
-v8::Local<v8::Value> CallStubConstructor(v8::Handle<v8::Function> constructor);
+v8::Local<v8::Value> CallStubConstructor(v8::Local<v8::Function> constructor);
 
 
 Book* GetBook(Book*);

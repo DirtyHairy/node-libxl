@@ -33,7 +33,7 @@ namespace node_libxl {
 class BufferCopy {
     public:
 
-        explicit BufferCopy(v8::Handle<v8::Value> buffer);
+        explicit BufferCopy(v8::Local<v8::Value> buffer);
 
         ~BufferCopy();
 

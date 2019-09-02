@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -50,7 +50,7 @@ Local<Object> Format::NewInstance(
 
     Format* format = new Format(libxlFormat, book);
 
-    Local<Object> that = 
+    Local<Object> that =
         util::CallStubConstructor(Nan::New(constructor)).As<Object>();
 
     format->Wrap(that);
@@ -100,7 +100,7 @@ NAN_METHOD(Format::SetNumFormat) {
     Nan::HandleScope scope;
 
     ArgumentHelper arguments(info);
-    
+
     int format = arguments.GetInt(0);
     ASSERT_ARGUMENTS(arguments);
 
@@ -172,7 +172,7 @@ NAN_METHOD(Format::SetAlignV) {
     ASSERT_THIS(that);
 
     that->GetWrapped()->setAlignV(static_cast<libxl::AlignV>(align));
-    
+
     info.GetReturnValue().Set(info.This());
 }
 
@@ -706,7 +706,7 @@ NAN_METHOD(Format::SetHidden) {
     Nan::HandleScope scope;
 
     ArgumentHelper arguments(info);
-    
+
     bool hidden = arguments.GetBoolean(0);
     ASSERT_ARGUMENTS(arguments);
 
@@ -722,7 +722,7 @@ NAN_METHOD(Format::SetHidden) {
 // Init
 
 
-void Format::Initialize(Handle<Object> exports) {
+void Format::Initialize(Local<Object> exports) {
     using namespace libxl;
     Nan::HandleScope scope;
 
@@ -782,7 +782,7 @@ void Format::Initialize(Handle<Object> exports) {
     Nan::SetPrototypeMethod(t, "setLocked", SetLocked);
 
     t->ReadOnlyPrototype();
-    constructor.Reset(t->GetFunction());
+    constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
 
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_GENERAL);
     NODE_DEFINE_CONSTANT(exports, NUMFORMAT_NUMBER);

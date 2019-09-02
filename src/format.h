@@ -38,7 +38,7 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
 
         Format(libxl::Format* format, v8::Local<v8::Value> book);
 
-        static void Initialize(v8::Handle<v8::Object> exports);
+        static void Initialize(v8::Local<v8::Object> exports);
         
         static Format* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Format>::Unwrap<Format>(object);

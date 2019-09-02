@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,7 +40,7 @@ template<typename T> class Wrapper : public Nan::ObjectWrap {
             return wrapped;
         }
 
-        static bool InstanceOf(v8::Handle<v8::Value> object);
+        static bool InstanceOf(v8::Local<v8::Value> object);
         template<typename U> static U* Unwrap(v8::Local<v8::Value> object);
 
     protected:
@@ -61,12 +61,13 @@ template<typename T> class Wrapper : public Nan::ObjectWrap {
 template<typename T> Nan::Persistent<v8::Function> Wrapper<T>::constructor;
 
 
-template<typename T> bool Wrapper<T>::InstanceOf(v8::Handle<v8::Value> object) {
+template<typename T> bool Wrapper<T>::InstanceOf(v8::Local<v8::Value> object) {
     Nan::HandleScope scope;
 
     return object->IsObject() &&
         object.As<v8::Object>()->GetPrototype()->StrictEquals(
-            Nan::New(constructor)->Get(Nan::New<v8::String>("prototype").ToLocalChecked()));
+            Nan::Get(Nan::New(constructor), Nan::New<v8::String>("prototype").ToLocalChecked()).ToLocalChecked()
+        );
 }
 
 
