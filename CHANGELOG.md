@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+ * Fix build on node 12
+ * Drop support for node < 10
+ * Dependency bump
+
 ## 0.3.2
 
  * Fix build on node version 8.0 -- 8.9

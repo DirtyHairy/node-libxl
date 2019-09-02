@@ -2,7 +2,7 @@
 [![npm version](https://badge.fury.io/js/libxl.svg)](https://badge.fury.io/js/libxl)
 # What it is
 
-Node.js bindings for [libxl](http://www.libxl.com/). Node versions starting from 4.0.0
+Node.js bindings for [libxl](http://www.libxl.com/). Node versions starting from 10.0.0
 are supported (see 'Platform and Node.js support' below for details).
 
 # Compilation and Installation
@@ -215,8 +215,8 @@ The package supports Linux, Windows and Mac.
 
 ## Node.js
 
-The current branch (0.3.x) supports all current versions of Node.js starting with 4.0.0.
-If you need support for older Node versions, use the 0.2.x branch --- this supports
+The current branch (0.4.x) supports all current versions of Node.js starting with 10.0.0.
+If you need support for older Node versions, use the 0.3.x and 0.2.x branches --- those support
 Node.js down to version 0.10.0.
 
 ## Restrictions
