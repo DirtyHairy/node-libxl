@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+ 
+ * No changes, bogus release to keep 0.4.x the default on NPM.
+
 ## 0.4.1
 
  * Pin tar to 4.4.10 to avoid build break with 4.4.11
