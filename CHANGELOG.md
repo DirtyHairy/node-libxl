@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+ * Pin tar to 4.4.10 to avoid build break with 4.4.11
+
 ## 0.4.0
 
  * Fix build on node 12
