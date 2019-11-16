@@ -73,7 +73,11 @@ bool ArgumentHelper::GetBoolean(uint8_t pos) {
         return false;
     }
 
-    return arguments[pos]->BooleanValue(Nan::GetCurrentContext()).ToChecked();
+    #if NODE_MAJOR_VERSION > 11
+        return arguments[pos]->BooleanValue(v8::Isolate::GetCurrent());
+    #else
+        return arguments[pos]->BooleanValue(Nan::GetCurrentContext()).ToChecked();
+    #endif
 }
 
 

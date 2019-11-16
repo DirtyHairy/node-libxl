@@ -1,7 +1,12 @@
 # Changelog
 
+## 0.4.3
+
+ * Support Node 13
+ * Temporarily disable tests relating to named ranges (upstream bug)
+
 ## 0.4.2
- 
+
  * No changes, bogus release to keep 0.4.x the default on NPM.
 
 ## 0.4.1
