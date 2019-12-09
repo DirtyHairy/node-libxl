@@ -764,8 +764,6 @@ describe('The sheet class', function() {
     it('sheet.getNamedRange, sheet.setNamedRange, sheet.delNamedRange, sheet.namedRangeSize and sheet.namedRange ' +
         'manage named ranges', function()
     {
-        return;
-
         var sheet2 = newSheet();
 
         function assertRange(range, rowFirst, rowLast, colFirst, colLast, name, scope) {
