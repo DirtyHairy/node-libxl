@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+ * Download libxl via HTTPS
+
 ## 0.3.3
 
  * Pin tar to 4.4.10 to avoid build break with 4.4.11
