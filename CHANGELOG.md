@@ -23,3 +23,7 @@
  * Allow formats belonging to a different book as templates for addFormat (see
     [issue #10](https://github.com/DirtyHairy/node-libxl/issues/10)).
  * Bump dependency versions.
+
+## 0.2.20
+
+ * Download libxl via HTTPS.
