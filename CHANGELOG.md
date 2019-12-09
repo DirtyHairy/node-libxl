@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.4
+
+ * Download libxl via HTTPS
+ * Upstream bug fix -> reenable ranges suite
+
 ## 0.4.3
 
  * Support Node 13
