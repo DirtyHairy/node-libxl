@@ -31,7 +31,7 @@ var fs = require('fs'),
     md5 = require('md5'),
     zlib = require('zlib'),
     tar = require('tar'),
-    http = require('http'),
+    https = require('https'),
     AdmZip = require('adm-zip');
 
 var isWin = !!os.platform().match(/^win/),
@@ -63,7 +63,7 @@ var download = function(callback) {
         function dieOnError(e) {
             console.log(util.format('unable to download the libxl SDK: %s', e.message));
             console.log(util.format(
-                '\nplease download libxl manually from http://www.libxl.com and point the environment variable %s to the downloaded file',
+                '\nplease download libxl manually from https://www.libxl.com and point the environment variable %s to the downloaded file',
                 archiveEnv
             ));
 
@@ -71,11 +71,11 @@ var download = function(callback) {
         }
 
         function onOpen() {
-            var url = util.format('http://www.libxl.com/download/%s', getArchiveName());
+            var url = util.format('https://www.libxl.com/download/%s', getArchiveName());
 
             console.log('Downloading ' + url);
 
-            http.get(url, function(response) {
+            https.get(url, function(response) {
                 if (response.statusCode !== 200) {
                     dieOnError(new Error(util.format('request failed: %s %s', response.statusCode, response.statusMessage)));
                 }
