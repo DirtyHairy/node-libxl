@@ -219,6 +219,11 @@ The current branch (0.4.x) supports all current versions of Node.js starting wit
 If you need support for older Node versions, use the 0.3.x and 0.2.x branches --- those support
 Node.js down to version 0.10.0.
 
+Be aware, though, that the build time dependencies have moved on and are starting to use
+ES6 features that break support for Node < 6, even if those older versions of node-libxl
+still support it. If you still need to use such an old version of Node, you'll have to
+use lockfiles to pin those transitive dependencies.
+
 ## Restrictions
 
 Some of the newer parts of the libxl API are currently unsupported. Nag me to implement
