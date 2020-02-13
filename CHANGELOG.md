@@ -24,6 +24,14 @@
  * Drop support for node < 10
  * Dependency bump
 
+## 0.3.4
+
+ * Download libxl via HTTPS
+
+## 0.3.3
+
+ * Pin tar to 4.4.10 to avoid build break with 4.4.11
+
 ## 0.3.2
 
  * Fix build on node version 8.0 -- 8.9
@@ -63,3 +71,7 @@
  * Allow formats belonging to a different book as templates for addFormat (see
     [issue #10](https://github.com/DirtyHairy/node-libxl/issues/10)).
  * Bump dependency versions.
+
+## 0.2.20
+
+ * Download libxl via HTTPS.
