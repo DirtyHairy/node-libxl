@@ -1,12 +1,16 @@
 # Changelog
 
-## 0.2.21
+## 0.2.22
 
  * Download and extract dmg image on Mac.
 
-## 0.2.20
+## 0.2.21
 
  * Download libxl via HTTPS.
+
+## 0.2.20
+
+ * Download libxl via HTTP instead of FTP.
 
 ## 0.2.19
 
