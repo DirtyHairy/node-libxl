@@ -2,7 +2,7 @@
   "name": "libxl",
   "author": "Christian Speckner <cnspeckn@googlemail.com>",
   "license": "MIT",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Node bindings for the libxl library for reading and writing excel (XLS and XLSX) spreadsheets.",
   "keywords": [
     "excel",
@@ -38,7 +38,8 @@
     "md5": "~2.2.1",
     "nan": "~2.14.0",
     "tar": "4.4.10",
-    "tmp": "~0.1.0"
+    "tmp": "~0.1.0",
+    "plist": "~3.0.1"
   },
   "devDependencies": {
     "jshint": "~2.10.2"

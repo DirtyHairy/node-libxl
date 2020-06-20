@@ -4,3 +4,4 @@ build
 .ycm_extra_conf.pyc
 node_modules
 specs/output
+yarn.lock
