@@ -72,7 +72,6 @@ describe('The sheet class', function() {
         expect(function() {sheet.readStr.call({}, row, 0);}).toThrow();
 
         var formatRef = {};
-        expect(function() {sheet.readStr(row, 1);}).toThrow();
         expect(sheet.readStr(row, 0)).toBe('foo');
         expect(sheet.readStr(row, 0, formatRef)).toBe('foo');
         expect(formatRef.format instanceof format.constructor).toBe(true);
