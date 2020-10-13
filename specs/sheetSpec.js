@@ -68,7 +68,6 @@ describe('The sheet class', function() {
         sheet.writeStr(row, 0, 'foo');
         sheet.writeNum(row, 1, 10);
 
-        expect(function() {sheet.readStr();}).toThrow();
         expect(function() {sheet.readStr.call({}, row, 0);}).toThrow();
 
         var formatRef = {};
