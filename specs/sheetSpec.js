@@ -68,7 +68,6 @@ describe('The sheet class', function() {
         sheet.writeStr(row, 0, 'foo');
         sheet.writeNum(row, 1, 10);
 
-        expect(function() {sheet.readStr();}).toThrow();
         expect(function() {sheet.readStr.call({}, row, 0);}).toThrow();
 
         var formatRef = {};
@@ -251,7 +250,7 @@ describe('The sheet class', function() {
     it('sheet.setCol configures columns', function() {
         expect(function() {sheet.setCol();}).toThrow();
         expect(function() {sheet.setCol.call({}, 0, 0, 42);}).toThrow();
-      
+
         expect(function() {sheet.setCol(0, 0, 42, wrongFormat);}).toThrow();
 
         expect(sheet.setCol(0, 0, 42)).toBe(sheet);
@@ -261,7 +260,7 @@ describe('The sheet class', function() {
     it('sheet.setRow configures rows', function() {
         expect(function() {sheet.setRow();}).toThrow();
         expect(function() {sheet.setRow.call({}, 1, 42);}).toThrow();
-      
+
         expect(function() {sheet.setRow(1, 42, wrongFormat);}).toThrow();
 
         expect(sheet.setRow(1, 42)).toBe(sheet);
@@ -604,7 +603,7 @@ describe('The sheet class', function() {
 
     it('sheet.copyCell copies a cell', function() {
         sheet.writeStr(row, 0, 'baz');
-        
+
         shouldThrow(sheet.copyCell, sheet, row, 0, row, 'a');
         shouldThrow(sheet.copyCell, {}, row, 0, row, 1);
 
@@ -846,7 +845,7 @@ describe('The sheet class', function() {
         shouldThrow(sheet.setTopLeftView, sheet, 5, true);
         shouldThrow(sheet.setTopLeftView, {}, 5, 6);
         expect(sheet.setTopLeftView(5, 6)).toBe(sheet);
-        
+
         shouldThrow(sheet.getTopLeftView, {});
         var result = sheet.getTopLeftView();
         expect(result.row).toBe(5);
