@@ -4,7 +4,7 @@ var path = require('path'),
 var outputDir = path.join(__dirname, 'output'),
     writeTestFile = path.join(outputDir, 'writetest.xls'),
     filesDir = path.join(__dirname, 'files'),
-    testPicture = path.join(filesDir, 'dummy.png');
+    testPicture = path.join(filesDir, 'dummy.jpg');
 
 module.exports = {
     initFilesystem: function() {

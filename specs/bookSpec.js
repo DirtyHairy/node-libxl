@@ -373,14 +373,14 @@ describe('The book class', function() {
         shouldThrow(book.getPicture, {}, 0);
         var pic0 = book.getPicture(0);
 
-        expect(pic0.type).toBe(xl.PICTURETYPE_PNG);
+        expect(pic0.type).toBe(xl.PICTURETYPE_JPEG);
         expect(testUtils.compareBuffers(pic0.data, fileBuffer)).toBe(true);
 
         expect(book.addPicture(fileBuffer)).toBe(1);
         expect(book.pictureSize()).toBe(2);
 
         var pic1 = book.getPicture(1);
-        expect(pic1.type).toBe(xl.PICTURETYPE_PNG);
+        expect(pic1.type).toBe(xl.PICTURETYPE_JPEG);
         expect(testUtils.compareBuffers(pic1.data, fileBuffer)).toBe(true);
     });
 
@@ -423,7 +423,7 @@ describe('The book class', function() {
 
                 book.getPictureAsync(0, function(err, type, data) {
                     expect(err).toBeUndefined();
-                    expect(type).toBe(xl.PICTURETYPE_PNG);
+                    expect(type).toBe(xl.PICTURETYPE_JPEG);
                     buffer1 = data;
 
                     getBuffer2();
@@ -433,7 +433,7 @@ describe('The book class', function() {
             function getBuffer2() {
                  book.getPictureAsync(1, function(err, type, data) {
                     expect(err).toBeUndefined();
-                    expect(type).toBe(xl.PICTURETYPE_PNG);
+                    expect(type).toBe(xl.PICTURETYPE_JPEG);
                     buffer2 = data;
                 });
             }
