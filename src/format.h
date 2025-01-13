@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,32 +25,25 @@
 #ifndef BINDINGS_FORMAT_H
 #define BINDINGS_FORMAT_H
 
+#include "book_wrapper.h"
 #include "common.h"
 #include "wrapper.h"
-#include "book_wrapper.h"
 
 namespace node_libxl {
 
-
-class Format : public Wrapper<libxl::Format>, public BookWrapper
-{
-    public:
-
+    class Format : public Wrapper<libxl::Format>, public BookWrapper {
+       public:
         Format(libxl::Format* format, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-        
+
         static Format* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Format>::Unwrap<Format>(object);
         }
 
-        static v8::Local<v8::Object> NewInstance(
-            libxl::Format* format,
-            v8::Local<v8::Value> book
-        );
+        static v8::Local<v8::Object> NewInstance(libxl::Format* format, v8::Local<v8::Value> book);
 
-    protected:
-
+       protected:
         static NAN_METHOD(Font);
         static NAN_METHOD(SetFont);
         static NAN_METHOD(NumFormat);
@@ -100,13 +93,11 @@ class Format : public Wrapper<libxl::Format>, public BookWrapper
         static NAN_METHOD(Hidden);
         static NAN_METHOD(SetHidden);
 
-    private:
-
+       private:
         Format(const Format&);
         const Format& operator=(const Format&);
-};
+    };
 
+}  // namespace node_libxl
 
-}
-
-#endif // BINDINGS_FORMAT_H
+#endif  // BINDINGS_FORMAT_H

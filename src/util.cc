@@ -31,91 +31,68 @@
 
 using namespace v8;
 
-
 namespace node_libxl {
-namespace util {
+    namespace util {
 
-Local<Value> ProxyConstructor(
-    Local<Function> constructor,
-    Nan::NAN_METHOD_ARGS_TYPE arguments
-) {
-    Nan::EscapableHandleScope scope;
+        Local<Value> ProxyConstructor(Local<Function> constructor,
+                                      Nan::NAN_METHOD_ARGS_TYPE arguments) {
+            Nan::EscapableHandleScope scope;
 
-    uint8_t argc = arguments.Length();
-    Local<Value>* argv = new Local<Value>[argc];
+            uint8_t argc = arguments.Length();
+            Local<Value>* argv = new Local<Value>[argc];
 
-    for (uint8_t i = 0; i < argc; i++) {
-        argv[i] = arguments[i];
-    }
+            for (uint8_t i = 0; i < argc; i++) {
+                argv[i] = arguments[i];
+            }
 
-    Local<Value> newInstance = CSNanNewInstance(constructor, argc, argv);
+            Local<Value> newInstance = CSNanNewInstance(constructor, argc, argv);
 
-    delete[] argv;
-    return scope.Escape(newInstance);
-}
+            delete[] argv;
+            return scope.Escape(newInstance);
+        }
 
+        NAN_METHOD(StubConstructor) {
+            Nan::HandleScope scope;
 
-NAN_METHOD(StubConstructor) {
-    Nan::HandleScope scope;
+            Local<Value> sentry = info[0];
 
-    Local<Value> sentry = info[0];
+            if (!(info.IsConstructCall() && info.Length() == 1 && sentry->IsExternal() &&
+                  sentry.As<External>()->Value() == NULL)) {
+                return Nan::ThrowTypeError(
+                    "You are not supposed to call this constructor directly");
+            }
 
-    if (!(  info.IsConstructCall() &&
-            info.Length() == 1 &&
-            sentry->IsExternal() &&
-            sentry.As<External>()->Value() == NULL
-    )) {
-        return Nan::ThrowTypeError(
-            "You are not supposed to call this constructor directly");
-    }
+            Nan::SetInternalFieldPointer(info.This(), 0, NULL);
 
-    Nan::SetInternalFieldPointer(info.This(), 0, NULL);
+            info.GetReturnValue().Set(info.This());
+        }
 
-    info.GetReturnValue().Set(info.This());
-}
+        Local<Value> CallStubConstructor(Local<Function> constructor) {
+            Nan::EscapableHandleScope scope;
 
+            Local<Value> info[1] = {CSNanNewExternal(NULL)};
 
-Local<Value> CallStubConstructor(Local<Function> constructor) {
-    Nan::EscapableHandleScope scope;
+            return scope.Escape(CSNanNewInstance(constructor, 1, info));
+        }
 
-    Local<Value> info[1] = {CSNanNewExternal(NULL)};
+        Book* GetBook(Book* book) { return book; }
 
-    return scope.Escape(CSNanNewInstance(constructor, 1, info));
-}
+        Book* GetBook(BookWrapper* bookWrapper) { return bookWrapper->GetBook(); }
 
+        libxl::Book* UnwrapBook(libxl::Book* book) { return book; }
 
-Book* GetBook(Book* book) {
-    return book;
-}
+        libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle) {
+            Book* book = Book::Unwrap(bookHandle);
 
+            return book ? book->GetWrapped() : NULL;
+        }
 
-Book* GetBook(BookWrapper* bookWrapper) {
-    return bookWrapper->GetBook();
-}
+        libxl::Book* UnwrapBook(Book* book) { return book ? book->GetWrapped() : NULL; }
 
+        libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
+            Book* book = bookWrapper->GetBook();
+            return book ? book->GetWrapped() : NULL;
+        }
 
-libxl::Book* UnwrapBook(libxl::Book* book) {
-    return book;
-}
-
-
-libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle) {
-    Book* book = Book::Unwrap(bookHandle);
-
-    return book ? book->GetWrapped() : NULL;
-}
-
-
-libxl::Book* UnwrapBook(Book* book) {
-    return book ? book->GetWrapped() : NULL;
-}
-
-
-libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
-    Book* book = bookWrapper->GetBook();
-    return book ? book->GetWrapped() : NULL;
-}
-
-
-}
-}
+    }  // namespace util
+}  // namespace node_libxl

@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,30 +28,20 @@ using namespace v8;
 
 namespace node_libxl {
 
+    BookWrapper::BookWrapper(Local<Value> bookHandle) { this->bookHandle.Reset(bookHandle); }
 
-BookWrapper::BookWrapper(Local<Value> bookHandle)
-{
-    this->bookHandle.Reset(bookHandle);
-}
+    BookWrapper::~BookWrapper() { bookHandle.Reset(); }
 
+    v8::Local<v8::Value> BookWrapper::GetBookHandle() {
+        Nan::EscapableHandleScope scope;
 
-BookWrapper::~BookWrapper() {
-    bookHandle.Reset();
-}
+        return scope.Escape(Nan::New(bookHandle));
+    }
 
+    Book* BookWrapper::GetBook() {
+        Nan::HandleScope scope;
 
-v8::Local<v8::Value> BookWrapper::GetBookHandle() {
-    Nan::EscapableHandleScope scope;
+        return Book::Unwrap(Nan::New(bookHandle));
+    }
 
-    return scope.Escape(Nan::New(bookHandle));
-}
-
-
-Book* BookWrapper::GetBook() {
-    Nan::HandleScope scope;
-
-    return Book::Unwrap(Nan::New(bookHandle));
-}
-
-
-}
+}  // namespace node_libxl

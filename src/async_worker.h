@@ -25,55 +25,51 @@
 #ifndef BINDINGS_ASYNC_WORKER_H
 #define BINDINGS_ASYNC_WORKER_H
 
-#include <v8.h>
 #include <nan.h>
+#include <v8.h>
+
 #include "util.h"
 
 namespace node_libxl {
 
-
-template<typename T> class AsyncWorker : public Nan::AsyncWorker {
-    public:
-
-        AsyncWorker(Nan::Callback* callback, v8::Local<v8::Object> that, const char* asyncResourceName);
+    template <typename T>
+    class AsyncWorker : public Nan::AsyncWorker {
+       public:
+        AsyncWorker(Nan::Callback *callback, v8::Local<v8::Object> that,
+                    const char *asyncResourceName);
 
         virtual void WorkComplete();
 
-    protected:
-
+       protected:
         void RaiseLibxlError();
 
-        T* that;
+        T *that;
 
-    private:
+       private:
+        AsyncWorker(const AsyncWorker &);
+        const AsyncWorker &operator=(const AsyncWorker &);
+    };
 
-        AsyncWorker(const AsyncWorker&);
-        const AsyncWorker& operator=(const AsyncWorker&);
-};
+    template <typename T>
+    AsyncWorker<T>::AsyncWorker(Nan::Callback *callback, v8::Local<v8::Object> that,
+                                const char *asyncResourceName)
+        : Nan::AsyncWorker(callback, asyncResourceName), that(T::Unwrap(that)) {
+        util::GetBook(this->that)->StartAsync();
+        SaveToPersistent("that", that);
+    }
 
+    template <typename T>
+    void AsyncWorker<T>::WorkComplete() {
+        util::GetBook(that)->StopAsync();
 
-template<typename T> AsyncWorker<T>::AsyncWorker(
-        Nan::Callback* callback, v8::Local<v8::Object> that, const char* asyncResourceName) :
-    Nan::AsyncWorker(callback, asyncResourceName),
-    that(T::Unwrap(that))
-{
-    util::GetBook(this->that)->StartAsync();
-    SaveToPersistent("that", that);
-}
+        Nan::AsyncWorker::WorkComplete();
+    }
 
+    template <typename T>
+    void AsyncWorker<T>::RaiseLibxlError() {
+        SetErrorMessage(util::UnwrapBook(that)->errorMessage());
+    }
 
-template<typename T> void AsyncWorker<T>::WorkComplete() {
-    util::GetBook(that)->StopAsync();
+}  // namespace node_libxl
 
-    Nan::AsyncWorker::WorkComplete();
-}
-
-
-template<typename T> void AsyncWorker<T>::RaiseLibxlError() {
-    SetErrorMessage(util::UnwrapBook(that)->errorMessage());
-}
-
-
-}
-
-#endif // BINDINGS_ASYNC_WORKER_H
+#endif  // BINDINGS_ASYNC_WORKER_H

@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,16 +30,10 @@
 
 namespace node_libxl {
 
+    enum { BOOK_TYPE_XLS, BOOK_TYPE_XLSX };
 
-enum {
-    BOOK_TYPE_XLS,
-    BOOK_TYPE_XLSX
-};
-
-
-class Book : public Wrapper<libxl::Book> {
-    public:
-
+    class Book : public Wrapper<libxl::Book> {
+       public:
         Book(libxl::Book* libxlBook);
         ~Book();
 
@@ -53,8 +47,7 @@ class Book : public Wrapper<libxl::Book> {
             return Wrapper<libxl::Book>::Unwrap<Book>(object);
         }
 
-    protected:
-
+       protected:
         static NAN_METHOD(New);
 
         static NAN_METHOD(LoadSync);
@@ -103,17 +96,15 @@ class Book : public Wrapper<libxl::Book> {
         static NAN_METHOD(SetTemplate);
         static NAN_METHOD(SetKey);
 
-    private:
-
+       private:
         Book(const Book&);
         const Book& operator=(const Book&);
 
         bool asyncPending;
-};
+    };
 
-
-}
+}  // namespace node_libxl
 
 #include "libxl.h"
 
-#endif // BINDINGS_BOOK
+#endif  // BINDINGS_BOOK

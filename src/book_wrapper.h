@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,77 +25,63 @@
 #ifndef BINDINGS_BOOK_WRAPPER_H
 #define BINDINGS_BOOK_WRAPPER_H
 
-#include "common.h"
 #include "book.h"
+#include "common.h"
 
 namespace node_libxl {
 
-
-class BookWrapper{
-    public:
-
+    class BookWrapper {
+       public:
         BookWrapper(v8::Local<v8::Value> bookHandle);
         ~BookWrapper();
 
         v8::Local<v8::Value> GetBookHandle();
         Book* GetBook();
-    protected:
 
+       protected:
         Nan::Persistent<v8::Value> bookHandle;
 
         // We need to template this in order to unwrap the correct object
         // pointer
-        template<typename T> static void Initialize (
-            v8::Local<v8::FunctionTemplate> constructor
-        );
+        template <typename T>
+        static void Initialize(v8::Local<v8::FunctionTemplate> constructor);
 
-    private:
-
+       private:
         // We need to template this in order to unwrap the correct object
         // pointer
-        template<typename T> static NAN_GETTER(BookAccessor);
+        template <typename T>
+        static NAN_GETTER(BookAccessor);
 
         BookWrapper();
         BookWrapper(const BookWrapper&);
         const BookWrapper& operator=(const BookWrapper&);
-};
+    };
 
+    // Implementation
 
-// Implementation
+    template <typename T>
+    void BookWrapper::Initialize(v8::Local<v8::FunctionTemplate> constructor) {
+        v8::Local<v8::ObjectTemplate> instanceTemplate = constructor->InstanceTemplate();
 
-
-template<typename T> void BookWrapper::Initialize(
-    v8::Local<v8::FunctionTemplate> constructor)
-{
-    v8::Local<v8::ObjectTemplate> instanceTemplate =
-        constructor->InstanceTemplate();
-    
-    Nan::SetAccessor(instanceTemplate, 
-        Nan::New<v8::String>("book").ToLocalChecked(),
-        BookAccessor<T>, 
-        NULL,
-        v8::Local<v8::Value>(),
-        v8::DEFAULT,
-        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)
-    );
-}
-
-
-template<typename T>  NAN_GETTER(BookWrapper::BookAccessor)
-{
-    Nan::HandleScope scope;
-
-    BookWrapper* bookWrapper = dynamic_cast<BookWrapper*>(
-        Nan::ObjectWrap::Unwrap<T>(info.This()));
-   
-    if (bookWrapper) {
-        info.GetReturnValue().Set(Nan::New(bookWrapper->bookHandle));
-    } else {
-        return;
+        Nan::SetAccessor(instanceTemplate, Nan::New<v8::String>("book").ToLocalChecked(),
+                         BookAccessor<T>, NULL, v8::Local<v8::Value>(), v8::DEFAULT,
+                         static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     }
-}
 
+    template <typename T>
+    NAN_GETTER(BookWrapper::BookAccessor) {
+        Nan::HandleScope scope;
 
-}
+        BookWrapper* bookWrapper =
+            dynamic_cast<BookWrapper*>(Nan::ObjectWrap::Unwrap<T>(info.This()));
 
-#endif // BINDINGS_BOOK_WRAPPER_H
+        if (bookWrapper) {
+            info.GetReturnValue().Set(Nan::New(bookWrapper->bookHandle));
+        } else {
+            return;
+        }
+    }
+
+}  // namespace node_libxl
+
+#endif  // BINDINGS_BOOK_WRAPPER_H

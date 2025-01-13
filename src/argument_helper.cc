@@ -28,131 +28,113 @@
 
 namespace node_libxl {
 
+    ArgumentHelper::ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info)
+        : arguments(info), exceptionRaised(false) {}
 
-ArgumentHelper::ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info) :
-    arguments(info),
-    exceptionRaised(false)
-{}
+    int ArgumentHelper::GetInt(uint8_t pos) {
+        if (!arguments[pos]->IsInt32()) {
+            RaiseException("integer required at position", pos);
+            return 0;
+        }
 
-
-int ArgumentHelper::GetInt(uint8_t pos) {
-    if (!arguments[pos]->IsInt32()) {
-        RaiseException("integer required at position", pos);
-        return 0;
+        return arguments[pos]->IntegerValue(Nan::GetCurrentContext()).ToChecked();
     }
 
-    return arguments[pos]->IntegerValue(Nan::GetCurrentContext()).ToChecked();
-}
-
-
-int ArgumentHelper::GetInt(uint8_t pos, int def) {
-    if (arguments[pos]->IsUndefined()) return def;
-    return GetInt(pos);
-}
-
-
-double ArgumentHelper::GetDouble(uint8_t pos) {
-    if (!arguments[pos]->IsNumber()) {
-        RaiseException("number required at position", pos);
-        return 0;
+    int ArgumentHelper::GetInt(uint8_t pos, int def) {
+        if (arguments[pos]->IsUndefined()) return def;
+        return GetInt(pos);
     }
 
-    return arguments[pos]->NumberValue(Nan::GetCurrentContext()).ToChecked();
-}
+    double ArgumentHelper::GetDouble(uint8_t pos) {
+        if (!arguments[pos]->IsNumber()) {
+            RaiseException("number required at position", pos);
+            return 0;
+        }
 
-
-double ArgumentHelper::GetDouble(uint8_t pos, double def) {
-    if (arguments[pos]->IsUndefined()) return def;
-    return GetDouble(pos);
-}
-
-
-bool ArgumentHelper::GetBoolean(uint8_t pos) {
-    if (!arguments[pos]->IsBoolean()) {
-        RaiseException("bool required at position", pos);
-        return false;
+        return arguments[pos]->NumberValue(Nan::GetCurrentContext()).ToChecked();
     }
 
-    #if NODE_MAJOR_VERSION > 11
+    double ArgumentHelper::GetDouble(uint8_t pos, double def) {
+        if (arguments[pos]->IsUndefined()) return def;
+        return GetDouble(pos);
+    }
+
+    bool ArgumentHelper::GetBoolean(uint8_t pos) {
+        if (!arguments[pos]->IsBoolean()) {
+            RaiseException("bool required at position", pos);
+            return false;
+        }
+
+#if NODE_MAJOR_VERSION > 11
         return arguments[pos]->BooleanValue(v8::Isolate::GetCurrent());
-    #else
+#else
         return arguments[pos]->BooleanValue(Nan::GetCurrentContext()).ToChecked();
-    #endif
-}
-
-
-bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
-    if (arguments[pos]->IsUndefined()) return def;
-    return GetBoolean(pos);
-}
-
-
-v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
-    Nan::EscapableHandleScope scope;
-
-    if (!arguments[pos]->IsString()) {
-        RaiseException("string required at position", pos);
+#endif
     }
 
-    return scope.Escape(arguments[pos]);
-}
-
-
-v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char* def) {
-    Nan::EscapableHandleScope scope;
-
-    if (arguments[pos]->IsUndefined())
-        return scope.Escape(Nan::New<v8::String>(def).ToLocalChecked());
-
-    return scope.Escape(GetString(pos));
-}
-
-
-v8::Local<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
-    Nan::EscapableHandleScope scope;
-
-    if (!arguments[pos]->IsFunction()) {
-        RaiseException("function required at position", pos);
+    bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
+        if (arguments[pos]->IsUndefined()) return def;
+        return GetBoolean(pos);
     }
 
-    return scope.Escape(arguments[pos].As<v8::Function>());
-}
+    v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
+        Nan::EscapableHandleScope scope;
 
+        if (!arguments[pos]->IsString()) {
+            RaiseException("string required at position", pos);
+        }
 
-v8::Local<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
-    Nan::EscapableHandleScope scope;
-
-    if (!arguments[pos]->IsObject() || !node::Buffer::HasInstance(arguments[pos])) {
-        RaiseException("buffer required at position", pos);
+        return scope.Escape(arguments[pos]);
     }
 
-    return scope.Escape(arguments[pos]);
-}
+    v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char *def) {
+        Nan::EscapableHandleScope scope;
 
+        if (arguments[pos]->IsUndefined())
+            return scope.Escape(Nan::New<v8::String>(def).ToLocalChecked());
 
-void ArgumentHelper::RaiseException(const std::string& message, int32_t pos) {
-    Nan::EscapableHandleScope scope;
+        return scope.Escape(GetString(pos));
+    }
 
-    if (HasException()) return;
+    v8::Local<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
+        Nan::EscapableHandleScope scope;
 
-    std::stringstream ss;
-    ss.str("");
-    ss << message;
+        if (!arguments[pos]->IsFunction()) {
+            RaiseException("function required at position", pos);
+        }
 
-    if (pos >= 0) ss << " " << pos;
+        return scope.Escape(arguments[pos].As<v8::Function>());
+    }
 
-    exceptionMessage = ss.str();
-    exceptionRaised = true;
-}
+    v8::Local<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
+        Nan::EscapableHandleScope scope;
 
+        if (!arguments[pos]->IsObject() || !node::Buffer::HasInstance(arguments[pos])) {
+            RaiseException("buffer required at position", pos);
+        }
 
-bool ArgumentHelper::HasException() const {
-    return exceptionRaised;
-}
+        return scope.Escape(arguments[pos]);
+    }
 
-Nan::NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
-    return Nan::ThrowTypeError(exceptionMessage.data());
-}
+    void ArgumentHelper::RaiseException(const std::string &message, int32_t pos) {
+        Nan::EscapableHandleScope scope;
 
+        if (HasException()) return;
 
-}
+        std::stringstream ss;
+        ss.str("");
+        ss << message;
+
+        if (pos >= 0) ss << " " << pos;
+
+        exceptionMessage = ss.str();
+        exceptionRaised = true;
+    }
+
+    bool ArgumentHelper::HasException() const { return exceptionRaised; }
+
+    Nan::NAN_METHOD_RETURN_TYPE ArgumentHelper::ThrowException() const {
+        return Nan::ThrowTypeError(exceptionMessage.data());
+    }
+
+}  // namespace node_libxl

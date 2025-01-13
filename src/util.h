@@ -25,56 +25,48 @@
 #ifndef BINDINGS_UTIL
 #define BINDINGS_UTIL
 
-#include "common.h"
 #include "book.h"
 #include "book_wrapper.h"
+#include "common.h"
 
 namespace node_libxl {
-namespace util {
+    namespace util {
 
+        v8::Local<v8::Value> ProxyConstructor(v8::Local<v8::Function> constructor,
+                                              Nan::NAN_METHOD_ARGS_TYPE arguments);
 
-v8::Local<v8::Value> ProxyConstructor(
-    v8::Local<v8::Function> constructor,
-    Nan::NAN_METHOD_ARGS_TYPE arguments
-);
+        template <typename T>
+        Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
 
+        NAN_METHOD(StubConstructor);
 
-template<typename T> Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T book);
+        v8::Local<v8::Value> CallStubConstructor(v8::Local<v8::Function> constructor);
 
+        Book* GetBook(Book*);
+        Book* GetBook(BookWrapper*);
 
-NAN_METHOD(StubConstructor);
+        libxl::Book* UnwrapBook(libxl::Book* book);
+        libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle);
+        libxl::Book* UnwrapBook(Book* book);
+        libxl::Book* UnwrapBook(BookWrapper* bookWrapper);
 
+        template <typename T>
+        Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
+            Nan::HandleScope scope;
 
-v8::Local<v8::Value> CallStubConstructor(v8::Local<v8::Function> constructor);
+            libxl::Book* book = UnwrapBook(wrappedBook);
 
+            return Nan::ThrowError(book ? book->errorMessage() : "");
+        }
 
-Book* GetBook(Book*);
-Book* GetBook(BookWrapper*);
+        template <typename T, typename U>
+        bool IsSameBook(T book1, U book2) {
+            libxl::Book *libxlBook1 = UnwrapBook(book1), *libxlBook2 = UnwrapBook(book2);
 
+            return !libxlBook1 || !libxlBook2 || libxlBook1 == libxlBook2;
+        }
 
-libxl::Book* UnwrapBook(libxl::Book* book);
-libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle);
-libxl::Book* UnwrapBook(Book* book);
-libxl::Book* UnwrapBook(BookWrapper* bookWrapper);
+    }  // namespace util
+}  // namespace node_libxl
 
-template<typename T> Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {
-    Nan::HandleScope scope;
-
-    libxl::Book* book = UnwrapBook(wrappedBook);
-
-    return Nan::ThrowError(book ? book->errorMessage() : "");
-}
-
-
-template<typename T, typename U> bool IsSameBook(T book1, U book2) {
-    libxl::Book *libxlBook1 = UnwrapBook(book1), *libxlBook2 = UnwrapBook(book2);
-
-    return !libxlBook1 || !libxlBook2 || libxlBook1 == libxlBook2;
-}
-
-
-}
-}
-
-
-#endif // BINDINGS_UTIL
+#endif  // BINDINGS_UTIL

@@ -23,35 +23,29 @@
  */
 
 #include "string_copy.h"
-#include "csnan.h"
+
 #include <cstring>
+
+#include "csnan.h"
 
 using namespace v8;
 
 namespace node_libxl {
 
-StringCopy::StringCopy(String::Utf8Value& utf8Value) {
-    str = new char[strlen(*utf8Value) + 1];
-    strcpy(str, *utf8Value);
-}
+    StringCopy::StringCopy(String::Utf8Value& utf8Value) {
+        str = new char[strlen(*utf8Value) + 1];
+        strcpy(str, *utf8Value);
+    }
 
+    StringCopy::StringCopy(Local<Value> value) {
+        String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), value);
 
-StringCopy::StringCopy(Local<Value> value) {
-    String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), value);
+        str = new char[strlen(*utf8Value) + 1];
+        strcpy(str, *utf8Value);
+    }
 
-    str = new char[strlen(*utf8Value) + 1];
-    strcpy(str, *utf8Value);
-}
+    StringCopy::~StringCopy() { delete[] str; }
 
+    char* StringCopy::operator*() { return str; }
 
-StringCopy::~StringCopy() {
-    delete[] str;
-}
-
-
-char* StringCopy::operator*() {
-    return str;
-}
-
-
-}
+}  // namespace node_libxl

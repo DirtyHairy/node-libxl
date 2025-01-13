@@ -29,59 +29,53 @@
 
 namespace node_libxl {
 
-
-template<typename T> class Wrapper : public Nan::ObjectWrap {
-    public:
-
+    template <typename T>
+    class Wrapper : public Nan::ObjectWrap {
+       public:
         Wrapper() : wrapped(NULL) {}
         Wrapper(T* wrapped) : wrapped(wrapped) {}
 
-        T* GetWrapped() {
-            return wrapped;
-        }
+        T* GetWrapped() { return wrapped; }
 
         static bool InstanceOf(v8::Local<v8::Value> object);
-        template<typename U> static U* Unwrap(v8::Local<v8::Value> object);
+        template <typename U>
+        static U* Unwrap(v8::Local<v8::Value> object);
 
-    protected:
-
+       protected:
         static Nan::Persistent<v8::Function> constructor;
         T* wrapped;
 
-    private:
-
+       private:
         Wrapper(const Wrapper<T>&);
         const Wrapper<T>& operator=(const Wrapper<T>&);
-};
+    };
 
+    // Implementation
 
-// Implementation
+    template <typename T>
+    Nan::Persistent<v8::Function> Wrapper<T>::constructor;
 
+    template <typename T>
+    bool Wrapper<T>::InstanceOf(v8::Local<v8::Value> object) {
+        Nan::HandleScope scope;
 
-template<typename T> Nan::Persistent<v8::Function> Wrapper<T>::constructor;
-
-
-template<typename T> bool Wrapper<T>::InstanceOf(v8::Local<v8::Value> object) {
-    Nan::HandleScope scope;
-
-    return object->IsObject() &&
-        object.As<v8::Object>()->GetPrototype()->StrictEquals(
-            Nan::Get(Nan::New(constructor), Nan::New<v8::String>("prototype").ToLocalChecked()).ToLocalChecked()
-        );
-}
-
-
-template <typename T> template<typename U>
-    U* Wrapper<T>::Unwrap(v8::Local<v8::Value> object)
-{
-    if (InstanceOf(object)) {
-        return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
-    } else {
-        return NULL;
+        return object->IsObject() &&
+               object.As<v8::Object>()->GetPrototype()->StrictEquals(
+                   Nan::Get(Nan::New(constructor),
+                            Nan::New<v8::String>("prototype").ToLocalChecked())
+                       .ToLocalChecked());
     }
-}
 
+    template <typename T>
+    template <typename U>
+    U* Wrapper<T>::Unwrap(v8::Local<v8::Value> object) {
+        if (InstanceOf(object)) {
+            return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
+        } else {
+            return NULL;
+        }
+    }
 
-}
+}  // namespace node_libxl
 
-#endif // BINDINGS_WRAPPER_H
+#endif  // BINDINGS_WRAPPER_H

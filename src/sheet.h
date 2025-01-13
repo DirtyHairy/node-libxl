@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,33 +25,28 @@
 #ifndef BINDINGS_SHEET_H
 #define BINDINGS_SHEET_H
 
+#include "book_wrapper.h"
 #include "common.h"
 #include "wrapper.h"
-#include "book_wrapper.h"
 
 namespace node_libxl {
 
+    class Sheet : public Wrapper<libxl::Sheet>,
+                  public BookWrapper
 
-class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
-
-{
-    public:
-
+    {
+       public:
         Sheet(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-        
+
         static Sheet* Unwrap(v8::Local<v8::Value> object) {
             return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
         }
 
-        static v8::Local<v8::Object> NewInstance(
-            libxl::Sheet* sheet,
-            v8::Local<v8::Value> book
-        );
+        static v8::Local<v8::Object> NewInstance(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 
-    protected:
-
+       protected:
         static NAN_METHOD(CellType);
         static NAN_METHOD(IsFormula);
         static NAN_METHOD(CellFormat);
@@ -169,13 +164,11 @@ class Sheet : public Wrapper<libxl::Sheet> , public BookWrapper
         static NAN_METHOD(AddrToRowCol);
         static NAN_METHOD(RowColToAddr);
 
-    private:
-
+       private:
         Sheet(const Sheet&);
         const Sheet& operator=(const Sheet&);
-};
+    };
 
+}  // namespace node_libxl
 
-}
-
-#endif // BINDINGS_SHEET_H
+#endif  // BINDINGS_SHEET_H
