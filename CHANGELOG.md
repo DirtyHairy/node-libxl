@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+ * Update dependencies.
+ * Fix build on recent node versions.
+ * Drop support for node < 18.
+
 ## 0.4.5
 
  * Download and extract dmg image on Mac.
