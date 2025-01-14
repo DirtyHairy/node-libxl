@@ -27,22 +27,27 @@
 
 #include <v8.h>
 
+#include <optional>
+
 namespace node_libxl {
 
     class StringCopy {
        public:
         explicit StringCopy(v8::String::Utf8Value& utf8Value);
         explicit StringCopy(v8::Local<v8::Value> value);
+        explicit StringCopy(std::optional<v8::Local<v8::Value>> value);
 
         ~StringCopy();
 
         char* operator*();
 
        private:
-        StringCopy(const StringCopy&);
-        const StringCopy& operator=(const StringCopy&);
+        StringCopy(const StringCopy&) = delete;
+        StringCopy(StringCopy&&) = delete;
+        StringCopy& operator=(const StringCopy&);
+        StringCopy& operator=(StringCopy&&);
 
-        char* str;
+        char* str{nullptr};
     };
 
 }  // namespace node_libxl

@@ -3,11 +3,12 @@ var path = require('path'),
 
 var outputDir = path.join(__dirname, 'output'),
     writeTestFile = path.join(outputDir, 'writetest.xls'),
+    tempFile = path.join(outputDir, 'tempfile'),
     filesDir = path.join(__dirname, 'files'),
     testPicture = path.join(filesDir, 'dummy.jpg');
 
 module.exports = {
-    initFilesystem: function() {
+    initFilesystem: function () {
         if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir);
         }
@@ -17,21 +18,27 @@ module.exports = {
         }
     },
 
-    getWriteTestFile: function() {
+    getWriteTestFile: function () {
         return writeTestFile;
     },
 
-    shouldThrow: function(fun, scope) {
-        var args = Array.prototype.slice.call(arguments, 2);
-
-        expect(function() {fun.apply(scope, args);}).toThrow();
+    getTempFile: function () {
+        return tempFile;
     },
 
-    getTestPicturePath: function() {
+    shouldThrow: function (fun, scope) {
+        var args = Array.prototype.slice.call(arguments, 2);
+
+        expect(function () {
+            fun.apply(scope, args);
+        }).toThrow();
+    },
+
+    getTestPicturePath: function () {
         return testPicture;
     },
 
-    compareBuffers: function(buf1, buf2) {
+    compareBuffers: function (buf1, buf2) {
         if (buf1.length !== buf2.length) return false;
 
         for (var i = 0; i < buf1.length; i++) {
@@ -42,5 +49,5 @@ module.exports = {
     },
 
     testPictureWidth: 640,
-    testPictureHeight: 480
+    testPictureHeight: 480,
 };

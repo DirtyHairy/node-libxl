@@ -6,23 +6,26 @@ var xl = require('../lib/libxl'),
 
 testUtils.initFilesystem();
 
-describe('The book class', function() {
+describe('The book class', function () {
     var book;
 
-    beforeEach(function() {
+    beforeEach(function () {
         book = new xl.Book(xl.BOOK_TYPE_XLS);
     });
 
-    it('Books are created via the book constructor', function() {
-        expect(function() {var book = new xl.Book();}).toThrow();
-        expect(function() {var book = new xl.Book(200);}).toThrow();
-        expect(function() {var book = new xl.Book('a');}).toThrow();
-
-        var bookXls = new xl.Book(xl.BOOK_TYPE_XLS),
-            bookXlsx = new xl.Book(xl.BOOK_TYPE_XLSX);
+    it('Books are created via the book constructor', function () {
+        expect(function () {
+            var book = new xl.Book();
+        }).toThrow();
+        expect(function () {
+            var book = new xl.Book(200);
+        }).toThrow();
+        expect(function () {
+            var book = new xl.Book('a');
+        }).toThrow();
     });
 
-    it('book.writeSync writes a book in sync mode', function() {
+    it('book.writeSync writes a book in sync mode', function () {
         var book = new xl.Book(xl.BOOK_TYPE_XLS),
             sheet = book.addSheet('foo');
 
@@ -34,70 +37,62 @@ describe('The book class', function() {
         expect(book.writeSync(file)).toBe(book);
     });
 
-    it('book.write writes a book in sync mode', function() {
+    it('book.write writes a book in async mode', async () => {
         var book = new xl.Book(xl.BOOK_TYPE_XLS),
-            sheet = book.addSheet('foo'),
-            result = null;
+            sheet = book.addSheet('foo');
 
         sheet.writeStr(1, 0, 'bar');
 
-        runs(function() {
-            var file = testUtils.getWriteTestFile();
-            shouldThrow(book.write, book, file, 10);
-            shouldThrow(book.write, {}, file, function() {});
-
-            expect(book.write(file, function(res) {
-                result = res;
-            })).toBe(book);
-
-            shouldThrow(book.sheetCount, book);
-        });
-
-        waitsFor(function() {
-            return result !== null;
-        }, 'book to save', 1000);
-
-        runs(function() {
-            expect(result).toBeUndefined();
-        });
-    });
-
-    it('book.loadSync loads a book in sync mode', function() {
         var file = testUtils.getWriteTestFile();
-        shouldThrow(book.loadSync, book, 10);
-        shouldThrow(book.loadSync, {}, file);
+        shouldThrow(book.write, book, file, 10);
+        shouldThrow(book.write, {}, file, function () {});
 
-        expect(book.loadSync(file)).toBe(book);
-        var sheet = book.getSheet(0);
-        expect(sheet.readStr(1, 0)).toBe('bar');
+        const writeResult = util.promisify(book.write.bind(book))(file);
+        shouldThrow(book.sheetCount, book);
+
+        await writeResult;
     });
 
-    it('book.load loads a book in async mode', function() {
-        var result = null;
+    describe('book.loadSync', () => {
+        it('loads a book in sync mode', function () {
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.loadSync, book, 10);
+            shouldThrow(book.loadSync, {}, file);
 
-        runs(function() {
+            expect(book.loadSync(file)).toBe(book);
+            var sheet = book.getSheet(0);
+            expect(sheet.readStr(1, 0)).toBe('bar');
+        });
+
+        it('supports an optional tempfile', function () {
+            expect(book.loadSync(testUtils.getWriteTestFile(), testUtils.getTempFile())).toBe(book);
+            var sheet = book.getSheet(0);
+            expect(sheet.readStr(1, 0)).toBe('bar');
+        });
+    });
+
+    describe('book.load', () => {
+        it('loads a book in async mode', async () => {
             var file = testUtils.getWriteTestFile();
             shouldThrow(book.load, book, file, 10);
-            shouldThrow(book.load, {}, file, function() {});
+            shouldThrow(book.load, {}, file, function () {});
 
-            expect(book.load(file, function(res) {
-                result = res;
-            })).toBe(book);
-
+            const loadResult = util.promisify(book.load.bind(book))(file);
             shouldThrow(book.sheetCount, book);
+
+            await loadResult;
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
         });
 
-        waitsFor(function() {
-            return result !== null;
-        }, 'book to load', 1000);
+        it('supports an optional tempfile', async () => {
+            await util.promisify(book.load.bind(book))(testUtils.getWriteTestFile(), testUtils.getTempFile());
 
-        runs(function() {
-            expect(result).toBeUndefined();
             expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
         });
     });
 
-    it('book.loadRawSync and book.saveRawSync load and save a book into a buffer, sync mode', function() {
+    it('book.loadRawSync and book.saveRawSync load and save a book into a buffer, sync mode', function () {
         var book1 = new xl.Book(xl.BOOK_TYPE_XLS);
         var sheet = book1.addSheet('foo');
 
@@ -115,52 +110,33 @@ describe('The book class', function() {
         expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
     });
 
-    it('book.loadRaw and book.saveRaw load and save a book into a buffer, async mode', function() {
-        var book;
+    it('book.loadRaw and book.saveRaw load and save a book into a buffer, async mode', async () => {
+        const book1 = new xl.Book(xl.BOOK_TYPE_XLS),
+            book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+        const sheet = book1.addSheet('foo');
 
-        runs(function() {
-            var book1 = new xl.Book(xl.BOOK_TYPE_XLS),
-                book2 = new xl.Book(xl.BOOK_TYPE_XLS);
-            var sheet = book1.addSheet('foo');
+        sheet.writeStr(1, 0, 'bar');
 
-            sheet.writeStr(1, 0, 'bar');
+        shouldThrow(book1.writeRaw, book1, 1);
+        shouldThrow(book1.writeRaw, {}, function () {});
 
-            shouldThrow(book1.writeRaw, book1, 1);
-            shouldThrow(book1.writeRaw, {}, function() {});
+        const writeResult = util.promisify(book1.writeRaw.bind(book1))();
+        shouldThrow(book1.sheetCount, book1);
 
-            function step1(err, buffer) {
-                expect(err).toBeUndefined();
+        const buffer = await writeResult;
 
-                shouldThrow(book2.loadRaw, book2, buffer, 10);
-                shouldThrow(book2.loadRaw, {}, buffer, function() {});
+        shouldThrow(book2.loadRaw, book2, buffer, 10);
+        shouldThrow(book2.loadRaw, {}, buffer, function () {});
 
-                book2.loadRaw(buffer, step2);
+        const loadResult = util.promisify(book2.loadRaw.bind(book2))(buffer);
+        shouldThrow(book2.loadRaw, book2);
+        await loadResult;
 
-                shouldThrow(book2.sheetCount, book2);
-            }
-
-            function step2(err) {
-                expect(err).toBeUndefined();
-                book = book2;
-            }
-
-            book1.writeRaw(step1);
-
-            shouldThrow(book1.sheetCount, book1);
-        });
-
-        waitsFor(function() {
-            return !!book;
-        }, 'book to save and load again', 1000);
-
-        runs(function() {
-            expect(book.sheetCount()).toBe(1);
-            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
-        });
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
     });
 
-
-    it('book.addSheet adds a sheet to a book', function() {
+    it('book.addSheet adds a sheet to a book', function () {
         shouldThrow(book.addSheet, book, 10);
         shouldThrow(book.addSheet, book, 'foo', 10);
         shouldThrow(book.addSheet, {}, 'foo');
@@ -172,7 +148,7 @@ describe('The book class', function() {
         expect(sheet2.readStr(1, 0)).toBe('aaa');
     });
 
-    it('book.insertSheet inserts a sheet at a given position', function() {
+    it('book.insertSheet inserts a sheet at a given position', function () {
         var sheet1 = book.addSheet('foo');
         sheet1.writeStr(1, 0, 'bbb');
 
@@ -186,7 +162,7 @@ describe('The book class', function() {
         expect(sheet2.readStr(1, 0)).toBe('bbb');
     });
 
-    it('book.getSheet retrieves a sheet at a given index', function() {
+    it('book.getSheet retrieves a sheet at a given index', function () {
         var sheet = book.addSheet('foo');
         sheet.writeStr(1, 0, 'bar');
 
@@ -198,7 +174,7 @@ describe('The book class', function() {
         expect(sheet2.readStr(1, 0)).toBe('bar');
     });
 
-    it('book.sheetType determines sheet type', function() {
+    it('book.sheetType determines sheet type', function () {
         var sheet = book.addSheet('foo');
         shouldThrow(book.sheetType, book, 'a');
         shouldThrow(book.sheetType, {}, 0);
@@ -206,7 +182,7 @@ describe('The book class', function() {
         expect(book.sheetType(1)).toBe(xl.SHEETTYPE_UNKNOWN);
     });
 
-    it('book.delSheet removes a sheet', function() {
+    it('book.delSheet removes a sheet', function () {
         book.addSheet('foo');
         book.addSheet('bar');
         shouldThrow(book.delSheet, book, 'a');
@@ -216,14 +192,14 @@ describe('The book class', function() {
         expect(book.sheetCount()).toBe(1);
     });
 
-    it('book.sheetCount counts the number of sheets in a book', function() {
+    it('book.sheetCount counts the number of sheets in a book', function () {
         shouldThrow(book.sheetCount, {});
         expect(book.sheetCount()).toBe(0);
         book.addSheet('foo');
         expect(book.sheetCount()).toBe(1);
     });
 
-    it('book.addFormat adds a format', function() {
+    it('book.addFormat adds a format', function () {
         shouldThrow(book.addFormat, book, 10);
         shouldThrow(book.addFormat, {});
         book.addFormat();
@@ -231,22 +207,25 @@ describe('The book class', function() {
         // completed
     });
 
-    it('book.addFormat can use a format belonging to a different book as a template', function() {
+    it('book.addFormat can use a format belonging to a different book as a template', function () {
         var otherBook = new xl.Book(xl.BOOK_TYPE_XLS),
             format1 = otherBook.addFormat(),
             format2 = book.addFormat(format1);
     });
 
-    it ('book.addFormat will throw if an async operation is pending on the template\'s parent book', function() {
+    it("book.addFormat will throw if an async operation is pending on the template's parent book", function () {
         var otherBook = new xl.Book(xl.BOOK_TYPE_XLS),
             format1 = otherBook.addFormat();
 
-        otherBook.saveRaw(function() {}, function() {});
+        otherBook.saveRaw(
+            function () {},
+            function () {}
+        );
 
         shouldThrow(book.addFormat, book, format1);
     });
 
-    it('book.addFont adds a font', function() {
+    it('book.addFont adds a font', function () {
         shouldThrow(book.addFont, book, 10);
         shouldThrow(book.addFont, {});
         book.addFont();
@@ -256,13 +235,13 @@ describe('The book class', function() {
         expect(book.addFont(font1).name()).toBe('times');
     });
 
-    it('book.addCusomtNumFormat adds a custom number format', function() {
+    it('book.addCusomtNumFormat adds a custom number format', function () {
         shouldThrow(book.addCusomtNumFormat, book, 10);
         shouldThrow(book.addCusomtNumFormat, {}, '000');
         book.addCustomNumFormat('000');
     });
 
-    it('book.customNumFormat retrieves a custom number format', function() {
+    it('book.customNumFormat retrieves a custom number format', function () {
         var format = book.addCustomNumFormat('000');
         shouldThrow(book.customNumFormat, book, 'a');
         shouldThrow(book.customNumFormat, {}, format);
@@ -270,41 +249,41 @@ describe('The book class', function() {
         expect(book.customNumFormat(format)).toBe('000');
     });
 
-    it('book.format retrieves a format by index', function() {
+    it('book.format retrieves a format by index', function () {
         var format = book.addFormat();
         shouldThrow(book.format, book, 'a');
         shouldThrow(book.format, {}, 0);
         expect(book.format(0) instanceof format.constructor).toBe(true);
     });
 
-    it('book.formatSize counts the number of formats', function() {
+    it('book.formatSize counts the number of formats', function () {
         shouldThrow(book.formatSize, {});
         var n = book.formatSize();
         book.addFormat();
-        expect(book.formatSize()).toBe(n+1);
+        expect(book.formatSize()).toBe(n + 1);
     });
 
-    it('book.font gets a font by index', function() {
+    it('book.font gets a font by index', function () {
         var font = book.addFont();
         shouldThrow(book.font, book, -1);
         shouldThrow(book.font, {}, 0);
         expect(book.font(0) instanceof font.constructor).toBe(true);
     });
 
-    it('book.fontSize counts the number of fonts', function() {
+    it('book.fontSize counts the number of fonts', function () {
         shouldThrow(book.fontSize, {});
         var n = book.fontSize();
         book.addFont();
-        expect(book.fontSize()).toBe(n+1);
+        expect(book.fontSize()).toBe(n + 1);
     });
 
-    it('book.datePack packs a date', function() {
+    it('book.datePack packs a date', function () {
         shouldThrow(book.datePack, book, 'a', 1, 2);
         shouldThrow(book.datePack, {}, 1, 2, 3);
         book.datePack(1, 2, 3);
     });
 
-    it('book.datePack unpacks a date', function() {
+    it('book.datePack unpacks a date', function () {
         var date = book.datePack(1999, 2, 3, 4, 5, 6, 7);
         shouldThrow(book.dateUnpack, book, 'a');
         shouldThrow(book.dateUnpack, {}, date);
@@ -319,13 +298,13 @@ describe('The book class', function() {
         expect(unpacked.msecond).toBe(7);
     });
 
-    it('book.colorPack packs a color', function() {
+    it('book.colorPack packs a color', function () {
         shouldThrow(book.colorPack, book, 'a', 2, 3);
         shouldThrow(book.colorPack, {}, 1, 2, 3);
         book.colorPack(1, 2, 3);
     });
 
-    it('book.colorUnpack unpacks a color', function() {
+    it('book.colorUnpack unpacks a color', function () {
         var color = book.colorPack(1, 2, 3);
         shouldThrow(book.colorUnpack, book, 'a');
         shouldThrow(book.colorUnpack, {}, color);
@@ -336,7 +315,7 @@ describe('The book class', function() {
         expect(unpacked.blue).toBe(3);
     });
 
-    it('book.activeSheet returns the index of a book\'s active sheet', function() {
+    it("book.activeSheet returns the index of a book's active sheet", function () {
         book.addSheet('foo');
         book.addSheet('bar');
         book.setActiveSheet(0);
@@ -346,17 +325,14 @@ describe('The book class', function() {
         expect(book.activeSheet()).toBe(1);
     });
 
-    it('book.setActiveSheet sets the active sheet', function() {
+    it('book.setActiveSheet sets the active sheet', function () {
         book.addSheet('foo');
         shouldThrow(book.setActiveSheet, book, 'a');
         shouldThrow(book.setActiveSheet, {}, 0);
         expect(book.setActiveSheet(0)).toBe(book);
     });
 
-    it('book.addPicture, book.pictureSize and book.getPicture ' +
-            'manage the pictures in a book',
-        function()
-    {
+    it('book.addPicture, book.pictureSize and book.getPicture ' + 'manage the pictures in a book', function () {
         var book = new xl.Book(xl.BOOK_TYPE_XLS),
             file = testUtils.getTestPicturePath(),
             fileBuffer = fs.readFileSync(file);
@@ -384,74 +360,44 @@ describe('The book class', function() {
         expect(testUtils.compareBuffers(pic1.data, fileBuffer)).toBe(true);
     });
 
-    it('book.addPictureAsync and boook.addPictureAsync provide async picture management',
-        function()
-    {
-        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+    it('book.addPictureAsync and book.getPictureAsync provide async picture management', async () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLS),
             file = testUtils.getTestPicturePath(),
-            fileBuffer = fs.readFileSync(file),
-            buffer1, buffer2;
+            fileBuffer = fs.readFileSync(file);
 
-        runs(function() {
-            function addFromFile(callback) {
-                shouldThrow(book.addPictureAsync, book, file, 1);
-                shouldThrow(book.addPictureAsync, {}, file, function() {});
+        shouldThrow(book.addPictureAsync, book, file, 1);
+        shouldThrow(book.addPictureAsync, {}, file, function () {});
 
-                book.addPictureAsync(file, function(err, id) {
-                    expect(err).toBeUndefined();
-                    expect(id).toBe(0);
-                    expect(book.pictureSize()).toBe(1);
+        const addPictureAsync = util.promisify(book.addPictureAsync.bind(book));
 
-                    addFromStream();
-                });
-            }
+        const addResult = addPictureAsync(file);
+        shouldThrow(book.sheetCount, book);
 
-            function addFromStream() {
-                book.addPictureAsync(fileBuffer, function(err, id) {
-                    expect(err).toBeUndefined();
-                    expect(id).toBe(1);
-                    expect(book.pictureSize()).toBe(2);
+        expect(await addResult).toBe(0);
+        expect(book.pictureSize()).toBe(1);
 
-                    getBuffer1();
-                });
-            }
+        expect(await addPictureAsync(fileBuffer)).toBe(1);
+        expect(book.pictureSize()).toBe(2);
 
+        const getPictureAsync = (id) =>
+            new Promise((resolve, reject) =>
+                book.getPictureAsync(id, (err, type, data) => (err ? reject(err) : resolve([type, data])))
+            );
 
-            function getBuffer1() {
-                shouldThrow(book.getPictureAsync, book, 1, 1);
-                shouldThrow(book.getPictureAsync, {}, 1, function() {});
+        const getResult = getPictureAsync(0);
+        shouldThrow(book.sheetCount, book);
 
-                book.getPictureAsync(0, function(err, type, data) {
-                    expect(err).toBeUndefined();
-                    expect(type).toBe(xl.PICTURETYPE_JPEG);
-                    buffer1 = data;
+        const [type1, buffer1] = await getResult;
+        const [type2, buffer2] = await getPictureAsync(1);
 
-                    getBuffer2();
-                });
-            }
+        expect(type1).toBe(xl.PICTURETYPE_JPEG);
+        expect(type2).toBe(xl.PICTURETYPE_JPEG);
 
-            function getBuffer2() {
-                 book.getPictureAsync(1, function(err, type, data) {
-                    expect(err).toBeUndefined();
-                    expect(type).toBe(xl.PICTURETYPE_JPEG);
-                    buffer2 = data;
-                });
-            }
-
-            addFromFile();
-        });
-
-        waitsFor(function() {
-            return buffer1 && buffer2;
-        }, 'pictures to load', 2000);
-
-        runs(function() {
-            expect(testUtils.compareBuffers(buffer1, fileBuffer)).toBe(true);
-            expect(testUtils.compareBuffers(buffer2, fileBuffer)).toBe(true);
-        });
+        expect(testUtils.compareBuffers(buffer1, fileBuffer)).toBe(true);
+        expect(testUtils.compareBuffers(buffer2, fileBuffer)).toBe(true);
     });
 
-    it('book.defaultFont returns the default font', function() {
+    it('book.defaultFont returns the default font', function () {
         book.setDefaultFont('times', 13);
         shouldThrow(book.defaultFont, {});
 
@@ -460,13 +406,13 @@ describe('The book class', function() {
         expect(defaultFont.size).toBe(13);
     });
 
-    it('book.setDefaultFont sets the default font', function() {
+    it('book.setDefaultFont sets the default font', function () {
         shouldThrow(book.setDefaultFont, book, 10, 10);
         shouldThrow(book.setDefaultFont, {}, 'times', 10);
         expect(book.setDefaultFont('times', 10)).toBe(book);
     });
 
-    it('book.refR1C1 checks for R1C1 mode', function() {
+    it('book.refR1C1 checks for R1C1 mode', function () {
         book.setRefR1C1();
         shouldThrow(book.refR1C1, {});
         expect(book.refR1C1()).toBe(true);
@@ -474,13 +420,13 @@ describe('The book class', function() {
         expect(book.refR1C1()).toBe(false);
     });
 
-    it('book.setRefR1C1 switches R1C1 mode', function() {
+    it('book.setRefR1C1 switches R1C1 mode', function () {
         shouldThrow(book.setRefR1C1, book, 1);
         shouldThrow(book.setRefR1C1, {});
         expect(book.setRefR1C1(true)).toBe(book);
     });
 
-    it('book.rgbMode checks for RGB mode', function() {
+    it('book.rgbMode checks for RGB mode', function () {
         book.setRgbMode();
         shouldThrow(book.rgbMode, {});
         expect(book.rgbMode()).toBe(true);
@@ -488,18 +434,18 @@ describe('The book class', function() {
         expect(book.rgbMode()).toBe(false);
     });
 
-    it('book.setRgbMode switches RGB mode', function() {
+    it('book.setRgbMode switches RGB mode', function () {
         shouldThrow(book.setRgbMode, book, 1);
         shouldThrow(book.setRgbMode, {});
         expect(book.setRgbMode(true)).toBe(book);
     });
 
-    it('book.biffVersion returns the BIFF format version', function() {
+    it('book.biffVersion returns the BIFF format version', function () {
         shouldThrow(book.biffVersion, {});
         expect(book.biffVersion()).toBe(1536);
     });
 
-    it('book.isDate1904 checks which date system is active', function() {
+    it('book.isDate1904 checks which date system is active', function () {
         book.setDate1904();
         shouldThrow(book.isDate1904, {});
         expect(book.isDate1904()).toBe(true);
@@ -507,13 +453,13 @@ describe('The book class', function() {
         expect(book.isDate1904()).toBe(false);
     });
 
-    it('book.setDate1904 sets the active date system', function() {
+    it('book.setDate1904 sets the active date system', function () {
         shouldThrow(book.setDate1904, book, 1);
         shouldThrow(book.setDate1904, {}, true);
         expect(book.setDate1904(true)).toBe(book);
     });
 
-    it('book.isTemplate checks whether the document is a template', function() {
+    it('book.isTemplate checks whether the document is a template', function () {
         book.setTemplate();
         shouldThrow(book.isTemplate, {});
         expect(book.isTemplate()).toBe(true);
@@ -521,13 +467,13 @@ describe('The book class', function() {
         expect(book.isTemplate()).toBe(false);
     });
 
-    it('book.setTemplate toggles whether a document is a template', function() {
+    it('book.setTemplate toggles whether a document is a template', function () {
         shouldThrow(book.setTemplate, book, 1);
         shouldThrow(book.setTemplate, {});
         expect(book.setTemplate(true)).toBe(book);
     });
 
-    it('book.setKey sets the API key', function() {
+    it('book.setKey sets the API key', function () {
         shouldThrow(book.setKey, book, 1, 'a');
         shouldThrow(book.setKey, {}, 'a', 'b');
         expect(book.setKey('a', 'b')).toBe(book);

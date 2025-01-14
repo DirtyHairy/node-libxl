@@ -31,7 +31,6 @@
 using namespace v8;
 
 namespace node_libxl {
-
     StringCopy::StringCopy(String::Utf8Value& utf8Value) {
         str = new char[strlen(*utf8Value) + 1];
         strcpy(str, *utf8Value);
@@ -44,7 +43,18 @@ namespace node_libxl {
         strcpy(str, *utf8Value);
     }
 
-    StringCopy::~StringCopy() { delete[] str; }
+    StringCopy::StringCopy(std::optional<v8::Local<v8::Value>> value) {
+        if (value) {
+            String::Utf8Value utf8Value(v8::Isolate::GetCurrent(), *value);
+
+            str = new char[strlen(*utf8Value) + 1];
+            strcpy(str, *utf8Value);
+        }
+    }
+
+    StringCopy::~StringCopy() {
+        if (str) delete[] str;
+    }
 
     char* StringCopy::operator*() { return str; }
 

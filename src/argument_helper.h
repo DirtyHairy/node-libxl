@@ -25,6 +25,7 @@
 #ifndef BINDINGS_ARGUMENT_HELPER_H
 #define BINDINGS_ARGUMENT_HELPER_H
 
+#include <optional>
 #include <string>
 
 #include "common.h"
@@ -35,26 +36,36 @@ namespace node_libxl {
        public:
         ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info);
 
-        int GetInt(uint8_t pos);
-        int GetInt(uint8_t pos, int def);
+        size_t Length();
 
-        double GetDouble(uint8_t pos);
-        double GetDouble(uint8_t pos, double def);
+        int GetInt(size_t pos);
+        std::optional<int> GetMaybeInt(size_t pos);
+        int GetInt(size_t pos, int def);
 
-        bool GetBoolean(uint8_t pos);
-        bool GetBoolean(uint8_t pos, bool def);
+        double GetDouble(size_t pos);
+        std::optional<double> GetMaybeDouble(size_t pos);
+        double GetDouble(size_t pos, double def);
 
-        v8::Local<v8::Value> GetString(uint8_t pos);
-        v8::Local<v8::Value> GetString(uint8_t pos, const char *def);
+        bool GetBoolean(size_t pos);
+        std::optional<bool> GetMaybeBoolean(size_t pos);
+        bool GetBoolean(size_t pos, bool def);
 
-        v8::Local<v8::Function> GetFunction(uint8_t pos);
+        v8::Local<v8::Value> GetString(size_t pos);
+        std::optional<v8::Local<v8::Value>> GetMaybeString(size_t pos);
+        v8::Local<v8::Value> GetString(size_t pos, const char *def);
 
-        v8::Local<v8::Value> GetBuffer(uint8_t pos);
+        v8::Local<v8::Function> GetFunction(size_t pos);
+        std::optional<v8::Local<v8::Function>> GetMaybeFunction(size_t pos);
+
+        v8::Local<v8::Value> GetBuffer(size_t pos);
+        std::optional<v8::Local<v8::Value>> GetMaybeBuffer(size_t pos);
+
+        bool IsDefined(size_t pos);
 
         template <typename T>
-        T *GetWrapped(uint8_t pos);
+        T *GetWrapped(size_t pos);
         template <typename T>
-        T *GetWrapped(uint8_t pos, T *def);
+        T *GetWrapped(size_t pos, T *def);
 
         bool HasException() const;
         Nan::NAN_METHOD_RETURN_TYPE ThrowException() const;
@@ -71,14 +82,14 @@ namespace node_libxl {
     };
 
     template <typename T>
-    T *ArgumentHelper::GetWrapped(uint8_t pos) {
+    T *ArgumentHelper::GetWrapped(size_t pos) {
         T *unwrapped = T::Unwrap(arguments[pos]);
         if (!unwrapped) RaiseException("Invalid type for argument", pos);
         return unwrapped;
     }
 
     template <typename T>
-    T *ArgumentHelper::GetWrapped(uint8_t pos, T *def) {
+    T *ArgumentHelper::GetWrapped(size_t pos, T *def) {
         if (arguments[pos]->IsUndefined()) return def;
         return GetWrapped<T>(pos);
     }

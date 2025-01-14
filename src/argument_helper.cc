@@ -31,7 +31,7 @@ namespace node_libxl {
     ArgumentHelper::ArgumentHelper(Nan::NAN_METHOD_ARGS_TYPE info)
         : arguments(info), exceptionRaised(false) {}
 
-    int ArgumentHelper::GetInt(uint8_t pos) {
+    int ArgumentHelper::GetInt(size_t pos) {
         if (!arguments[pos]->IsInt32()) {
             RaiseException("integer required at position", pos);
             return 0;
@@ -40,12 +40,18 @@ namespace node_libxl {
         return arguments[pos]->IntegerValue(Nan::GetCurrentContext()).ToChecked();
     }
 
-    int ArgumentHelper::GetInt(uint8_t pos, int def) {
+    size_t ArgumentHelper::Length() { return arguments.Length(); }
+
+    int ArgumentHelper::GetInt(size_t pos, int def) {
         if (arguments[pos]->IsUndefined()) return def;
         return GetInt(pos);
     }
 
-    double ArgumentHelper::GetDouble(uint8_t pos) {
+    std::optional<int> ArgumentHelper::GetMaybeInt(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetInt(pos)) : std::nullopt;
+    }
+
+    double ArgumentHelper::GetDouble(size_t pos) {
         if (!arguments[pos]->IsNumber()) {
             RaiseException("number required at position", pos);
             return 0;
@@ -54,30 +60,36 @@ namespace node_libxl {
         return arguments[pos]->NumberValue(Nan::GetCurrentContext()).ToChecked();
     }
 
-    double ArgumentHelper::GetDouble(uint8_t pos, double def) {
+    double ArgumentHelper::GetDouble(size_t pos, double def) {
         if (arguments[pos]->IsUndefined()) return def;
         return GetDouble(pos);
     }
 
-    bool ArgumentHelper::GetBoolean(uint8_t pos) {
+    std::optional<double> ArgumentHelper::GetMaybeDouble(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetDouble(pos)) : std::nullopt;
+    }
+
+    bool ArgumentHelper::GetBoolean(size_t pos) {
         if (!arguments[pos]->IsBoolean()) {
             RaiseException("bool required at position", pos);
             return false;
         }
 
-#if NODE_MAJOR_VERSION > 11
         return arguments[pos]->BooleanValue(v8::Isolate::GetCurrent());
-#else
-        return arguments[pos]->BooleanValue(Nan::GetCurrentContext()).ToChecked();
-#endif
     }
 
-    bool ArgumentHelper::GetBoolean(uint8_t pos, bool def) {
+    bool ArgumentHelper::IsDefined(size_t pos) { return !arguments[pos]->IsUndefined(); }
+
+    bool ArgumentHelper::GetBoolean(size_t pos, bool def) {
         if (arguments[pos]->IsUndefined()) return def;
         return GetBoolean(pos);
     }
 
-    v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos) {
+    std::optional<bool> ArgumentHelper::GetMaybeBoolean(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetBoolean(pos)) : std::nullopt;
+    }
+
+    v8::Local<v8::Value> ArgumentHelper::GetString(size_t pos) {
         Nan::EscapableHandleScope scope;
 
         if (!arguments[pos]->IsString()) {
@@ -87,7 +99,7 @@ namespace node_libxl {
         return scope.Escape(arguments[pos]);
     }
 
-    v8::Local<v8::Value> ArgumentHelper::GetString(uint8_t pos, const char *def) {
+    v8::Local<v8::Value> ArgumentHelper::GetString(size_t pos, const char *def) {
         Nan::EscapableHandleScope scope;
 
         if (arguments[pos]->IsUndefined())
@@ -96,7 +108,11 @@ namespace node_libxl {
         return scope.Escape(GetString(pos));
     }
 
-    v8::Local<v8::Function> ArgumentHelper::GetFunction(uint8_t pos) {
+    std::optional<v8::Local<v8::Value>> ArgumentHelper::GetMaybeString(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetString(pos)) : std::nullopt;
+    }
+
+    v8::Local<v8::Function> ArgumentHelper::GetFunction(size_t pos) {
         Nan::EscapableHandleScope scope;
 
         if (!arguments[pos]->IsFunction()) {
@@ -106,7 +122,11 @@ namespace node_libxl {
         return scope.Escape(arguments[pos].As<v8::Function>());
     }
 
-    v8::Local<v8::Value> ArgumentHelper::GetBuffer(uint8_t pos) {
+    std::optional<v8::Local<v8::Function>> ArgumentHelper::GetMaybeFunction(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetFunction(pos)) : std::nullopt;
+    }
+
+    v8::Local<v8::Value> ArgumentHelper::GetBuffer(size_t pos) {
         Nan::EscapableHandleScope scope;
 
         if (!arguments[pos]->IsObject() || !node::Buffer::HasInstance(arguments[pos])) {
@@ -114,6 +134,10 @@ namespace node_libxl {
         }
 
         return scope.Escape(arguments[pos]);
+    }
+
+    std::optional<v8::Local<v8::Value>> ArgumentHelper::GetMaybeBuffer(size_t pos) {
+        return IsDefined(pos) ? std::optional(GetBuffer(pos)) : std::nullopt;
     }
 
     void ArgumentHelper::RaiseException(const std::string &message, int32_t pos) {
