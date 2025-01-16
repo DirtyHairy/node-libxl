@@ -36,6 +36,11 @@
               'link_settings': {
                 'ldflags': ['-L../deps/libxl/lib-aarch64']
               }
+            }],
+            ['target_arch=="arm"', {
+              'link_settings': {
+                'ldflags': ['-L../deps/libxl/lib-armhf']
+              }
             }]
           ],
           'libraries': [
