@@ -42,6 +42,7 @@
     "tmp": "~0.2.3"
   },
   "devDependencies": {
+    "jasmine": "^5.5.0",
     "jshint": "~2.13.6"
   }
 }
