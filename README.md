@@ -252,7 +252,7 @@ supported.
 
 # Credits
 
-Developed with kind support from XLWare.
+Developed with kind support from XLware.
 
 * Torben Fitschen wrote the install script which pulls the
   necessary libxl SDK before building.
