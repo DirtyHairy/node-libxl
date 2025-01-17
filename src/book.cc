@@ -93,7 +93,11 @@ namespace node_libxl {
 
     void Book::StopAsync() { asyncPending = false; }
 
-    bool Book::AsyncPending() { return asyncPending; }
+    bool Book::AsyncPending() const { return asyncPending; }
+
+    bool Book::IsValidSheet(const libxl::Sheet* sheet) const {
+        return validSheetHandles.find(sheet) != validSheetHandles.end();
+    }
 
     // Implementation
 
@@ -346,6 +350,7 @@ namespace node_libxl {
             return util::ThrowLibxlError(libxlBook);
         }
 
+        that->validSheetHandles.insert(libxlSheet);
         info.GetReturnValue().Set(Sheet::NewInstance(libxlSheet, info.This()));
     }
 
@@ -372,6 +377,7 @@ namespace node_libxl {
             return util::ThrowLibxlError(that);
         }
 
+        that->validSheetHandles.insert(libxlSheet);
         info.GetReturnValue().Set(Sheet::NewInstance(libxlSheet, info.This()));
     }
 
@@ -386,12 +392,13 @@ namespace node_libxl {
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
 
-        libxl::Sheet* sheet = that->GetWrapped()->getSheet(index);
-        if (!sheet) {
+        libxl::Sheet* libxlSheet = that->GetWrapped()->getSheet(index);
+        if (!libxlSheet) {
             return util::ThrowLibxlError(that);
         }
 
-        info.GetReturnValue().Set(Sheet::NewInstance(sheet, info.This()));
+        that->validSheetHandles.insert(libxlSheet);
+        info.GetReturnValue().Set(Sheet::NewInstance(libxlSheet, info.This()));
     }
 
     NAN_METHOD(Book::SheetType) {
@@ -418,6 +425,9 @@ namespace node_libxl {
 
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
+
+        auto libxlSheet = that->GetWrapped()->getSheet(index);
+        if (libxlSheet) that->validSheetHandles.erase(libxlSheet);
 
         if (!that->GetWrapped()->delSheet(index)) {
             return util::ThrowLibxlError(that);

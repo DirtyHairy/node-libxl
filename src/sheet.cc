@@ -32,12 +32,17 @@
 
 using namespace v8;
 
+#define ASSERT_SHEET(sheet)                                                     \
+    ASSERT_THIS(sheet);                                                         \
+    if (!::node_libxl::util::GetBook(sheet)->IsValidSheet(sheet->wrappedSheet)) \
+        return (Nan::ThrowError("sheet has been discarded and is no longer valid"));
+
 namespace node_libxl {
 
     // Lifecycle
 
     Sheet::Sheet(libxl::Sheet* sheet, Local<Value> book)
-        : Wrapper<libxl::Sheet>(sheet), BookWrapper(book) {}
+        : Wrapper<libxl::Sheet>(sheet), BookWrapper(book), wrappedSheet(sheet) {}
 
     Local<Object> Sheet::NewInstance(libxl::Sheet* libxlSheet, Local<Value> book) {
         Nan::EscapableHandleScope scope;
@@ -63,7 +68,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::CellType cellType = that->GetWrapped()->cellType(row, col);
         if (cellType == libxl::CELLTYPE_ERROR) {
@@ -83,7 +88,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isFormula(row, col)));
     }
@@ -98,7 +103,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = that->GetWrapped()->cellFormat(row, col);
         if (!libxlFormat) {
@@ -119,7 +124,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         ASSERT_SAME_BOOK(that, format);
 
         that->GetWrapped()->setCellFormat(row, col, format->GetWrapped());
@@ -137,7 +142,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
         const char* value = that->GetWrapped()->readStr(row, col, &libxlFormat);
@@ -165,7 +170,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -187,7 +192,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
         double value = that->GetWrapped()->readNum(row, col, &libxlFormat);
@@ -212,7 +217,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -234,7 +239,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
         bool value = that->GetWrapped()->readBool(row, col, &libxlFormat);
@@ -259,7 +264,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -281,7 +286,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
         if (!that->GetWrapped()->readBlank(row, col, &libxlFormat) || !libxlFormat) {
@@ -309,7 +314,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         ASSERT_SAME_BOOK(that, format);
 
         if (!that->GetWrapped()->writeBlank(row, col, format ? format->GetWrapped() : NULL)) {
@@ -329,7 +334,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
         const char* value = that->GetWrapped()->readFormula(row, col, &libxlFormat);
@@ -357,7 +362,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -379,7 +384,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         const char* value = that->GetWrapped()->readComment(row, col);
         if (!value) {
@@ -403,7 +408,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (info[3]->IsString()) {
             that->GetWrapped()->writeComment(row, col, *value, *author, width, height);
@@ -424,7 +429,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->readError(row, col)));
     }
@@ -438,7 +443,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate(row, col)));
     }
@@ -452,7 +457,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->colWidth(col)));
     }
@@ -466,7 +471,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeight(row)));
     }
@@ -484,7 +489,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -509,7 +514,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
         }
@@ -531,7 +536,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rowHidden(row)));
     }
@@ -546,7 +551,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setRowHidden(row, hidden)) {
             return util::ThrowLibxlError(that);
@@ -564,7 +569,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->colHidden(col)));
     }
@@ -579,7 +584,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setColHidden(col, hidden)) {
             return util::ThrowLibxlError(that);
@@ -597,7 +602,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
 
@@ -628,7 +633,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
             return util::ThrowLibxlError(that);
@@ -646,7 +651,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delMerge(row, col)) {
             return util::ThrowLibxlError(that);
@@ -659,7 +664,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->pictureSize()));
     }
@@ -673,7 +678,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int rowTop, colLeft, rowBottom, colRight, width, height, offset_x, offset_y;
         int bookIndex =
@@ -714,7 +719,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y);
 
@@ -732,7 +737,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x, offset_y);
 
@@ -748,7 +753,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreak(index)));
     }
@@ -757,7 +762,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreakSize()));
     }
@@ -771,7 +776,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreak(index)));
     }
@@ -780,7 +785,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreakSize()));
     }
@@ -795,7 +800,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHorPageBreak(row, pagebreak)) {
             return util::ThrowLibxlError(that);
@@ -814,7 +819,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setVerPageBreak(col, pagebreak)) {
             return util::ThrowLibxlError(that);
@@ -832,7 +837,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->split(row, col);
 
@@ -849,7 +854,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->groupRows(rowFirst, rowLast, collapsed)) {
             return util::ThrowLibxlError(that);
@@ -868,7 +873,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->groupCols(colFirst, colLast, collapsed)) {
             return util::ThrowLibxlError(that);
@@ -881,7 +886,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryBelow()));
     }
@@ -895,7 +900,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setGroupSummaryBelow(summaryBelow);
 
@@ -906,7 +911,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryRight()));
     }
@@ -920,7 +925,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setGroupSummaryRight(summaryRight);
 
@@ -937,7 +942,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->clear(rowFirst, rowLast, colFirst, colLast);
 
@@ -953,7 +958,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
             return util::ThrowLibxlError(that);
@@ -989,7 +994,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(
             new Worker(new Nan::Callback(callback), info.This(), rowFirst, rowLast));
@@ -1006,7 +1011,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
             return util::ThrowLibxlError(that);
@@ -1042,7 +1047,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(
             new Worker(new Nan::Callback(callback), info.This(), colFirst, colLast));
@@ -1059,7 +1064,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removeRow(rowFirst, rowLast)) {
             return util::ThrowLibxlError(that);
@@ -1095,7 +1100,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(
             new Worker(new Nan::Callback(callback), info.This(), rowFirst, rowLast));
@@ -1130,7 +1135,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(
             new Worker(new Nan::Callback(callback), info.This(), colFirst, colLast));
@@ -1147,7 +1152,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removeCol(colFirst, colLast)) {
             return util::ThrowLibxlError(that);
@@ -1166,7 +1171,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->copyCell(rowSrc, colSrc, rowDst, colDst)) {
             return util::ThrowLibxlError(that);
@@ -1179,7 +1184,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstRow()));
     }
@@ -1188,7 +1193,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastRow()));
     }
@@ -1197,7 +1202,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstCol()));
     }
@@ -1206,7 +1211,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastCol()));
     }
@@ -1215,7 +1220,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->displayGridlines()));
     }
@@ -1229,7 +1234,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setDisplayGridlines(displayGridlines);
 
@@ -1240,7 +1245,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printGridlines()));
     }
@@ -1254,7 +1259,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintGridlines(printGridlines);
 
@@ -1265,7 +1270,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->zoom()));
     }
@@ -1279,7 +1284,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setZoom(zoom);
 
@@ -1290,7 +1295,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->printZoom()));
     }
@@ -1304,7 +1309,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintZoom(zoom);
 
@@ -1315,7 +1320,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int wPages, hPages;
 
@@ -1342,7 +1347,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintFit(wPages, hPages);
 
@@ -1353,7 +1358,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->landscape()));
     }
@@ -1367,7 +1372,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setLandscape(landscape);
 
@@ -1378,7 +1383,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->paper()));
     }
@@ -1392,7 +1397,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPaper(static_cast<libxl::Paper>(paper));
 
@@ -1403,7 +1408,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->header()).ToLocalChecked());
     }
@@ -1418,7 +1423,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHeader(*header, margin)) {
             return util::ThrowLibxlError(that);
@@ -1431,7 +1436,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->headerMargin()));
     }
@@ -1440,7 +1445,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->footer()).ToLocalChecked());
     }
@@ -1455,7 +1460,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setFooter(*footer, margin)) {
             return util::ThrowLibxlError(that);
@@ -1468,7 +1473,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->footerMargin()));
     }
@@ -1477,7 +1482,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->hCenter()));
     }
@@ -1491,7 +1496,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setHCenter(center);
 
@@ -1502,7 +1507,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->vCenter()));
     }
@@ -1516,7 +1521,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setVCenter(center);
 
@@ -1527,7 +1532,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginLeft()));
     }
@@ -1541,7 +1546,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginLeft(margin);
 
@@ -1552,7 +1557,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginRight()));
     }
@@ -1566,7 +1571,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginRight(margin);
 
@@ -1577,7 +1582,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginTop()));
     }
@@ -1591,7 +1596,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginTop(margin);
 
@@ -1602,7 +1607,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginBottom()));
     }
@@ -1616,7 +1621,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginBottom(margin);
 
@@ -1627,7 +1632,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printRowCol()));
     }
@@ -1641,7 +1646,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRowCol(printRowCol);
 
@@ -1657,7 +1662,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRepeatRows(rowFirst, rowLast);
 
@@ -1673,7 +1678,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRepeatCols(colFirst, colLast);
 
@@ -1690,7 +1695,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintArea(rowFirst, rowLast, colFirst, colLast);
 
@@ -1701,7 +1706,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->clearPrintRepeats();
 
@@ -1712,7 +1717,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->clearPrintArea();
 
@@ -1729,7 +1734,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
         bool hidden;
@@ -1764,7 +1769,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setNamedRange(*name, rowFirst, rowLast, colFirst, colLast,
                                                static_cast<libxl::Scope>(scopeId))) {
@@ -1784,7 +1789,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delNamedRange(*name, static_cast<libxl::Scope>(scopeId))) {
             return util::ThrowLibxlError(that);
@@ -1797,7 +1802,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->namedRangeSize()));
     }
@@ -1811,7 +1816,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast, scopeId;
         bool hidden;
@@ -1842,7 +1847,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->name()).ToLocalChecked());
     }
@@ -1856,7 +1861,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setName(*name);
 
@@ -1867,7 +1872,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->protect()));
     }
@@ -1881,7 +1886,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setProtect(protect);
 
@@ -1892,7 +1897,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rightToLeft()));
     }
@@ -1906,7 +1911,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setRightToLeft(rightToLeft);
 
@@ -1917,7 +1922,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->hidden()));
     }
@@ -1931,7 +1936,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHidden(static_cast<libxl::SheetState>(state))) {
             return util::ThrowLibxlError(that);
@@ -1944,7 +1949,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int row, col;
         that->GetWrapped()->getTopLeftView(&row, &col);
@@ -1966,7 +1971,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         that->GetWrapped()->setTopLeftView(row, col);
 
@@ -1982,7 +1987,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         int row = -1, col = -1;
         bool rowRelative = true, colRelative = true;
@@ -2011,7 +2016,7 @@ namespace node_libxl {
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
-        ASSERT_THIS(that);
+        ASSERT_SHEET(that);
 
         const char* addr = that->GetWrapped()->rowColToAddr(row, col, rowRelative, colRelative);
 

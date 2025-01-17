@@ -25,6 +25,8 @@
 #ifndef BINDINGS_BOOK
 #define BINDINGS_BOOK
 
+#include <unordered_set>
+
 #include "common.h"
 #include "wrapper.h"
 
@@ -39,7 +41,9 @@ namespace node_libxl {
 
         void StartAsync();
         void StopAsync();
-        bool AsyncPending();
+        bool AsyncPending() const;
+
+        bool IsValidSheet(const libxl::Sheet* sheet) const;
 
         static void Initialize(v8::Local<v8::Object> exports);
 
@@ -95,6 +99,9 @@ namespace node_libxl {
         static NAN_METHOD(IsTemplate);
         static NAN_METHOD(SetTemplate);
         static NAN_METHOD(SetKey);
+
+       private:
+        std::unordered_set<const libxl::Sheet*> validSheetHandles;
 
        private:
         Book(const Book&);

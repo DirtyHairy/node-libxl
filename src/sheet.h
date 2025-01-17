@@ -165,6 +165,9 @@ namespace node_libxl {
         static NAN_METHOD(RowColToAddr);
 
        private:
+        const libxl::Sheet* wrappedSheet;
+
+       private:
         Sheet(const Sheet&);
         const Sheet& operator=(const Sheet&);
     };
