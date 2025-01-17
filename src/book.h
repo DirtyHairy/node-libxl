@@ -56,6 +56,8 @@ namespace node_libxl {
 
         static NAN_METHOD(LoadSync);
         static NAN_METHOD(Load);
+        static NAN_METHOD(LoadSheet);
+        static NAN_METHOD(LoadSheetSync);
         static NAN_METHOD(WriteSync);
         static NAN_METHOD(Write);
         static NAN_METHOD(WriteRawSync);

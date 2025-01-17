@@ -27,9 +27,11 @@ describe('The book class', function () {
 
     it('book.writeSync writes a book in sync mode', function () {
         var book = new xl.Book(xl.BOOK_TYPE_XLS),
-            sheet = book.addSheet('foo');
+            sheet1 = book.addSheet('foo'),
+            sheet2 = book.addSheet('bar');
 
-        sheet.writeStr(1, 0, 'bar');
+        sheet1.writeStr(1, 0, 'bar');
+        sheet2.writeStr(1, 0, 'foo');
 
         var file = testUtils.getWriteTestFile();
         shouldThrow(book.writeSync, book, 10);
@@ -39,9 +41,11 @@ describe('The book class', function () {
 
     it('book.write writes a book in async mode', async () => {
         var book = new xl.Book(xl.BOOK_TYPE_XLS),
-            sheet = book.addSheet('foo');
+            sheet1 = book.addSheet('foo'),
+            sheet2 = book.addSheet('bar');
 
-        sheet.writeStr(1, 0, 'bar');
+        sheet1.writeStr(1, 0, 'bar');
+        sheet2.writeStr(1, 0, 'foo');
 
         var file = testUtils.getWriteTestFile();
         shouldThrow(book.write, book, file, 10);
@@ -89,6 +93,65 @@ describe('The book class', function () {
             await util.promisify(book.load.bind(book))(testUtils.getWriteTestFile(), testUtils.getTempFile());
 
             expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+        });
+    });
+
+    describe('book.loadSheetSync', () => {
+        it('loads a book in sync mode with a single sheet', () => {
+            const file = testUtils.getWriteTestFile();
+            shouldThrow(book.loadSyncSheet, book, 'a', file);
+            shouldThrow(book.loadSyncSheet, {}, 1, file);
+
+            expect(book.loadSheetSync(file, 1)).toBe(book);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports an optional tempfile', () => {
+            const file = testUtils.getWriteTestFile();
+
+            expect(book.loadSheetSync(file, 1, testUtils.getTempFile())).toBe(book);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports loading all sheets', () => {
+            const file = testUtils.getWriteTestFile();
+
+            expect(book.loadSheetSync(file, 1, undefined, true)).toBe(book);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+    });
+
+    describe('book.loadSheet', () => {
+        it('loads a book in with a single sheet', async () => {
+            const file = testUtils.getWriteTestFile();
+            shouldThrow(book.loadSheet, book, 'a', file);
+            shouldThrow(book.loadSheet, {}, 1, file);
+
+            const loadResult = util.promisify(book.loadSheet.bind(book))(file, 1);
+            shouldThrow(book.sheetCount, book);
+
+            await loadResult;
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports an optional tempfile', async () => {
+            const file = testUtils.getWriteTestFile();
+
+            await util.promisify(book.loadSheet.bind(book))(file, 1, testUtils.getTempFile());
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports loading all sheets', async () => {
+            const file = testUtils.getWriteTestFile();
+
+            await util.promisify(book.loadSheet.bind(book))(file, 1, undefined, true);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
         });
     });
 
