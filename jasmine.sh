@@ -2,7 +2,11 @@
 
 SYSTEM=$(uname)
 MACHINE=$(uname -m)
-JASMINE="node ./node_modules/.bin/jasmine --config=jasmine.json"
+
+NODE="node"
+test -n "$VALGRIND" && NODE="valgrind node"
+
+JASMINE="$NODE ./node_modules/.bin/jasmine --config=jasmine.json"
 
 if [ "$SYSTEM" = Darwin ]; then
     DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$(pwd)/deps/libxl/lib" $JASMINE
