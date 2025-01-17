@@ -32,6 +32,7 @@ describe('The book class', function () {
 
         sheet1.writeStr(1, 0, 'bar');
         sheet2.writeStr(1, 0, 'foo');
+        sheet2.writeStr(2, 0, 'row2');
 
         var file = testUtils.getWriteTestFile();
         shouldThrow(book.writeSync, book, 10);
@@ -46,6 +47,7 @@ describe('The book class', function () {
 
         sheet1.writeStr(1, 0, 'bar');
         sheet2.writeStr(1, 0, 'foo');
+        sheet2.writeStr(2, 0, 'row2');
 
         var file = testUtils.getWriteTestFile();
         shouldThrow(book.write, book, file, 10);
@@ -127,8 +129,8 @@ describe('The book class', function () {
     describe('book.loadSheet', () => {
         it('loads a book in with a single sheet', async () => {
             const file = testUtils.getWriteTestFile();
-            shouldThrow(book.loadSheet, book, 'a', file);
-            shouldThrow(book.loadSheet, {}, 1, file);
+            shouldThrow(book.loadSheet, book, 'a', file, () => undefined);
+            shouldThrow(book.loadSheet, {}, 1, file, () => undefined);
 
             const loadResult = util.promisify(book.loadSheet.bind(book))(file, 1);
             shouldThrow(book.sheetCount, book);
@@ -150,6 +152,69 @@ describe('The book class', function () {
             const file = testUtils.getWriteTestFile();
 
             await util.promisify(book.loadSheet.bind(book))(file, 1, undefined, true);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+    });
+
+    describe('book.loadPartiallySync', () => {
+        it('loads a book in sync mode with a single, partial sheet', () => {
+            const file = testUtils.getWriteTestFile();
+            shouldThrow(book.loadPartiallySync, book, 1, 0, 'a', file);
+            shouldThrow(book.loadPartiallySync, {}, 1, 0, 1, file);
+
+            expect(book.loadPartiallySync(file, 1, 0, 1)).toBe(book);
+
+            const sheet = book.getSheet(0);
+            expect(sheet.readStr(1, 0)).toBe('foo');
+            shouldThrow(sheet.readStr, sheet, 2, 0);
+        });
+
+        it('supports an optional tempfile', () => {
+            const file = testUtils.getWriteTestFile();
+
+            expect(book.loadPartiallySync(file, 1, 0, 1, testUtils.getTempFile())).toBe(book);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports loading all sheets', () => {
+            const file = testUtils.getWriteTestFile();
+
+            expect(book.loadPartiallySync(file, 1, 0, 1, undefined, true)).toBe(book);
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+    });
+
+    describe('book.loadPartially', () => {
+        it('loads a book with a single, partial sheet', async () => {
+            const file = testUtils.getWriteTestFile();
+            shouldThrow(book.loadPartially, book, 1, 0, 'a', file, () => undefined);
+            shouldThrow(book.loadPartially, {}, 1, 0, 1, file, () => undefined);
+
+            const loadResult = util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1);
+            shouldThrow(book.sheetCount, book);
+
+            await loadResult;
+
+            const sheet = book.getSheet(0);
+            expect(sheet.readStr(1, 0)).toBe('foo');
+            shouldThrow(sheet.readStr, sheet, 2, 0);
+        });
+
+        it('supports an optional tempfile', async () => {
+            const file = testUtils.getWriteTestFile();
+
+            await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, testUtils.getTempFile());
+
+            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+        });
+
+        it('supports loading all sheets', async () => {
+            const file = testUtils.getWriteTestFile();
+
+            await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, undefined, true);
 
             expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
         });

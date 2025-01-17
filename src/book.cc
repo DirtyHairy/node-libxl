@@ -229,6 +229,85 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Book::LoadPartiallySync) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(filename, arguments.GetString(0));
+        int sheetIndex = arguments.GetInt(1);
+        int firstRow = arguments.GetInt(2);
+        int lastRow = arguments.GetInt(3);
+        auto tempfile = arguments.GetMaybeString(4);
+        bool keepAllSheets = arguments.GetBoolean(5, false);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->loadPartially(
+                *filename, sheetIndex, firstRow, lastRow,
+                tempfile ? *String::Utf8Value(Isolate::GetCurrent(), *tempfile) : nullptr,
+                keepAllSheets)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadPartially) {
+        class Worker : public AsyncWorker<Book> {
+           public:
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename,
+                   int sheetIndex, int firstRow, int lastRow, std::optional<Local<Value>> tempfile,
+                   bool keepAllSheets)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"),
+                  filename(filename),
+                  sheetIndex(sheetIndex),
+                  firstRow(firstRow),
+                  lastRow(lastRow),
+                  tempfile(tempfile),
+                  keepAllSheets(keepAllSheets) {}
+
+            virtual void Execute() {
+                if (!that->GetWrapped()->loadPartially(*filename, sheetIndex, firstRow, lastRow,
+                                                       *tempfile, keepAllSheets))
+                    RaiseLibxlError();
+            }
+
+           private:
+            StringCopy filename;
+            int sheetIndex;
+            int firstRow;
+            int lastRow;
+            StringCopy tempfile;
+            bool keepAllSheets;
+        };
+
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        Local<Value> filename = arguments.GetString(0);
+        int sheetIndex = arguments.GetInt(1);
+        int firstRow = arguments.GetInt(2);
+        int lastRow = arguments.GetInt(3);
+        std::optional<Local<Value>> tempfile =
+            arguments.Length() > 5 ? arguments.GetMaybeString(4) : std::nullopt;
+        bool keepAllSheets = arguments.Length() > 6 ? arguments.GetBoolean(5, false) : false;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename,
+                                         sheetIndex, firstRow, lastRow, tempfile, keepAllSheets));
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Book::WriteSync) {
         Nan::HandleScope scope;
 
@@ -1154,6 +1233,8 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "load", Load);
         Nan::SetPrototypeMethod(t, "loadSheetSync", LoadSheetSync);
         Nan::SetPrototypeMethod(t, "loadSheet", LoadSheet);
+        Nan::SetPrototypeMethod(t, "loadPartiallySync", LoadPartiallySync);
+        Nan::SetPrototypeMethod(t, "loadPartially", LoadPartially);
         Nan::SetPrototypeMethod(t, "writeSync", WriteSync);
         Nan::SetPrototypeMethod(t, "saveSync", WriteSync);
         Nan::SetPrototypeMethod(t, "write", Write);
