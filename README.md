@@ -252,6 +252,8 @@ supported.
 
 # Credits
 
+Developed with kind support from XLWare.
+
 * Torben Fitschen wrote the install script which pulls the
   necessary libxl SDK before building.
 * Martin Schröder for adding Mac support.
