@@ -551,13 +551,17 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         Local<Value> buffer = arguments.GetBuffer(0);
+        int sheetIndex = arguments.GetInt(1, -1);
+        int firstRow = arguments.GetInt(2, -1);
+        int lastRow = arguments.GetInt(3, -1);
+        bool keepAllSheets = arguments.GetBoolean(4, false);
         ASSERT_ARGUMENTS(arguments);
 
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
 
-        if (!that->GetWrapped()->loadRaw(node::Buffer::Data(buffer),
-                                         node::Buffer::Length(buffer))) {
+        if (!that->GetWrapped()->loadRaw(node::Buffer::Data(buffer), node::Buffer::Length(buffer),
+                                         sheetIndex, firstRow, lastRow, keepAllSheets)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -567,31 +571,51 @@ namespace node_libxl {
     NAN_METHOD(Book::LoadRaw) {
         class Worker : public AsyncWorker<Book> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> buffer)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-raw"), buffer(buffer) {}
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> buffer, int sheetIndex,
+                   int firstRow, int lastRow, bool keepAllSheets)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-raw"),
+                  buffer(buffer),
+                  sheetIndex(sheetIndex),
+                  firstRow(firstRow),
+                  lastRow(lastRow),
+                  keepAllSheets(keepAllSheets) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->loadRaw(*buffer, buffer.GetSize())) {
+                if (!that->GetWrapped()->loadRaw(*buffer, buffer.GetSize(), sheetIndex, firstRow,
+                                                 lastRow, keepAllSheets)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             BufferCopy buffer;
+            int sheetIndex;
+            int firstRow;
+            int lastRow;
+            bool keepAllSheets;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 6) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         Local<Value> buffer = arguments.GetBuffer(0);
-        Local<Function> callback = arguments.GetFunction(1);
+        int sheetIndex = arguments.Length() > 2 ? arguments.GetInt(1, -1) : -1;
+        int firstRow = arguments.Length() > 3 ? arguments.GetInt(2, -1) : -1;
+        int lastRow = arguments.Length() > 4 ? arguments.GetInt(3, -1) : -1;
+        bool keepAllSheets = arguments.Length() > 5 ? arguments.GetBoolean(4, false) : false;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
 
-        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), buffer));
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), buffer,
+                                         sheetIndex, firstRow, lastRow, keepAllSheets));
 
         info.GetReturnValue().Set(info.This());
     }

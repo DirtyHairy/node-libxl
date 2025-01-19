@@ -327,6 +327,21 @@ describe('The book class', function () {
         expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
     });
 
+    it('book.loadRawSync supports extra args for sheet and range', function () {
+        var book1 = new xl.Book(xl.BOOK_TYPE_XLS);
+        var sheet = book1.addSheet('foo');
+
+        sheet.writeStr(1, 0, 'bar');
+
+        var buffer = book1.writeRawSync();
+
+        var book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+
+        expect(book2.loadRawSync(buffer, 0, 0, 1, true)).toBe(book2);
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+    });
+
     it('book.loadRaw and book.saveRaw load and save a book into a buffer, async mode', async () => {
         const book1 = new xl.Book(xl.BOOK_TYPE_XLS),
             book2 = new xl.Book(xl.BOOK_TYPE_XLS);
@@ -344,10 +359,36 @@ describe('The book class', function () {
 
         shouldThrow(book2.loadRaw, book2, buffer, 10);
         shouldThrow(book2.loadRaw, {}, buffer, function () {});
+        shouldThrow(
+            book2.loadRaw,
+            book2,
+            buffer,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            function () {}
+        );
 
         const loadResult = util.promisify(book2.loadRaw.bind(book2))(buffer);
         shouldThrow(book2.loadRaw, book2);
         await loadResult;
+
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.loadRaw supports extra args for sheet and range', async () => {
+        const book1 = new xl.Book(xl.BOOK_TYPE_XLS),
+            book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+        const sheet = book1.addSheet('foo');
+
+        sheet.writeStr(1, 0, 'bar');
+
+        const buffer = await util.promisify(book1.writeRaw.bind(book1))();
+
+        await util.promisify(book2.loadRaw.bind(book2))(buffer, 0, 0, 1, true);
 
         expect(book2.sheetCount()).toBe(1);
         expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
