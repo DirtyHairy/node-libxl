@@ -145,6 +145,10 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 3) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         Local<Value> filename = arguments.GetString(0);
         std::optional<Local<Value>> tempfile =
             arguments.Length() > 2 ? arguments.GetMaybeString(1) : std::nullopt;
@@ -211,6 +215,10 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
+
+        if (arguments.Length() > 5) {
+            return Nan::ThrowError("too many arguments");
+        }
 
         Local<Value> filename = arguments.GetString(0);
         int sheetIndex = arguments.GetInt(1);
@@ -289,6 +297,10 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 7) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         Local<Value> filename = arguments.GetString(0);
         int sheetIndex = arguments.GetInt(1);
         int firstRow = arguments.GetInt(2);
@@ -304,6 +316,104 @@ namespace node_libxl {
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename,
                                          sheetIndex, firstRow, lastRow, tempfile, keepAllSheets));
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadWithoutEmptyCellsSync) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(filename, arguments.GetString(0));
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->loadWithoutEmptyCells(*filename)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadWithoutEmptyCells) {
+        class Worker : public AsyncWorker<Book> {
+           public:
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"), filename(filename) {}
+
+            virtual void Execute() {
+                if (!that->GetWrapped()->loadWithoutEmptyCells(*filename)) RaiseLibxlError();
+            }
+
+           private:
+            StringCopy filename;
+        };
+
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        Local<Value> filename = arguments.GetString(0);
+        Local<Function> callback = arguments.GetFunction(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadInfoSync) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(filename, arguments.GetString(0));
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->loadInfo(*filename)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadInfo) {
+        class Worker : public AsyncWorker<Book> {
+           public:
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"), filename(filename) {}
+
+            virtual void Execute() {
+                if (!that->GetWrapped()->loadInfo(*filename)) RaiseLibxlError();
+            }
+
+           private:
+            StringCopy filename;
+        };
+
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        Local<Value> filename = arguments.GetString(0);
+        Local<Function> callback = arguments.GetFunction(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1235,6 +1345,10 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "loadSheet", LoadSheet);
         Nan::SetPrototypeMethod(t, "loadPartiallySync", LoadPartiallySync);
         Nan::SetPrototypeMethod(t, "loadPartially", LoadPartially);
+        Nan::SetPrototypeMethod(t, "loadWithoutEmptyCellsSync", LoadWithoutEmptyCellsSync);
+        Nan::SetPrototypeMethod(t, "loadWithoutEmptyCells", LoadWithoutEmptyCells);
+        Nan::SetPrototypeMethod(t, "loadInfoSync", LoadInfoSync);
+        Nan::SetPrototypeMethod(t, "loadInfo", LoadInfo);
         Nan::SetPrototypeMethod(t, "writeSync", WriteSync);
         Nan::SetPrototypeMethod(t, "saveSync", WriteSync);
         Nan::SetPrototypeMethod(t, "write", Write);

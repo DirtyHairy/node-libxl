@@ -82,6 +82,7 @@ describe('The book class', function () {
             var file = testUtils.getWriteTestFile();
             shouldThrow(book.load, book, file, 10);
             shouldThrow(book.load, {}, file, function () {});
+            shouldThrow(book.load, book, file, undefined, undefined, function () {});
 
             const loadResult = util.promisify(book.load.bind(book))(file);
             shouldThrow(book.sheetCount, book);
@@ -101,8 +102,8 @@ describe('The book class', function () {
     describe('book.loadSheetSync', () => {
         it('loads a book in sync mode with a single sheet', () => {
             const file = testUtils.getWriteTestFile();
-            shouldThrow(book.loadSyncSheet, book, 'a', file);
-            shouldThrow(book.loadSyncSheet, {}, 1, file);
+            shouldThrow(book.loadSyncSheet, book, file, 'a');
+            shouldThrow(book.loadSyncSheet, {}, file, 1);
 
             expect(book.loadSheetSync(file, 1)).toBe(book);
 
@@ -129,8 +130,9 @@ describe('The book class', function () {
     describe('book.loadSheet', () => {
         it('loads a book in with a single sheet', async () => {
             const file = testUtils.getWriteTestFile();
-            shouldThrow(book.loadSheet, book, 'a', file, () => undefined);
-            shouldThrow(book.loadSheet, {}, 1, file, () => undefined);
+            shouldThrow(book.loadSheet, book, file, 'a', () => undefined);
+            shouldThrow(book.loadSheet, {}, file, 1, () => undefined);
+            shouldThrow(book.loadSheet, book, file, 1, undefined, undefined, undefined, () => undefined);
 
             const loadResult = util.promisify(book.loadSheet.bind(book))(file, 1);
             shouldThrow(book.sheetCount, book);
@@ -160,8 +162,8 @@ describe('The book class', function () {
     describe('book.loadPartiallySync', () => {
         it('loads a book in sync mode with a single, partial sheet', () => {
             const file = testUtils.getWriteTestFile();
-            shouldThrow(book.loadPartiallySync, book, 1, 0, 'a', file);
-            shouldThrow(book.loadPartiallySync, {}, 1, 0, 1, file);
+            shouldThrow(book.loadPartiallySync, book, file, 1, 0, 'a');
+            shouldThrow(book.loadPartiallySync, {}, file, 1, 0, 1);
 
             expect(book.loadPartiallySync(file, 1, 0, 1)).toBe(book);
 
@@ -190,8 +192,9 @@ describe('The book class', function () {
     describe('book.loadPartially', () => {
         it('loads a book with a single, partial sheet', async () => {
             const file = testUtils.getWriteTestFile();
-            shouldThrow(book.loadPartially, book, 1, 0, 'a', file, () => undefined);
-            shouldThrow(book.loadPartially, {}, 1, 0, 1, file, () => undefined);
+            shouldThrow(book.loadPartially, book, file, 1, 0, 'a', () => undefined);
+            shouldThrow(book.loadPartially, {}, file, 1, 0, 1, () => undefined);
+            shouldThrow(book.loadPartially, book, file, 1, 0, 1, undefined, undefined, undefined, () => undefined);
 
             const loadResult = util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1);
             shouldThrow(book.sheetCount, book);
@@ -218,6 +221,53 @@ describe('The book class', function () {
 
             expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
         });
+    });
+
+    it('book.loadWithoutEmptyCellsSync loads a book in sync mode without empty cells', function () {
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.loadWithoutEmptyCellsSync, book, 10);
+        shouldThrow(book.loadWithoutEmptyCellsSync, {}, file);
+
+        expect(book.loadWithoutEmptyCellsSync(file)).toBe(book);
+        var sheet = book.getSheet(0);
+        expect(sheet.readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.loadWithoutEmptyCells loads a book in async mode without empty cells', async () => {
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.loadWithoutEmptyCells, book, file, 10);
+        shouldThrow(book.loadWithoutEmptyCells, {}, file, function () {});
+        shouldThrow(book.loadWithoutEmptyCells, book, file, undefined, function () {});
+
+        const loadResult = util.promisify(book.loadWithoutEmptyCells.bind(book))(file);
+        shouldThrow(book.sheetCount, book);
+
+        await loadResult;
+
+        expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+    });
+
+    it('book.loadInfoSync loads a book in sync mode without data', function () {
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.loadInfoSync, book, 10);
+        shouldThrow(book.loadInfoSync, {}, file);
+
+        expect(book.loadInfoSync(file)).toBe(book);
+        expect(book.sheetCount()).toBe(2);
+    });
+
+    it('book.loadInfo loads a book in async mode without data', async () => {
+        var file = testUtils.getWriteTestFile();
+        shouldThrow(book.loadInfo, book, file, 10);
+        shouldThrow(book.loadInfo, {}, file, function () {});
+        shouldThrow(book.loadInfo, book, file, undefined, function () {});
+
+        const loadResult = util.promisify(book.loadInfo.bind(book))(file);
+        shouldThrow(book.sheetCount, book);
+
+        await loadResult;
+
+        expect(book.sheetCount()).toBe(2);
     });
 
     it('book.loadRawSync and book.saveRawSync load and save a book into a buffer, sync mode', function () {

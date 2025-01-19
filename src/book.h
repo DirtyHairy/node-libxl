@@ -60,6 +60,10 @@ namespace node_libxl {
         static NAN_METHOD(LoadSheetSync);
         static NAN_METHOD(LoadPartially);
         static NAN_METHOD(LoadPartiallySync);
+        static NAN_METHOD(LoadWithoutEmptyCells);
+        static NAN_METHOD(LoadWithoutEmptyCellsSync);
+        static NAN_METHOD(LoadInfo);
+        static NAN_METHOD(LoadInfoSync);
         static NAN_METHOD(WriteSync);
         static NAN_METHOD(Write);
         static NAN_METHOD(WriteRawSync);
