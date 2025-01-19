@@ -424,13 +424,14 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         CSNanUtf8Value(filename, arguments.GetString(0));
+        bool useTempFile = arguments.GetBoolean(1, false);
         ASSERT_ARGUMENTS(arguments);
 
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
 
         libxl::Book* libxlBook = that->GetWrapped();
-        if (!libxlBook->save(*filename)) {
+        if (!libxlBook->save(*filename, useTempFile)) {
             return util::ThrowLibxlError(libxlBook);
         }
 
@@ -440,31 +441,41 @@ namespace node_libxl {
     NAN_METHOD(Book::Write) {
         class Worker : public AsyncWorker<Book> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-write"), filename(filename) {}
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename,
+                   bool useTempFile)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-write"),
+                  filename(filename),
+                  useTempFile(useTempFile) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->save(*filename)) {
+                if (!that->GetWrapped()->save(*filename, useTempFile)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             StringCopy filename;
+            bool useTempFile;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 3) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         Local<Value> filename = arguments.GetString(0);
-        Local<Function> callback = arguments.GetFunction(1);
+        bool useTempFile = arguments.Length() > 2 ? arguments.GetBoolean(1, false) : false;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Book* that = Unwrap(info.This());
         ASSERT_THIS(that);
 
-        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
+        Nan::AsyncQueueWorker(
+            new Worker(new Nan::Callback(callback), info.This(), filename, useTempFile));
 
         info.GetReturnValue().Set(info.This());
     }

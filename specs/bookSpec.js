@@ -25,38 +25,77 @@ describe('The book class', function () {
         }).toThrow();
     });
 
-    it('book.writeSync writes a book in sync mode', function () {
-        var book = new xl.Book(xl.BOOK_TYPE_XLS),
-            sheet1 = book.addSheet('foo'),
-            sheet2 = book.addSheet('bar');
+    describe('book.writeSync', () => {
+        it('writes a book in sync mode', function () {
+            var book = new xl.Book(xl.BOOK_TYPE_XLS),
+                sheet1 = book.addSheet('foo'),
+                sheet2 = book.addSheet('bar');
 
-        sheet1.writeStr(1, 0, 'bar');
-        sheet2.writeStr(1, 0, 'foo');
-        sheet2.writeStr(2, 0, 'row2');
+            sheet1.writeStr(1, 0, 'bar');
+            sheet2.writeStr(1, 0, 'foo');
+            sheet2.writeStr(2, 0, 'row2');
 
-        var file = testUtils.getWriteTestFile();
-        shouldThrow(book.writeSync, book, 10);
-        shouldThrow(book.writeSync, {}, file);
-        expect(book.writeSync(file)).toBe(book);
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.writeSync, book, 10);
+            shouldThrow(book.writeSync, {}, file);
+            expect(book.writeSync(file)).toBe(book);
+        });
+
+        it('supports a tempfile', function () {
+            var book = new xl.Book(xl.BOOK_TYPE_XLS),
+                sheet1 = book.addSheet('foo'),
+                sheet2 = book.addSheet('bar');
+
+            sheet1.writeStr(1, 0, 'bar');
+            sheet2.writeStr(1, 0, 'foo');
+            sheet2.writeStr(2, 0, 'row2');
+
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.writeSync, book, 10);
+            shouldThrow(book.writeSync, {}, file);
+            expect(book.writeSync(file)).toBe(book, true);
+        });
     });
 
-    it('book.write writes a book in async mode', async () => {
-        var book = new xl.Book(xl.BOOK_TYPE_XLS),
-            sheet1 = book.addSheet('foo'),
-            sheet2 = book.addSheet('bar');
+    describe('book.write', () => {
+        it('writes a book in async mode', async () => {
+            var book = new xl.Book(xl.BOOK_TYPE_XLS),
+                sheet1 = book.addSheet('foo'),
+                sheet2 = book.addSheet('bar');
 
-        sheet1.writeStr(1, 0, 'bar');
-        sheet2.writeStr(1, 0, 'foo');
-        sheet2.writeStr(2, 0, 'row2');
+            sheet1.writeStr(1, 0, 'bar');
+            sheet2.writeStr(1, 0, 'foo');
+            sheet2.writeStr(2, 0, 'row2');
 
-        var file = testUtils.getWriteTestFile();
-        shouldThrow(book.write, book, file, 10);
-        shouldThrow(book.write, {}, file, function () {});
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.write, book, file, 10);
+            shouldThrow(book.write, {}, file, function () {});
 
-        const writeResult = util.promisify(book.write.bind(book))(file);
-        shouldThrow(book.sheetCount, book);
+            const writeResult = util.promisify(book.write.bind(book))(file);
+            shouldThrow(book.sheetCount, book);
 
-        await writeResult;
+            await writeResult;
+        });
+
+        it('supports a tempfile', async () => {
+            var book = new xl.Book(xl.BOOK_TYPE_XLS),
+                sheet1 = book.addSheet('foo'),
+                sheet2 = book.addSheet('bar');
+
+            sheet1.writeStr(1, 0, 'bar');
+            sheet2.writeStr(1, 0, 'foo');
+            sheet2.writeStr(2, 0, 'row2');
+
+            var file = testUtils.getWriteTestFile();
+            shouldThrow(book.write, book, file, 10);
+            shouldThrow(book.write, {}, file, function () {});
+            shouldThrow(book.write, book, file, undefined, undefined, function () {});
+
+            const writeResult = util.promisify(book.write.bind(book))(file, true);
+            shouldThrow(book.sheetCount, book);
+
+            await writeResult;
+        });
     });
 
     describe('book.loadSync', () => {
