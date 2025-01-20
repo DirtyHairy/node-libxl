@@ -727,6 +727,25 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->sheetType(index)));
     }
 
+    NAN_METHOD(Book::MoveSheet) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int srcIndex = arguments.GetInt(0);
+        int destIndex = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->moveSheet(srcIndex, destIndex)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Book::DelSheet) {
         Nan::HandleScope scope;
 
@@ -775,6 +794,28 @@ namespace node_libxl {
         libxl::Book* libxlBook = that->GetWrapped();
         libxl::Format* libxlFormat =
             libxlBook->addFormat(parentFormat ? parentFormat->GetWrapped() : NULL);
+
+        if (!libxlFormat) {
+            return util::ThrowLibxlError(libxlBook);
+        }
+
+        info.GetReturnValue().Set(Format::NewInstance(libxlFormat, info.This()));
+    }
+
+    NAN_METHOD(Book::AddFormatFromStyle) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int style = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        libxl::Book* libxlBook = that->GetWrapped();
+        libxl::Format* libxlFormat =
+            libxlBook->addFormatFromStyle(static_cast<libxl::CellStyle>(style));
 
         if (!libxlFormat) {
             return util::ThrowLibxlError(libxlBook);
@@ -1418,9 +1459,11 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "getSheet", GetSheet);
         Nan::SetPrototypeMethod(t, "getSheetName", GetSheetName);
         Nan::SetPrototypeMethod(t, "sheetType", SheetType);
+        Nan::SetPrototypeMethod(t, "moveSheet", MoveSheet);
         Nan::SetPrototypeMethod(t, "delSheet", DelSheet);
         Nan::SetPrototypeMethod(t, "sheetCount", SheetCount);
         Nan::SetPrototypeMethod(t, "addFormat", AddFormat);
+        Nan::SetPrototypeMethod(t, "addFormatFromStyle", AddFormatFromStyle);
         Nan::SetPrototypeMethod(t, "addFont", AddFont);
         Nan::SetPrototypeMethod(t, "addCustomNumFormat", AddCustomNumFormat);
         Nan::SetPrototypeMethod(t, "customNumFormat", CustomNumFormat);
@@ -1480,6 +1523,55 @@ namespace node_libxl {
         NODE_DEFINE_CONSTANT(exports, PICTURETYPE_EMF);
         NODE_DEFINE_CONSTANT(exports, PICTURETYPE_PICT);
         NODE_DEFINE_CONSTANT(exports, PICTURETYPE_TIFF);
+
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_NORMAL);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_BAD);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_GOOD);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_NEUTRAL);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_CALC);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_CHECKCELL);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_EXPLANATORY);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_INPUT);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_OUTPUT);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_HYPERLINK);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_LINKEDCELL);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_NOTE);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_WARNING);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_TITLE);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_HEADING1);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_HEADING2);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_HEADING3);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_HEADING4);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_TOTAL);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT1);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT1);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT1);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT1);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT2);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT2);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT2);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT2);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT3);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT3);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT3);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT3);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT4);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT4);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT4);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT4);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT5);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT5);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT5);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT5);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_20ACCENT6);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_40ACCENT6);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_60ACCENT6);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_ACCENT6);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_COMMA);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_COMMA0);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_CURRENCY);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_CURRENCY0);
+        NODE_DEFINE_CONSTANT(exports, CELLSTYLE_PERCENT);
     }
 
 }  // namespace node_libxl

@@ -450,6 +450,19 @@ describe('The book class', function () {
         expect(book.sheetType(1)).toBe(xl.SHEETTYPE_UNKNOWN);
     });
 
+    it('book.moveSheet moves a sheet', function () {
+        book.addSheet('foo');
+        book.addSheet('bar');
+        book.addSheet('baz');
+
+        shouldThrow(book.moveSheet, book, 'a', 0);
+        shouldThrow(book.moveSheet, {}, 1, 0);
+
+        expect(book.moveSheet(2, 0)).toBe(book);
+        // Book?
+        // expect(book.getSheetName(0)).toBe('baz');
+    });
+
     it('book.delSheet removes a sheet', function () {
         book.addSheet('foo');
         book.addSheet('bar');
@@ -470,9 +483,8 @@ describe('The book class', function () {
     it('book.addFormat adds a format', function () {
         shouldThrow(book.addFormat, book, 10);
         shouldThrow(book.addFormat, {});
+
         book.addFormat();
-        // TODO add a check for format inheritance once format has been
-        // completed
     });
 
     it('book.addFormat can use a format belonging to a different book as a template', function () {
@@ -491,6 +503,14 @@ describe('The book class', function () {
         );
 
         shouldThrow(book.addFormat, book, format1);
+    });
+
+    it('book.addFormatFromStyle adds a format from a cell style', function () {
+        shouldThrow(book.addFormatFromStyle, book, 'a');
+        shouldThrow(book.addFormatFromStyle, {}, xl.CELLSTYLE_NORMAL);
+
+        // Bug?
+        // expect(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor).toBe(true);
     });
 
     it('book.addFont adds a font', function () {

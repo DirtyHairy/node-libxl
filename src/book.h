@@ -75,9 +75,11 @@ namespace node_libxl {
         static NAN_METHOD(GetSheet);
         static NAN_METHOD(GetSheetName);
         static NAN_METHOD(SheetType);
+        static NAN_METHOD(MoveSheet);
         static NAN_METHOD(DelSheet);
         static NAN_METHOD(SheetCount);
         static NAN_METHOD(AddFormat);
+        static NAN_METHOD(AddFormatFromStyle);
         static NAN_METHOD(AddFont);
         static NAN_METHOD(AddCustomNumFormat);
         static NAN_METHOD(CustomNumFormat);
