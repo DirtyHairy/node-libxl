@@ -432,6 +432,16 @@ describe('The book class', function () {
         expect(sheet2.readStr(1, 0)).toBe('bar');
     });
 
+    it('book.getSheetName retrieves the name of a sheet', function () {
+        book.addSheet('foo');
+
+        shouldThrow(book.getSheetName, book, 'a');
+        shouldThrow(book.getSheetName, book, 1);
+        shouldThrow(book.getSheetName, {}, 0);
+
+        expect(book.getSheetName(0)).toBe('foo');
+    });
+
     it('book.sheetType determines sheet type', function () {
         var sheet = book.addSheet('foo');
         shouldThrow(book.sheetType, book, 'a');

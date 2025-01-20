@@ -694,6 +694,25 @@ namespace node_libxl {
         info.GetReturnValue().Set(Sheet::NewInstance(libxlSheet, info.This()));
     }
 
+    NAN_METHOD(Book::GetSheetName) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* sheetName = that->GetWrapped()->getSheetName(index);
+        if (!sheetName) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(sheetName).ToLocalChecked());
+    }
+
     NAN_METHOD(Book::SheetType) {
         Nan::HandleScope scope;
 
@@ -1397,6 +1416,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "addSheet", AddSheet);
         Nan::SetPrototypeMethod(t, "insertSheet", InsertSheet);
         Nan::SetPrototypeMethod(t, "getSheet", GetSheet);
+        Nan::SetPrototypeMethod(t, "getSheetName", GetSheetName);
         Nan::SetPrototypeMethod(t, "sheetType", SheetType);
         Nan::SetPrototypeMethod(t, "delSheet", DelSheet);
         Nan::SetPrototypeMethod(t, "sheetCount", SheetCount);
