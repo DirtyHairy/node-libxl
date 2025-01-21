@@ -224,7 +224,10 @@ describe('The sheet class', function () {
         row++;
     });
 
-    it('sheet.readFormula reads a formula', function () {
+    it('sheet.readFormula and sheet.writeFormula read and write a formula', function () {
+        shouldThrow(sheet.writeFormula, sheet, row, 'a', '=SUM(A1:A10)');
+        shouldThrow(sheet.writeFormula, {}, row, 0, '=SUM(A1:A10)');
+
         sheet.writeFormula(row, 0, '=SUM(A1:A10)');
         sheet.writeNum(row, 1, 10);
 
@@ -242,6 +245,39 @@ describe('The sheet class', function () {
         expect(sheet.readFormula(row, 0)).toBe('SUM(A1:A10)');
         expect(sheet.readFormula(row, 0, formatRef)).toBe('SUM(A1:A10)');
         expect(formatRef.format instanceof format.constructor).toBe(true);
+
+        row++;
+    });
+
+    it('sheet.writeFormulaNum write a formula and a numeric value', function () {
+        shouldThrow(sheet.writeFormulaNum, sheet, row, 'a', '=SUM(A1:A10)', 1);
+        shouldThrow(sheet.writeFormulaNum, {}, row, 0, '=SUM(A1:A10)', 1);
+
+        sheet.writeFormulaNum(row, 0, '=SUM(A1:A10)', 1);
+
+        expect(sheet.readFormula(row, 0)).toBe('SUM(A1:A10)');
+
+        row++;
+    });
+
+    it('sheet.writeFormulaStr write a formula and a numeric value', function () {
+        shouldThrow(sheet.writeFormulaStr, sheet, row, 'a', '=SUM(A1:A10)', 'a');
+        shouldThrow(sheet.writeFormulaStr, {}, row, 0, '=SUM(A1:A10)', 'a');
+
+        sheet.writeFormulaStr(row, 0, '=SUM(A1:A10)', 'a');
+
+        expect(sheet.readFormula(row, 0)).toBe('SUM(A1:A10)');
+
+        row++;
+    });
+
+    it('sheet.writeFormulaBool write a formula and a numeric value', function () {
+        shouldThrow(sheet.writeFormulaBool, sheet, row, 'a', '=A1>A2', false);
+        shouldThrow(sheet.writeFormulaBool, {}, row, 0, '=A1>A2', false);
+
+        sheet.writeFormulaBool(row, 0, '=A1>A2', false);
+
+        expect(sheet.readFormula(row, 0)).toBe('A1>A2');
 
         row++;
     });

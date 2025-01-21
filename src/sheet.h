@@ -61,6 +61,9 @@ namespace node_libxl {
         static NAN_METHOD(WriteBlank);
         static NAN_METHOD(ReadFormula);
         static NAN_METHOD(WriteFormula);
+        static NAN_METHOD(WriteFormulaNum);
+        static NAN_METHOD(WriteFormulaStr);
+        static NAN_METHOD(WriteFormulaBool);
         static NAN_METHOD(ReadComment);
         static NAN_METHOD(WriteComment);
         static NAN_METHOD(IsDate);

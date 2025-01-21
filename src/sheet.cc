@@ -375,6 +375,84 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::WriteFormulaNum) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        CSNanUtf8Value(expr, arguments.GetString(2));
+        double value = arguments.GetDouble(3);
+        Format* format = arguments.GetWrapped<Format>(4, NULL);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        if (!that->GetWrapped()->writeFormulaNum(row, col, *expr, value,
+                                                 format ? format->GetWrapped() : NULL)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::WriteFormulaStr) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        CSNanUtf8Value(expr, arguments.GetString(2));
+        CSNanUtf8Value(value, arguments.GetString(3));
+        Format* format = arguments.GetWrapped<Format>(4, NULL);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        if (!that->GetWrapped()->writeFormulaStr(row, col, *expr, *value,
+                                                 format ? format->GetWrapped() : NULL)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::WriteFormulaBool) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        CSNanUtf8Value(expr, arguments.GetString(2));
+        bool value = arguments.GetBoolean(3);
+        Format* format = arguments.GetWrapped<Format>(4, NULL);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        if (!that->GetWrapped()->writeFormulaBool(row, col, *expr, value,
+                                                  format ? format->GetWrapped() : NULL)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::ReadComment) {
         Nan::HandleScope scope;
 
@@ -2056,6 +2134,9 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "writeBlank", WriteBlank);
         Nan::SetPrototypeMethod(t, "readFormula", ReadFormula);
         Nan::SetPrototypeMethod(t, "writeFormula", WriteFormula);
+        Nan::SetPrototypeMethod(t, "writeFormulaNum", WriteFormulaNum);
+        Nan::SetPrototypeMethod(t, "writeFormulaStr", WriteFormulaStr);
+        Nan::SetPrototypeMethod(t, "writeFormulaBool", WriteFormulaBool);
         Nan::SetPrototypeMethod(t, "readComment", ReadComment);
         Nan::SetPrototypeMethod(t, "writeComment", WriteComment);
         Nan::SetPrototypeMethod(t, "isDate", IsDate);
