@@ -451,6 +451,8 @@ describe('The book class', function () {
     });
 
     it('book.moveSheet moves a sheet', function () {
+        book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
         book.addSheet('foo');
         book.addSheet('bar');
         book.addSheet('baz');
@@ -459,8 +461,7 @@ describe('The book class', function () {
         shouldThrow(book.moveSheet, {}, 1, 0);
 
         expect(book.moveSheet(2, 0)).toBe(book);
-        // Book?
-        // expect(book.getSheetName(0)).toBe('baz');
+        expect(book.getSheetName(0)).toBe('baz');
     });
 
     it('book.delSheet removes a sheet', function () {
@@ -506,11 +507,12 @@ describe('The book class', function () {
     });
 
     it('book.addFormatFromStyle adds a format from a cell style', function () {
+        book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
         shouldThrow(book.addFormatFromStyle, book, 'a');
         shouldThrow(book.addFormatFromStyle, {}, xl.CELLSTYLE_NORMAL);
 
-        // Bug?
-        // expect(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor).toBe(true);
+        expect(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor).toBe(true);
     });
 
     it('book.addFont adds a font', function () {
