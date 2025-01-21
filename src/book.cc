@@ -194,7 +194,7 @@ namespace node_libxl {
            public:
             Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename,
                    int sheetIndex, std::optional<Local<Value>> tempfile, bool keepAllSheets)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"),
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-sheet"),
                   filename(filename),
                   sheetIndex(sheetIndex),
                   tempfile(tempfile),
@@ -270,7 +270,7 @@ namespace node_libxl {
             Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename,
                    int sheetIndex, int firstRow, int lastRow, std::optional<Local<Value>> tempfile,
                    bool keepAllSheets)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"),
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-partially"),
                   filename(filename),
                   sheetIndex(sheetIndex),
                   firstRow(firstRow),
@@ -343,7 +343,8 @@ namespace node_libxl {
         class Worker : public AsyncWorker<Book> {
            public:
             Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"), filename(filename) {}
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-empty-cells"),
+                  filename(filename) {}
 
             virtual void Execute() {
                 if (!that->GetWrapped()->loadWithoutEmptyCells(*filename)) RaiseLibxlError();
@@ -392,7 +393,8 @@ namespace node_libxl {
         class Worker : public AsyncWorker<Book> {
            public:
             Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename)
-                : AsyncWorker<Book>(callback, that, "node-libxl-book-load"), filename(filename) {}
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-info"),
+                  filename(filename) {}
 
             virtual void Execute() {
                 if (!that->GetWrapped()->loadInfo(*filename)) RaiseLibxlError();
@@ -1259,6 +1261,78 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Book::AddPictureAsLink) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(filename, arguments.GetString(0));
+        bool insert = arguments.GetBoolean(1, false);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        int index = that->GetWrapped()->addPictureAsLink(*filename, insert);
+        if (index < 0) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<Integer>(index));
+    }
+
+    NAN_METHOD(Book::AddPictureAsLinkAsync) {
+        class Worker : public AsyncWorker<Book> {
+           public:
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> filename, bool insert)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-add-picture-as-link"),
+                  filename(filename),
+                  insert(insert) {}
+
+            void Execute() override {
+                index = that->GetWrapped()->addPictureAsLink(*filename, insert);
+                if (index < 0) RaiseLibxlError();
+            }
+
+            void HandleOKCallback() override {
+                Nan::HandleScope scope;
+
+                Local<Value> argv[] = {Nan::Undefined(), Nan::New<Integer>(index)};
+
+                callback->Call(2, argv, async_resource);
+            }
+
+           private:
+            StringCopy filename;
+            bool insert;
+
+            int index{-1};
+        };
+
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        if (arguments.Length() > 3) {
+            return Nan::ThrowError("too many arguments");
+        }
+
+        Local<Value> filename = arguments.GetString(0);
+        bool insert = arguments.Length() > 2 ? arguments.GetBoolean(1, false) : false;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        Nan::AsyncQueueWorker(
+            new Worker(new Nan::Callback(callback), info.This(), filename, insert));
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Book::DefaultFont) {
         Nan::HandleScope scope;
 
@@ -1347,6 +1421,15 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Book::Version) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->version()));
+    }
+
     NAN_METHOD(Book::BiffVersion) {
         Nan::HandleScope scope;
 
@@ -1423,6 +1506,89 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Book::IsWriteProtected) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isWriteProtected()));
+    }
+
+    NAN_METHOD(Book::SetLocale) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(locale, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->setLocale(*locale)) return util::ThrowLibxlError(that);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::RemoveVBA) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->removeVBA();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::RemovePrinterSettings) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->removePrinterSettings();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::RemoveAllPhonetics) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->removeAllPhonetics();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::DpiAwareness) {
+        Nan::HandleScope scope;
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->dpiAwareness()));
+    }
+
+    NAN_METHOD(Book::SetDpiAwareness) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        bool dpiAwareness = arguments.GetBoolean(0);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setDpiAwareness(dpiAwareness);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     // Init
 
     void Book::Initialize(Local<Object> exports) {
@@ -1435,25 +1601,35 @@ namespace node_libxl {
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
         Nan::SetPrototypeMethod(t, "loadSync", LoadSync);
+        Nan::SetPrototypeMethod(t, "loadAsync", Load);
         Nan::SetPrototypeMethod(t, "load", Load);
         Nan::SetPrototypeMethod(t, "loadSheetSync", LoadSheetSync);
+        Nan::SetPrototypeMethod(t, "loadSheetAsync", LoadSheet);
         Nan::SetPrototypeMethod(t, "loadSheet", LoadSheet);
         Nan::SetPrototypeMethod(t, "loadPartiallySync", LoadPartiallySync);
+        Nan::SetPrototypeMethod(t, "loadPartiallyAsync", LoadPartially);
         Nan::SetPrototypeMethod(t, "loadPartially", LoadPartially);
         Nan::SetPrototypeMethod(t, "loadWithoutEmptyCellsSync", LoadWithoutEmptyCellsSync);
+        Nan::SetPrototypeMethod(t, "loadWithoutEmptyCellsAsync", LoadWithoutEmptyCells);
         Nan::SetPrototypeMethod(t, "loadWithoutEmptyCells", LoadWithoutEmptyCells);
         Nan::SetPrototypeMethod(t, "loadInfoSync", LoadInfoSync);
+        Nan::SetPrototypeMethod(t, "loadInfoAsync", LoadInfo);
         Nan::SetPrototypeMethod(t, "loadInfo", LoadInfo);
         Nan::SetPrototypeMethod(t, "writeSync", WriteSync);
         Nan::SetPrototypeMethod(t, "saveSync", WriteSync);
+        Nan::SetPrototypeMethod(t, "writeAsync", Write);
+        Nan::SetPrototypeMethod(t, "saveAsync", Write);
         Nan::SetPrototypeMethod(t, "write", Write);
         Nan::SetPrototypeMethod(t, "save", Write);
         Nan::SetPrototypeMethod(t, "loadRawSync", LoadRawSync);
+        Nan::SetPrototypeMethod(t, "loadRawAsync", LoadRaw);
         Nan::SetPrototypeMethod(t, "loadRaw", LoadRaw);
         Nan::SetPrototypeMethod(t, "writeRawSync", WriteRawSync);
         Nan::SetPrototypeMethod(t, "saveRawSync", WriteRawSync);
         Nan::SetPrototypeMethod(t, "writeRaw", WriteRaw);
         Nan::SetPrototypeMethod(t, "saveRaw", WriteRaw);
+        Nan::SetPrototypeMethod(t, "writeRawAsync", WriteRaw);
+        Nan::SetPrototypeMethod(t, "saveRawAsync", WriteRaw);
         Nan::SetPrototypeMethod(t, "addSheet", AddSheet);
         Nan::SetPrototypeMethod(t, "insertSheet", InsertSheet);
         Nan::SetPrototypeMethod(t, "getSheet", GetSheet);
@@ -1479,21 +1655,34 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setActiveSheet", SetActiveSheet);
         Nan::SetPrototypeMethod(t, "pictureSize", PictureSize);
         Nan::SetPrototypeMethod(t, "getPicture", GetPicture);
+        Nan::SetPrototypeMethod(t, "getPictureSync", GetPicture);
         Nan::SetPrototypeMethod(t, "getPictureAsync", GetPictureAsync);
         Nan::SetPrototypeMethod(t, "addPicture", AddPicture);
+        Nan::SetPrototypeMethod(t, "addPictureSync", AddPicture);
         Nan::SetPrototypeMethod(t, "addPictureAsync", AddPictureAsync);
+        Nan::SetPrototypeMethod(t, "addPictureAsLink", AddPictureAsLink);
+        Nan::SetPrototypeMethod(t, "addPictureAsLinkSync", AddPictureAsLink);
+        Nan::SetPrototypeMethod(t, "addPictureAsLinkAsync", AddPictureAsLinkAsync);
         Nan::SetPrototypeMethod(t, "defaultFont", DefaultFont);
         Nan::SetPrototypeMethod(t, "setDefaultFont", SetDefaultFont);
         Nan::SetPrototypeMethod(t, "refR1C1", RefR1C1);
         Nan::SetPrototypeMethod(t, "setRefR1C1", SetRefR1C1);
         Nan::SetPrototypeMethod(t, "rgbMode", RgbMode);
         Nan::SetPrototypeMethod(t, "setRgbMode", SetRgbMode);
+        Nan::SetPrototypeMethod(t, "version", Version);
         Nan::SetPrototypeMethod(t, "biffVersion", BiffVersion);
         Nan::SetPrototypeMethod(t, "isDate1904", IsDate1904);
         Nan::SetPrototypeMethod(t, "setDate1904", SetDate1904);
         Nan::SetPrototypeMethod(t, "isTemplate", IsTemplate);
         Nan::SetPrototypeMethod(t, "setTemplate", SetTemplate);
         Nan::SetPrototypeMethod(t, "setKey", SetKey);
+        Nan::SetPrototypeMethod(t, "isWriteProtected", IsWriteProtected);
+        Nan::SetPrototypeMethod(t, "setLocale", SetLocale);
+        Nan::SetPrototypeMethod(t, "removeVBA", RemoveVBA);
+        Nan::SetPrototypeMethod(t, "removePrinterSettings", RemovePrinterSettings);
+        Nan::SetPrototypeMethod(t, "removeAllPhonetics", RemoveAllPhonetics);
+        Nan::SetPrototypeMethod(t, "dpiAwareness", DpiAwareness);
+        Nan::SetPrototypeMethod(t, "setDpiAwareness", SetDpiAwareness);
 
 #ifdef INCLUDE_API_KEY
         CSNanObjectSetWithAttributes(exports, Nan::New<String>("apiKeyCompiledIn").ToLocalChecked(),

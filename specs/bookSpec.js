@@ -687,6 +687,54 @@ describe('The book class', function () {
         expect(testUtils.compareBuffers(buffer2, fileBuffer)).toBe(true);
     });
 
+    describe('book.addPictureAsLinkSync', () => {
+        it('adds a picture as link', () => {
+            const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+            const file = testUtils.getTestPicturePath();
+
+            shouldThrow(book.addPictureAsLinkSync, book, 1);
+            shouldThrow(book.addPictureAsLinkSync, {}, file);
+
+            expect(book.addPictureAsLink(file)).toBe(0);
+            expect(book.pictureSize()).toBe(1);
+        });
+
+        it('accepts a second parameter insert', () => {
+            const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+            const file = testUtils.getTestPicturePath();
+
+            expect(book.addPictureAsLink(file, true)).toBe(0);
+            expect(book.pictureSize()).toBe(1);
+        });
+    });
+
+    describe('book.addPictureAsLinkAsync', () => {
+        it('adds a picture as link', async () => {
+            const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+            const file = testUtils.getTestPicturePath();
+
+            shouldThrow(book.addPictureAsLinkAsync, book, 1, () => undefined);
+            shouldThrow(book.addPictureAsLinkAsync, {}, file, () => undefined);
+
+            const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file);
+            shouldThrow(book.sheetCount, book);
+
+            expect(await result).toBe(0);
+            expect(book.pictureSize()).toBe(1);
+        });
+
+        it('supports a second parameter insert', async () => {
+            const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+            const file = testUtils.getTestPicturePath();
+
+            const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file, true);
+            shouldThrow(book.sheetCount, book);
+
+            expect(await result).toBe(0);
+            expect(book.pictureSize()).toBe(1);
+        });
+    });
+
     it('book.defaultFont returns the default font', function () {
         book.setDefaultFont('times', 13);
         shouldThrow(book.defaultFont, {});
@@ -730,6 +778,11 @@ describe('The book class', function () {
         expect(book.setRgbMode(true)).toBe(book);
     });
 
+    it('book.version returns the libxl version', function () {
+        shouldThrow(book.version, {});
+        expect(typeof book.version()).toBe('number');
+    });
+
     it('book.biffVersion returns the BIFF format version', function () {
         shouldThrow(book.biffVersion, {});
         expect(book.biffVersion()).toBe(1536);
@@ -767,5 +820,48 @@ describe('The book class', function () {
         shouldThrow(book.setKey, book, 1, 'a');
         shouldThrow(book.setKey, {}, 'a', 'b');
         expect(book.setKey('a', 'b')).toBe(book);
+    });
+
+    it('book.isWriteProtected checks for write protection', () => {
+        shouldThrow(book.isWriteProtected, {});
+        expect(book.isWriteProtected()).toBe(false);
+    });
+
+    it('book.setLocale sets the locale', () => {
+        shouldThrow(book.setLocale, book, 1);
+        shouldThrow(book.setLocale, {}, 'en_GB');
+
+        expect(book.setLocale('en_GB')).toBe(book);
+    });
+
+    it('book.remveVBA removes all VBA macros', () => {
+        shouldThrow(book.removeVBA, {});
+
+        expect(book.removeVBA()).toBe(book);
+    });
+
+    it('book.removePrinterSettings removes printer settings', () => {
+        shouldThrow(book.removePrinterSettings, {});
+
+        expect(book.removePrinterSettings()).toBe(book);
+    });
+
+    it('book.removeAllPhonetics removes all phonetics', () => {
+        shouldThrow(book.removeAllPhonetics, {});
+
+        expect(book.removeAllPhonetics()).toBe(book);
+    });
+
+    it('book.dpiAwareness and book.setDpiAwareness mange DPI awareness', () => {
+        book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        shouldThrow(book.dpiAwareness, {});
+        shouldThrow(book.setDpiAwareness, book, 1);
+        shouldThrow(book.setDpiAwareness, {}, false);
+
+        expect(book.setDpiAwareness(false)).toBe(book);
+        expect(book.dpiAwareness()).toBe(false);
+        expect(book.setDpiAwareness(true)).toBe(book);
+        expect(book.dpiAwareness()).toBe(true);
     });
 });

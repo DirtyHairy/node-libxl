@@ -98,18 +98,28 @@ namespace node_libxl {
         static NAN_METHOD(GetPictureAsync);
         static NAN_METHOD(AddPicture);
         static NAN_METHOD(AddPictureAsync);
+        static NAN_METHOD(AddPictureAsLink);
+        static NAN_METHOD(AddPictureAsLinkAsync);
         static NAN_METHOD(DefaultFont);
         static NAN_METHOD(SetDefaultFont);
         static NAN_METHOD(RefR1C1);
         static NAN_METHOD(SetRefR1C1);
         static NAN_METHOD(RgbMode);
         static NAN_METHOD(SetRgbMode);
+        static NAN_METHOD(Version);
         static NAN_METHOD(BiffVersion);
         static NAN_METHOD(IsDate1904);
         static NAN_METHOD(SetDate1904);
         static NAN_METHOD(IsTemplate);
         static NAN_METHOD(SetTemplate);
         static NAN_METHOD(SetKey);
+        static NAN_METHOD(IsWriteProtected);
+        static NAN_METHOD(SetLocale);
+        static NAN_METHOD(RemoveVBA);
+        static NAN_METHOD(RemovePrinterSettings);
+        static NAN_METHOD(RemoveAllPhonetics);
+        static NAN_METHOD(DpiAwareness);
+        static NAN_METHOD(SetDpiAwareness);
 
        private:
         std::unordered_set<const libxl::Sheet*> validSheetHandles;
