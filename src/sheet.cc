@@ -497,6 +497,22 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::RemoveComment) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->removeComment(row, col);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::ReadError) {
         Nan::HandleScope scope;
 
@@ -510,6 +526,29 @@ namespace node_libxl {
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->readError(row, col)));
+    }
+
+    NAN_METHOD(Sheet::WriteError) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        int error = arguments.GetInt(2);
+        Format* format = arguments.GetWrapped<Format>(3, nullptr);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        that->GetWrapped()->writeError(row, col, static_cast<libxl::ErrorType>(error),
+                                       format ? format->GetWrapped() : nullptr);
+
+        info.GetReturnValue().Set(info.This());
     }
 
     NAN_METHOD(Sheet::IsDate) {
@@ -554,6 +593,34 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeight(row)));
     }
 
+    NAN_METHOD(Sheet::ColWidthPx) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int col = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->colWidthPx(col)));
+    }
+
+    NAN_METHOD(Sheet::RowHeightPx) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeightPx(row)));
+    }
+
     NAN_METHOD(Sheet::SetCol) {
         Nan::HandleScope scope;
 
@@ -574,6 +641,32 @@ namespace node_libxl {
 
         if (!that->GetWrapped()->setCol(first, last, width, format ? format->GetWrapped() : NULL,
                                         hidden)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::SetColPx) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int first = arguments.GetInt(0);
+        int last = arguments.GetInt(1);
+        int width = arguments.GetInt(2);
+        Format* format = arguments.GetWrapped<Format>(3, NULL);
+        bool hidden = arguments.GetBoolean(4, false);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        if (!that->GetWrapped()->setColPx(first, last, width, format ? format->GetWrapped() : NULL,
+                                          hidden)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -603,6 +696,69 @@ namespace node_libxl {
         }
 
         info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::SetRowPx) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int height = arguments.GetInt(1);
+        Format* format = arguments.GetWrapped<Format>(2, NULL);
+        bool hidden = arguments.GetBoolean(3, false);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+        if (format) {
+            ASSERT_SAME_BOOK(that, format);
+        }
+
+        if (!that->GetWrapped()->setRowPx(row, height, format ? format->GetWrapped() : NULL,
+                                          hidden)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::ColFormat) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int col = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Format* format = that->GetWrapped()->colFormat(col);
+        if (!format) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Format::NewInstance(format, info.This()));
+    }
+
+    NAN_METHOD(Sheet::RowFormat) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Format* format = that->GetWrapped()->rowFormat(row);
+        if (!format) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Format::NewInstance(format, info.This()));
     }
 
     NAN_METHOD(Sheet::RowHidden) {
@@ -2139,12 +2295,20 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "writeFormulaBool", WriteFormulaBool);
         Nan::SetPrototypeMethod(t, "readComment", ReadComment);
         Nan::SetPrototypeMethod(t, "writeComment", WriteComment);
+        Nan::SetPrototypeMethod(t, "removeComment", RemoveComment);
         Nan::SetPrototypeMethod(t, "isDate", IsDate);
         Nan::SetPrototypeMethod(t, "readError", ReadError);
+        Nan::SetPrototypeMethod(t, "writeError", WriteError);
         Nan::SetPrototypeMethod(t, "colWidth", ColWidth);
         Nan::SetPrototypeMethod(t, "rowHeight", RowHeight);
+        Nan::SetPrototypeMethod(t, "colWidthPx", ColWidthPx);
+        Nan::SetPrototypeMethod(t, "rowHeightPx", RowHeightPx);
         Nan::SetPrototypeMethod(t, "setCol", SetCol);
         Nan::SetPrototypeMethod(t, "setRow", SetRow);
+        Nan::SetPrototypeMethod(t, "setColPx", SetColPx);
+        Nan::SetPrototypeMethod(t, "setRowPx", SetRowPx);
+        Nan::SetPrototypeMethod(t, "rowFormat", RowFormat);
+        Nan::SetPrototypeMethod(t, "colFormat", ColFormat);
         Nan::SetPrototypeMethod(t, "rowHidden", RowHidden);
         Nan::SetPrototypeMethod(t, "setRowHidden", SetRowHidden);
         Nan::SetPrototypeMethod(t, "colHidden", ColHidden);

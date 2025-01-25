@@ -295,6 +295,19 @@ describe('The sheet class', function () {
         row++;
     });
 
+    it('sheet.removeComment removes a comment', function () {
+        sheet.writeComment(row, 0, 'comment');
+
+        shouldThrow(sheet.removeComment, sheet, row, '1');
+        shouldThrow(sheet.removeComment, {}, row, 0);
+
+        sheet.removeComment(row, 0);
+
+        shouldThrow(sheet.readComment, sheet, row, 0);
+
+        row++;
+    });
+
     it('sheet.readComment reads a comment', function () {
         sheet.writeString(row, 0, 'foo');
         sheet.writeComment(row, 0, 'comment');
@@ -340,6 +353,30 @@ describe('The sheet class', function () {
         row++;
     });
 
+    it('sheet.writeError writes an error', () => {
+        shouldThrow(sheet.writeError, sheet, row, '0', xl.ERRORTYPE_DIV_0);
+        shouldThrow(sheet.writeError, {}, row, 0, xl.ERRORTYPE_DIV_0);
+
+        sheet.writeError(row, 0, xl.ERRORTYPE_DIV_0);
+
+        expect(sheet.readError(row, 0)).toBe(xl.ERRORTYPE_DIV_0);
+
+        row++;
+    });
+
+    it('sheet.writeError accepts a format', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.writeError, sheet, row, 0, xl.ERRORTYPE_DIV_0, 10);
+        shouldThrow(sheet.writeError, {}, row, 0, xl.ERRORTYPE_DIV_0, format);
+
+        sheet.writeError(row, 0, xl.ERRORTYPE_DIV_0, format);
+
+        expect(sheet.readError(row, 0)).toBe(xl.ERRORTYPE_DIV_0);
+
+        row++;
+    });
+
     it('sheet.colWidth reads colum width', function () {
         sheet.setCol(0, 0, 42);
 
@@ -366,6 +403,20 @@ describe('The sheet class', function () {
         expect(sheet.rowHeight(1)).toEqual(42);
     });
 
+    it('sheet.colWidthPx reads column width in pixels', () => {
+        shouldThrow(sheet.colWidthPx, sheet, '1');
+        shouldThrow(sheet.colWidthPx, {}, 1);
+
+        expect(typeof sheet.colWidthPx(1)).toBe('number');
+    });
+
+    it('sheet.colWidthPx reads column width in pixels', () => {
+        shouldThrow(sheet.rowHeightPx, sheet, '1');
+        shouldThrow(sheet.rowHeightPx, {}, 1);
+
+        expect(typeof sheet.rowHeightPx(1)).toBe('number');
+    });
+
     it('sheet.setCol configures columns', function () {
         expect(function () {
             sheet.setCol();
@@ -382,6 +433,54 @@ describe('The sheet class', function () {
         expect(sheet.setCol(0, 0, 42, format, false)).toBe(sheet);
     });
 
+    it('sheet.setColPx configures columms in pixels', () => {
+        shouldThrow(sheet.setColPx, sheet, 0, 0, '10');
+        shouldThrow(sheet.setColPx, {}, 0, 0, 10);
+
+        sheet.setColPx(0, 0, 10);
+
+        expect(sheet.colWidthPx(0)).toBe(10);
+    });
+
+    it('sheet.setColPx accepts format and hidden flag', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.setColPx, sheet, 0, 0, 10, format, '1');
+
+        sheet.setColPx(0, 0, 12, format, false);
+
+        expect(sheet.colWidthPx(0)).toBe(12);
+    });
+
+    it('sheet.setRowPx configures rows in pixels', () => {
+        shouldThrow(sheet.setRowPx, sheet, 1, '10');
+        shouldThrow(sheet.setRowPx, {}, 1, 10);
+
+        sheet.setRowPx(1, 20);
+
+        expect(sheet.rowHeightPx(1)).toBe(20);
+    });
+
+    it('sheet.setRowPx accepts format and hidden flag', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.setRowPx, sheet, 1, 10, format, '1');
+
+        sheet.setRowPx(1, 12, format, false);
+
+        expect(sheet.rowHeightPx(1)).toBe(12);
+    });
+
+    it('sheet.setColPx accepts format and hidden flag', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.setColPx, {}, 0, 0, 10, format, '1');
+
+        sheet.setColPx(0, 0, 12, format, false);
+
+        expect(sheet.colWidthPx(0)).toBe(12);
+    });
+
     it('sheet.setRow configures rows', function () {
         expect(function () {
             sheet.setRow();
@@ -396,6 +495,24 @@ describe('The sheet class', function () {
 
         expect(sheet.setRow(1, 42)).toBe(sheet);
         expect(sheet.setRow(1, 42, format, false)).toBe(sheet);
+    });
+
+    it('sheet.colFormat retrieves a column format', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.colFormat, sheet, '0');
+        shouldThrow(sheet.colFormat, {}, 0);
+
+        expect(sheet.colFormat(0) instanceof format.constructor).toBeTrue();
+    });
+
+    it('sheet.rowFormat retrieves a row format', () => {
+        const format = book.addFormat();
+
+        shouldThrow(sheet.rowFormat, sheet, '1');
+        shouldThrow(sheet.rowFormat, {}, 1);
+
+        expect(sheet.rowFormat(1) instanceof format.constructor).toBeTrue();
     });
 
     it('sheet.rowHidden checks whether a row is hidden', function () {
