@@ -50,4 +50,6 @@ module.exports = {
 
     testPictureWidth: 640,
     testPictureHeight: 480,
+
+    epsilon: 1e-9,
 };

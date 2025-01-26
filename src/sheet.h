@@ -68,6 +68,7 @@ namespace node_libxl {
         static NAN_METHOD(WriteComment);
         static NAN_METHOD(RemoveComment);
         static NAN_METHOD(IsDate);
+        static NAN_METHOD(IsRichStr);
         static NAN_METHOD(ReadError);
         static NAN_METHOD(WriteError);
         static NAN_METHOD(ColWidth);
@@ -84,9 +85,14 @@ namespace node_libxl {
         static NAN_METHOD(SetRowHidden);
         static NAN_METHOD(ColHidden);
         static NAN_METHOD(SetColHidden);
+        static NAN_METHOD(DefaultRowHeight);
+        static NAN_METHOD(SetDefaultRowHeight);
         static NAN_METHOD(GetMerge);
         static NAN_METHOD(SetMerge);
         static NAN_METHOD(DelMerge);
+        static NAN_METHOD(MergeSize);
+        static NAN_METHOD(Merge);
+        static NAN_METHOD(DelMergeByIndex);
         static NAN_METHOD(PictureSize);
         static NAN_METHOD(GetPicture);
         static NAN_METHOD(SetPicture);

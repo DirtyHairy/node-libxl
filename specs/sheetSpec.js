@@ -336,6 +336,16 @@ describe('The sheet class', function () {
 
         expect(sheet.isDate(row - 1, 0)).toBe(false);
         expect(sheet.isDate(row, 0)).toBe(true);
+
+        row++;
+    });
+
+    it('sheet.isRichStr checks whether a cell contains a richt string', () => {
+        shouldThrow(sheet.isRichStr, sheet, row, 'a');
+        shouldThrow(sheet.isRichStr, {}, row, 0);
+
+        // TODO: add a positive test once rich strings are supported
+        expect(sheet.isRichStr(row, 0)).toBe(false);
     });
 
     it('sheet.readError reads an error', function () {
@@ -565,6 +575,20 @@ describe('The sheet class', function () {
         expect(sheet.colHidden(0)).toBe(false);
     });
 
+    it('sheet.setDefaultRowHeight and sheet.defaultRowHeight control default row height', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.setDefaultRowHeight, sheet, 'a');
+        shouldThrow(sheet.setDefaultRowHeight, {}, 66.6);
+
+        expect(sheet.setDefaultRowHeight(66.6)).toBe(sheet);
+
+        shouldThrow(sheet.defaultRowHeight, {});
+
+        expect(Math.abs(sheet.defaultRowHeight() - 66.6)).toBeLessThan(testUtils.epsilon);
+    });
+
     it('sheet.setMerge, sheet.getMerge and sheet.delMerge manage merged cells', function () {
         shouldThrow(sheet.getMerge, sheet, row, 0);
         shouldThrow(sheet.delMerge, sheet, row, 0);
@@ -588,9 +612,35 @@ describe('The sheet class', function () {
         shouldThrow(sheet.delMerge, sheet, row, 0);
     });
 
+    it('sheet.mergeSize, sheet.merge and sheet.delMergeByIndex manage merged cells by index', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+        const mergeSizeStart = sheet.mergeSize();
+
+        shouldThrow(sheet.mergeSize, {});
+        shouldThrow(sheet.merge, sheet, 'a');
+        shouldThrow(sheet.merge, {}, 1);
+        shouldThrow(sheet.delMergeByIndex, sheet, 'a');
+        shouldThrow(sheet.delMergeByIndex, {}, 1);
+
+        sheet.setMerge(row, row + 2, 0, 3);
+
+        expect(sheet.mergeSize()).toBe(mergeSizeStart + 1);
+        const mergeIdx = sheet.mergeSize() - 1;
+
+        merge = sheet.merge(mergeIdx);
+        expect(merge.rowFirst).toBe(row);
+        expect(merge.rowLast).toBe(row + 2);
+        expect(merge.colFirst).toBe(0);
+        expect(merge.colLast).toBe(3);
+
+        expect(sheet.delMergeByIndex(mergeIdx)).toBe(sheet);
+        expect(sheet.mergeSize()).toBe(mergeSizeStart);
+    });
+
     it('sheet.pictureSize returns the number of pictures on a sheet', function () {
         shouldThrow(sheet.pictureSize, {});
-        sheet.pictureSize();
+        expect(sheet.pictureSize()).toBe(0);
     });
 
     it('sheet.setPicture and sheet.getPicture add and inspect pictures', function () {
@@ -610,6 +660,21 @@ describe('The sheet class', function () {
         expect(pic.height).toBe(testUtils.testPictureHeight);
         expect(pic.hasOwnProperty('rowBottom')).toBe(true);
         expect(pic.hasOwnProperty('colRight')).toBe(true);
+
+        row = pic.rowBottom + 1;
+    });
+
+    it('ssheet.getPicture can read links', function () {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        book.addPictureAsLink(testUtils.getTestPicturePath());
+        sheet.setPicture(row, 0, 0, 1, 0, 0);
+
+        var idx = sheet.pictureSize() - 1;
+
+        var pic = sheet.getPicture(idx);
+        expect(typeof pic.linkPath).toBe('string');
 
         row = pic.rowBottom + 1;
     });

@@ -565,6 +565,20 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate(row, col)));
     }
 
+    NAN_METHOD(Sheet::IsRichStr) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0), col = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isRichStr(row, col)));
+    }
+
     NAN_METHOD(Sheet::ColWidth) {
         Nan::HandleScope scope;
 
@@ -827,6 +841,33 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::DefaultRowHeight) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->defaultRowHeight()));
+    }
+
+    NAN_METHOD(Sheet::SetDefaultRowHeight) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        double height = arguments.GetDouble(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->setDefaultRowHeight(height);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::GetMerge) {
         Nan::HandleScope scope;
 
@@ -894,6 +935,64 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::MergeSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->mergeSize()));
+    }
+
+    NAN_METHOD(Sheet::Merge) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int rowFirst, rowLast, colFirst, colLast;
+
+        if (!that->GetWrapped()->merge(index, &rowFirst, &rowLast, &colFirst, &colLast)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+        Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(),
+                 Nan::New<Integer>(colFirst));
+        Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+
+        info.GetReturnValue().Set(result);
+    }
+
+    NAN_METHOD(Sheet::DelMergeByIndex) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->delMergeByIndex(index)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::PictureSize) {
         Nan::HandleScope scope;
 
@@ -915,9 +1014,10 @@ namespace node_libxl {
         ASSERT_SHEET(that);
 
         int rowTop, colLeft, rowBottom, colRight, width, height, offset_x, offset_y;
+        const char* linkPath;
         int bookIndex =
             that->GetWrapped()->getPicture(sheetIndex, &rowTop, &colLeft, &rowBottom, &colRight,
-                                           &width, &height, &offset_x, &offset_y);
+                                           &width, &height, &offset_x, &offset_y, &linkPath);
 
         if (bookIndex == -1) {
             return util::ThrowLibxlError(that);
@@ -938,6 +1038,10 @@ namespace node_libxl {
                  Nan::New<Integer>(offset_x));
         Nan::Set(result, Nan::New<String>("offset_y").ToLocalChecked(),
                  Nan::New<Integer>(offset_y));
+        if (linkPath) {
+            Nan::Set(result, Nan::New<String>("linkPath").ToLocalChecked(),
+                     Nan::New<String>(linkPath).ToLocalChecked());
+        }
 
         info.GetReturnValue().Set(result);
     }
@@ -2297,6 +2401,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "writeComment", WriteComment);
         Nan::SetPrototypeMethod(t, "removeComment", RemoveComment);
         Nan::SetPrototypeMethod(t, "isDate", IsDate);
+        Nan::SetPrototypeMethod(t, "isRichStr", IsRichStr);
         Nan::SetPrototypeMethod(t, "readError", ReadError);
         Nan::SetPrototypeMethod(t, "writeError", WriteError);
         Nan::SetPrototypeMethod(t, "colWidth", ColWidth);
@@ -2313,9 +2418,14 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setRowHidden", SetRowHidden);
         Nan::SetPrototypeMethod(t, "colHidden", ColHidden);
         Nan::SetPrototypeMethod(t, "setColHidden", SetColHidden);
+        Nan::SetPrototypeMethod(t, "defaultRowHeight", DefaultRowHeight);
+        Nan::SetPrototypeMethod(t, "setDefaultRowHeight", SetDefaultRowHeight);
         Nan::SetPrototypeMethod(t, "getMerge", GetMerge);
         Nan::SetPrototypeMethod(t, "setMerge", SetMerge);
         Nan::SetPrototypeMethod(t, "delMerge", DelMerge);
+        Nan::SetPrototypeMethod(t, "mergeSize", MergeSize);
+        Nan::SetPrototypeMethod(t, "merge", Merge);
+        Nan::SetPrototypeMethod(t, "delMergeByIndex", DelMergeByIndex);
         Nan::SetPrototypeMethod(t, "pictureSize", PictureSize);
         Nan::SetPrototypeMethod(t, "getPicture", GetPicture);
         Nan::SetPrototypeMethod(t, "setPicture", SetPicture);
