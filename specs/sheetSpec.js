@@ -646,8 +646,10 @@ describe('The sheet class', function () {
     it('sheet.setPicture and sheet.getPicture add and inspect pictures', function () {
         shouldThrow(sheet.setPicture, sheet, row, true);
         shouldThrow(sheet.setPicture, {}, row, 0, 0, 1, 0, 0);
+        shouldThrow(sheet.setPicture, sheet, row, 0, 0, 1, 0, 0, 'a');
 
         expect(sheet.setPicture(row, 0, 0, 1, 0, 0)).toBe(sheet);
+        expect(sheet.setPicture(row, 0, 0, 1, 0, 0, xl.POSITION_ONLY_MOVE)).toBe(sheet);
 
         var idx = sheet.pictureSize() - 1;
         shouldThrow(sheet.getPicture, sheet, true);
@@ -682,8 +684,10 @@ describe('The sheet class', function () {
     it('sheet.setPicture2 adds pictures by width and height instead of scale', function () {
         shouldThrow(sheet.setPicture2, sheet, row, true);
         shouldThrow(sheet.setPicture2, {}, row, 0, 0, 100, 100, 0, 0);
+        shouldThrow(sheet.setPicture2, sheet, row, 0, 0, 100, 100, 0, 0, 'a');
 
         expect(sheet.setPicture2(row, 0, 0, 100, 200, 0, 0)).toBe(sheet);
+        expect(sheet.setPicture2(row, 0, 0, 100, 200, 0, 0, xl.POSITION_ONLY_MOVE)).toBe(sheet);
 
         var idx = sheet.pictureSize() - 1;
 
@@ -694,6 +698,32 @@ describe('The sheet class', function () {
         expect(pic.height).toBe(200);
         expect(pic.hasOwnProperty('rowBottom')).toBe(true);
         expect(pic.hasOwnProperty('colRight')).toBe(true);
+
+        row = pic.rowBottom + 1;
+    });
+
+    it('sheet.removePicture removes a picture from the sheet', () => {
+        const pictureSizeOld = sheet.pictureSize();
+        sheet.setPicture(row, 0, 0);
+
+        shouldThrow(sheet.removePicture, sheet, row, 'a');
+        shouldThrow(sheet.removePicture, {}, row, 0);
+
+        expect(sheet.removePicture(row, 0)).toBe(sheet);
+
+        expect(sheet.pictureSize()).toBe(pictureSizeOld);
+    });
+
+    it('sheet.removePictureByIndex removes a picture from the sheet by index', () => {
+        const pictureSizeOld = sheet.pictureSize();
+        sheet.setPicture(row, 0, 0);
+
+        shouldThrow(sheet.removePictureByIndex, sheet, 'a');
+        shouldThrow(sheet.removePictureByIndex, {}, pictureSizeOld - 1);
+
+        expect(sheet.removePictureByIndex(pictureSizeOld - 1)).toBe(sheet);
+
+        expect(sheet.pictureSize()).toBe(pictureSizeOld);
     });
 
     it(
@@ -743,6 +773,20 @@ describe('The sheet class', function () {
         shouldThrow(sheet.split, sheet, 'a', 1);
         shouldThrow(sheet.split, {}, 2, 2);
         expect(sheet.split(2, 2)).toBe(sheet);
+    });
+
+    it('sheet.splitInfo obtains info about a sheet split', () => {
+        var book = new xl.Book(xl.BOOK_TYPE_XLS),
+            sheet = book.addSheet('foo');
+
+        sheet.split(2, 3);
+
+        shouldThrow(sheet.splitInfo, {});
+
+        const result = sheet.splitInfo();
+
+        expect(result.row).toBe(2);
+        expect(result.col).toBe(3);
     });
 
     it('sheet.groupRows groups rows', function () {
@@ -817,6 +861,25 @@ describe('The sheet class', function () {
         expect(sheet.readStr(4, 4)).toBe('22');
     });
 
+    it('sheet.insertRow and sheet.insertCol support updateNamedRanges', function () {
+        var sheet = newSheet();
+
+        sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
+
+        shouldThrow(sheet.insertRow, sheet, 2, 3, 'a');
+        shouldThrow(sheet.insertRow, {}, 2, 3, true);
+        shouldThrow(sheet.insertCol, sheet, 2, 3, 'a');
+        shouldThrow(sheet.insertCol, {}, 2, 3, true);
+
+        expect(sheet.insertRow(2, 3, true)).toBe(sheet);
+        expect(sheet.insertCol(2, 3, true)).toBe(sheet);
+
+        expect(sheet.readStr(1, 1)).toBe('11');
+        expect(sheet.readStr(1, 4)).toBe('12');
+        expect(sheet.readStr(4, 1)).toBe('21');
+        expect(sheet.readStr(4, 4)).toBe('22');
+    });
+
     it('sheet.insertRowAsync and sheet.insertColAsync insert rows and cols in async mode', async () => {
         const sheet = newSheet();
 
@@ -834,6 +897,33 @@ describe('The sheet class', function () {
         shouldThrow(sheet.insertColAsync, {}, 2, 3, function () {});
 
         const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3);
+        shouldThrow(book.sheetCount, book);
+
+        await insertColResult;
+
+        expect(sheet.readStr(1, 1)).toBe('11');
+        expect(sheet.readStr(1, 4)).toBe('12');
+        expect(sheet.readStr(4, 1)).toBe('21');
+        expect(sheet.readStr(4, 4)).toBe('22');
+    });
+
+    it('sheet.insertRowAsync and sheet.insertColAsync insert rows support updateNamedRanges', async () => {
+        const sheet = newSheet();
+
+        sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
+
+        shouldThrow(sheet.insertRowAsync, sheet, 2, 3, 'a', function () {});
+        shouldThrow(sheet.insertRowAsync, {}, 2, 3, true, function () {});
+
+        const insertRowResult = util.promisify(sheet.insertRowAsync.bind(sheet))(2, 3, true);
+        shouldThrow(book.sheetCount, book);
+
+        await insertRowResult;
+
+        shouldThrow(sheet.insertColAsync, sheet, 2, 3, 'a', function () {});
+        shouldThrow(sheet.insertColAsync, {}, 2, 3, true, function () {});
+
+        const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3, true);
         shouldThrow(book.sheetCount, book);
 
         await insertColResult;
@@ -863,6 +953,25 @@ describe('The sheet class', function () {
         expect(sheet.readStr(2, 2)).toBe('22');
     });
 
+    it('sheet.removeRow and sheet.removeCol support updateNamedRanges', function () {
+        var sheet = newSheet();
+
+        sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
+
+        shouldThrow(sheet.removeRow, sheet, 2, 3, 'a');
+        shouldThrow(sheet.removeRow, {}, 2, 3, true);
+        shouldThrow(sheet.removeCol, sheet, 2, 3, 'a');
+        shouldThrow(sheet.removeCol, {}, 2, 3, true);
+
+        expect(sheet.removeRow(2, 3, true)).toBe(sheet);
+        expect(sheet.removeCol(2, 3, true)).toBe(sheet);
+
+        expect(sheet.readStr(1, 1)).toBe('11');
+        expect(sheet.readStr(1, 2)).toBe('12');
+        expect(sheet.readStr(2, 1)).toBe('21');
+        expect(sheet.readStr(2, 2)).toBe('22');
+    });
+
     it('sheet.removeRowAsync and sheet.removeColAsync remove rows and cols in async mode', async () => {
         const sheet = newSheet();
 
@@ -880,6 +989,33 @@ describe('The sheet class', function () {
         shouldThrow(sheet.removeColAsync, {}, 2, 3, () => undefined);
 
         const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3);
+        shouldThrow(book.sheetCount, book);
+
+        await removeColResult;
+
+        expect(sheet.readStr(1, 1)).toBe('11');
+        expect(sheet.readStr(1, 2)).toBe('12');
+        expect(sheet.readStr(2, 1)).toBe('21');
+        expect(sheet.readStr(2, 2)).toBe('22');
+    });
+
+    it('sheet.removeRowAsync and sheet.removeColAsync support updateNamedRanges', async () => {
+        const sheet = newSheet();
+
+        sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
+
+        shouldThrow(sheet.removeRowAsync, sheet, 2, 3, 'a', () => undefined);
+        shouldThrow(sheet.removeRowAsync, {}, 2, 3, true, () => undefined);
+
+        const removeRowResult = util.promisify(sheet.removeRowAsync.bind(sheet))(2, 3, true);
+        shouldThrow(book.sheetCount, book);
+
+        await removeRowResult;
+
+        shouldThrow(sheet.removeColAsync, sheet, 2, 3, 'a', () => undefined);
+        shouldThrow(sheet.removeColAsync, {}, 2, 3, true, () => undefined);
+
+        const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3, true);
         shouldThrow(book.sheetCount, book);
 
         await removeColResult;
@@ -917,6 +1053,26 @@ describe('The sheet class', function () {
         expect(sheet.lastRow()).toBe(6);
         expect(sheet.lastCol()).toBe(6);
     });
+
+    it(
+        'sheet.firstFilledRow, sheet.firstFilledCol, sheet.lastFilledRow, sheet.lastFilledCol return ' +
+            'the spreadsheet limits',
+        function () {
+            var sheet = newSheet();
+
+            sheet.writeNum(2, 1, 1).writeNum(5, 5, 1);
+
+            shouldThrow(sheet.firstFilledRow, {});
+            shouldThrow(sheet.firstFilledCol, {});
+            shouldThrow(sheet.lastFilledRow, {});
+            shouldThrow(sheet.lastFilledCol, {});
+
+            expect(sheet.firstFilledRow()).toBe(0);
+            expect(sheet.firstFilledCol()).toBe(0);
+            expect(sheet.lastFilledRow()).toBe(6);
+            expect(sheet.lastFilledCol()).toBe(6);
+        }
+    );
 
     it('sheet.displayGridlines and sheet.setDisplayGridlines manage display of gridlines', function () {
         shouldThrow(sheet.setDisplayGridlines, sheet, 1);
@@ -1020,19 +1176,39 @@ describe('The sheet class', function () {
     });
 
     it(
-        'sheet.setPrintRepeatRows, sheet.setPrintRepeatCols, sheet.clearPrintRepeat ' +
+        'sheet.setPrintRepeatRows / sheet.printRepeatRows, sheet.setPrintRepeatCols / sheet.printRepeatCols, sheet.clearPrintRepeat ' +
             ' control row / col repeat in print',
         function () {
+            const book = new xl.Book(xl.BOOK_TYPE_XLS);
+            const sheet = book.addSheet('foo');
+            sheet.writeStr(1, 1, 'foo');
+            sheet.writeStr(2, 2, 'foo');
+
             shouldThrow(sheet.setPrintRepeatRows, sheet, true, 1);
-            shouldThrow(sheet.setPrintRepeatRows, {}, 1, 1);
-            expect(sheet.setPrintRepeatRows(1, 1)).toBe(sheet);
+            shouldThrow(sheet.setPrintRepeatRows, {}, 1, 2);
+            expect(sheet.setPrintRepeatRows(1, 2)).toBe(sheet);
+
+            shouldThrow(sheet.printRepeatRows, {});
+            const printRepeatRows = sheet.printRepeatRows();
+
+            expect(printRepeatRows.rowFirst).toBe(1);
+            expect(printRepeatRows.rowLast).toBe(2);
 
             shouldThrow(sheet.setPrintRepeatCols, sheet, true, 1);
-            shouldThrow(sheet.setPrintRepeatCols, {}, 1, 1);
-            expect(sheet.setPrintRepeatCols(1, 1)).toBe(sheet);
+            shouldThrow(sheet.setPrintRepeatCols, {}, 1, 2);
+            expect(sheet.setPrintRepeatCols(1, 2)).toBe(sheet);
+
+            shouldThrow(sheet.printRepeatCols, {});
+            const printRepeatCols = sheet.printRepeatCols();
+
+            expect(printRepeatCols.colFirst).toBe(1);
+            expect(printRepeatCols.colLast).toBe(2);
 
             shouldThrow(sheet.clearPrintRepeats, {});
             expect(sheet.clearPrintRepeats()).toBe(sheet);
+
+            shouldThrow(sheet.printRepeatCols, sheet);
+            shouldThrow(sheet.printRepeatRows, sheet);
         }
     );
 

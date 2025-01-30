@@ -97,6 +97,8 @@ namespace node_libxl {
         static NAN_METHOD(GetPicture);
         static NAN_METHOD(SetPicture);
         static NAN_METHOD(SetPicture2);
+        static NAN_METHOD(RemovePicture);
+        static NAN_METHOD(RemovePictureByIndex);
         static NAN_METHOD(GetHorPageBreak);
         static NAN_METHOD(GetHorPageBreakSize);
         static NAN_METHOD(GetVerPageBreak);
@@ -104,6 +106,7 @@ namespace node_libxl {
         static NAN_METHOD(SetHorPageBreak);
         static NAN_METHOD(SetVerPageBreak);
         static NAN_METHOD(Split);
+        static NAN_METHOD(SplitInfo);
         static NAN_METHOD(GroupRows);
         static NAN_METHOD(GroupCols);
         static NAN_METHOD(GroupSummaryBelow);
@@ -124,6 +127,10 @@ namespace node_libxl {
         static NAN_METHOD(LastRow);
         static NAN_METHOD(FirstCol);
         static NAN_METHOD(LastCol);
+        static NAN_METHOD(FirstFilledRow);
+        static NAN_METHOD(LastFilledRow);
+        static NAN_METHOD(FirstFilledCol);
+        static NAN_METHOD(LastFilledCol);
         static NAN_METHOD(DisplayGridlines);
         static NAN_METHOD(SetDisplayGridlines);
         static NAN_METHOD(PrintGridlines);
@@ -158,7 +165,9 @@ namespace node_libxl {
         static NAN_METHOD(SetMarginBottom);
         static NAN_METHOD(PrintRowCol);
         static NAN_METHOD(SetPrintRowCol);
+        static NAN_METHOD(PrintRepeatRows);
         static NAN_METHOD(SetPrintRepeatRows);
+        static NAN_METHOD(PrintRepeatCols);
         static NAN_METHOD(SetPrintRepeatCols);
         static NAN_METHOD(SetPrintArea);
         static NAN_METHOD(ClearPrintRepeats);

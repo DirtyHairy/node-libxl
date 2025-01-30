@@ -1046,6 +1046,42 @@ namespace node_libxl {
         info.GetReturnValue().Set(result);
     }
 
+    NAN_METHOD(Sheet::RemovePicture) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0), col = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->removePicture(row, col)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::RemovePictureByIndex) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->removePictureByIndex(index)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::SetPicture) {
         Nan::HandleScope scope;
 
@@ -1054,12 +1090,13 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1), id = arguments.GetInt(2);
         double scale = arguments.GetDouble(3, 1.);
         int offset_x = arguments.GetInt(4, 0), offset_y = arguments.GetInt(5, 0);
+        auto pos = static_cast<libxl::Position>(arguments.GetInt(6, libxl::POSITION_MOVE_AND_SIZE));
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y);
+        that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y, pos);
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1072,12 +1109,14 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1), id = arguments.GetInt(2),
             width = arguments.GetInt(3, -1), height = arguments.GetInt(4, -1),
             offset_x = arguments.GetInt(5, 0), offset_y = arguments.GetInt(6, 0);
+        auto pos = static_cast<libxl::Position>(arguments.GetInt(7, libxl::POSITION_MOVE_AND_SIZE));
+
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x, offset_y);
+        that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x, offset_y, pos);
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1182,6 +1221,28 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::SplitInfo) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int row, col;
+
+        if (!that->GetWrapped()->splitInfo(&row, &col)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
+        Nan::Set(result, Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
+
+        info.GetReturnValue().Set(result);
+    }
+
     NAN_METHOD(Sheet::GroupRows) {
         Nan::HandleScope scope;
 
@@ -1275,8 +1336,8 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        int rowFirst = arguments.GetInt(0, 0), rowLast = arguments.GetInt(1, 65535),
-            colFirst = arguments.GetInt(2, 0), colLast = arguments.GetInt(3, 255);
+        int rowFirst = arguments.GetInt(0, 0), rowLast = arguments.GetInt(1, 1048575),
+            colFirst = arguments.GetInt(2, 0), colLast = arguments.GetInt(3, 16383);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
@@ -1293,12 +1354,13 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         int rowFirst = arguments.GetInt(0), rowLast = arguments.GetInt(1);
+        bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
+        if (!that->GetWrapped()->insertRow(rowFirst, rowLast, updateNamedRanges)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -1308,34 +1370,42 @@ namespace node_libxl {
     NAN_METHOD(Sheet::InsertRowAsync) {
         class Worker : public AsyncWorker<Sheet> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, int rowFirst, int rowLast)
+            Worker(Nan::Callback* callback, Local<Object> that, int rowFirst, int rowLast,
+                   bool updateNamedRanges)
                 : AsyncWorker<Sheet>(callback, that, "node-libxl-sheet-insert-row"),
                   rowFirst(rowFirst),
-                  rowLast(rowLast) {}
+                  rowLast(rowLast),
+                  updateNamedRanges(updateNamedRanges) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->insertRow(rowFirst, rowLast)) {
+                if (!that->GetWrapped()->insertRow(rowFirst, rowLast, updateNamedRanges)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             int rowFirst, rowLast;
+            bool updateNamedRanges;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 4) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         int rowFirst = arguments.GetInt(0), rowLast = arguments.GetInt(1);
-        Local<Function> callback = arguments.GetFunction(2);
+        bool updateNamedRanges = arguments.Length() > 3 ? arguments.GetBoolean(2, true) : true;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        Nan::AsyncQueueWorker(
-            new Worker(new Nan::Callback(callback), info.This(), rowFirst, rowLast));
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), rowFirst,
+                                         rowLast, updateNamedRanges));
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1346,12 +1416,13 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         int colFirst = arguments.GetInt(0), colLast = arguments.GetInt(1);
+        bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
+        if (!that->GetWrapped()->insertCol(colFirst, colLast, updateNamedRanges)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -1361,34 +1432,42 @@ namespace node_libxl {
     NAN_METHOD(Sheet::InsertColAsync) {
         class Worker : public AsyncWorker<Sheet> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, int colFirst, int colLast)
+            Worker(Nan::Callback* callback, Local<Object> that, int colFirst, int colLast,
+                   bool updateNamedRanges)
                 : AsyncWorker<Sheet>(callback, that, "node-libxl-insert-col"),
                   colFirst(colFirst),
-                  colLast(colLast) {}
+                  colLast(colLast),
+                  updateNamedRanges(updateNamedRanges) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->insertCol(colFirst, colLast)) {
+                if (!that->GetWrapped()->insertCol(colFirst, colLast, updateNamedRanges)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             int colFirst, colLast;
+            bool updateNamedRanges;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 4) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         int colFirst = arguments.GetInt(0), colLast = arguments.GetInt(1);
-        Local<Function> callback = arguments.GetFunction(2);
+        bool updateNamedRanges = arguments.Length() > 3 ? arguments.GetBoolean(2, true) : true;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        Nan::AsyncQueueWorker(
-            new Worker(new Nan::Callback(callback), info.This(), colFirst, colLast));
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), colFirst,
+                                         colLast, updateNamedRanges));
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1399,12 +1478,13 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         int rowFirst = arguments.GetInt(0), rowLast = arguments.GetInt(1);
+        bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        if (!that->GetWrapped()->removeRow(rowFirst, rowLast)) {
+        if (!that->GetWrapped()->removeRow(rowFirst, rowLast, updateNamedRanges)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -1414,34 +1494,42 @@ namespace node_libxl {
     NAN_METHOD(Sheet::RemoveRowAsync) {
         class Worker : public AsyncWorker<Sheet> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, int rowFirst, int rowLast)
+            Worker(Nan::Callback* callback, Local<Object> that, int rowFirst, int rowLast,
+                   bool updateNamedRanges)
                 : AsyncWorker<Sheet>(callback, that, "node-livxl-remove-row"),
                   rowFirst(rowFirst),
-                  rowLast(rowLast) {}
+                  rowLast(rowLast),
+                  updateNamedRanges(updateNamedRanges) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->removeRow(rowFirst, rowLast)) {
+                if (!that->GetWrapped()->removeRow(rowFirst, rowLast, updateNamedRanges)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             int rowFirst, rowLast;
+            bool updateNamedRanges;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 4) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         int rowFirst = arguments.GetInt(0), rowLast = arguments.GetInt(1);
-        Local<Function> callback = arguments.GetFunction(2);
+        bool updateNamedRanges = arguments.Length() > 3 ? arguments.GetBoolean(2, true) : true;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        Nan::AsyncQueueWorker(
-            new Worker(new Nan::Callback(callback), info.This(), rowFirst, rowLast));
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), rowFirst,
+                                         rowLast, updateNamedRanges));
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1449,34 +1537,42 @@ namespace node_libxl {
     NAN_METHOD(Sheet::RemoveColAsync) {
         class Worker : public AsyncWorker<Sheet> {
            public:
-            Worker(Nan::Callback* callback, Local<Object> that, int colFirst, int colLast)
+            Worker(Nan::Callback* callback, Local<Object> that, int colFirst, int colLast,
+                   bool removeNamedRanges)
                 : AsyncWorker<Sheet>(callback, that, "node-libxl-remove-col"),
                   colFirst(colFirst),
-                  colLast(colLast) {}
+                  colLast(colLast),
+                  removeNamedRanges(removeNamedRanges) {}
 
             virtual void Execute() {
-                if (!that->GetWrapped()->removeCol(colFirst, colLast)) {
+                if (!that->GetWrapped()->removeCol(colFirst, colLast, removeNamedRanges)) {
                     RaiseLibxlError();
                 }
             }
 
            private:
             int colFirst, colLast;
+            bool removeNamedRanges;
         };
 
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
 
+        if (arguments.Length() > 4) {
+            return Nan::ThrowError("too many arguments");
+        }
+
         int colFirst = arguments.GetInt(0), colLast = arguments.GetInt(1);
-        Local<Function> callback = arguments.GetFunction(2);
+        bool updateNamedRanges = arguments.Length() > 3 ? arguments.GetBoolean(2, true) : true;
+        Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        Nan::AsyncQueueWorker(
-            new Worker(new Nan::Callback(callback), info.This(), colFirst, colLast));
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), colFirst,
+                                         colLast, updateNamedRanges));
 
         info.GetReturnValue().Set(info.This());
     }
@@ -1487,12 +1583,13 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
 
         int colFirst = arguments.GetInt(0), colLast = arguments.GetInt(1);
+        bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = Unwrap(info.This());
         ASSERT_SHEET(that);
 
-        if (!that->GetWrapped()->removeCol(colFirst, colLast)) {
+        if (!that->GetWrapped()->removeCol(colFirst, colLast, updateNamedRanges)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -1552,6 +1649,42 @@ namespace node_libxl {
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastCol()));
+    }
+
+    NAN_METHOD(Sheet::FirstFilledRow) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstFilledRow()));
+    }
+
+    NAN_METHOD(Sheet::LastFilledRow) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastFilledRow()));
+    }
+
+    NAN_METHOD(Sheet::FirstFilledCol) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstFilledCol()));
+    }
+
+    NAN_METHOD(Sheet::LastFilledCol) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastFilledCol()));
     }
 
     NAN_METHOD(Sheet::DisplayGridlines) {
@@ -1991,6 +2124,29 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::PrintRepeatRows) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int rowFirst, rowLast;
+
+        if (!that->GetWrapped()->printRepeatRows(&rowFirst, &rowLast)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+
+        info.GetReturnValue().Set(result);
+    }
+
     NAN_METHOD(Sheet::SetPrintRepeatRows) {
         Nan::HandleScope scope;
 
@@ -2005,6 +2161,29 @@ namespace node_libxl {
         that->GetWrapped()->setPrintRepeatRows(rowFirst, rowLast);
 
         info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::PrintRepeatCols) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int colFirst, colLast;
+
+        if (!that->GetWrapped()->printRepeatCols(&colFirst, &colLast)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(),
+                 Nan::New<Integer>(colFirst));
+        Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+
+        info.GetReturnValue().Set(result);
     }
 
     NAN_METHOD(Sheet::SetPrintRepeatCols) {
@@ -2428,6 +2607,8 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "delMergeByIndex", DelMergeByIndex);
         Nan::SetPrototypeMethod(t, "pictureSize", PictureSize);
         Nan::SetPrototypeMethod(t, "getPicture", GetPicture);
+        Nan::SetPrototypeMethod(t, "removePicture", RemovePicture);
+        Nan::SetPrototypeMethod(t, "removePictureByIndex", RemovePictureByIndex);
         Nan::SetPrototypeMethod(t, "setPicture", SetPicture);
         Nan::SetPrototypeMethod(t, "setPicture2", SetPicture2);
         Nan::SetPrototypeMethod(t, "getHorPageBreak", GetHorPageBreak);
@@ -2437,6 +2618,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setHorPageBreak", SetHorPageBreak);
         Nan::SetPrototypeMethod(t, "setVerPageBreak", SetVerPageBreak);
         Nan::SetPrototypeMethod(t, "split", Split);
+        Nan::SetPrototypeMethod(t, "splitInfo", SplitInfo);
         Nan::SetPrototypeMethod(t, "groupRows", GroupRows);
         Nan::SetPrototypeMethod(t, "groupCols", GroupCols);
         Nan::SetPrototypeMethod(t, "groupSummaryBelow", GroupSummaryBelow);
@@ -2445,18 +2627,26 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setGroupSummaryRight", SetGroupSummaryRight);
         Nan::SetPrototypeMethod(t, "clear", Clear);
         Nan::SetPrototypeMethod(t, "insertRow", InsertRow);
+        Nan::SetPrototypeMethod(t, "insertRowSync", InsertRow);
         Nan::SetPrototypeMethod(t, "insertRowAsync", InsertRowAsync);
         Nan::SetPrototypeMethod(t, "insertCol", InsertCol);
+        Nan::SetPrototypeMethod(t, "insertColSync", InsertCol);
         Nan::SetPrototypeMethod(t, "insertColAsync", InsertColAsync);
         Nan::SetPrototypeMethod(t, "removeRow", RemoveRow);
+        Nan::SetPrototypeMethod(t, "removeRowSync", RemoveRow);
         Nan::SetPrototypeMethod(t, "removeRowAsync", RemoveRowAsync);
         Nan::SetPrototypeMethod(t, "removeCol", RemoveCol);
+        Nan::SetPrototypeMethod(t, "removeColSync", RemoveCol);
         Nan::SetPrototypeMethod(t, "removeColAsync", RemoveColAsync);
         Nan::SetPrototypeMethod(t, "copyCell", CopyCell);
         Nan::SetPrototypeMethod(t, "firstRow", FirstRow);
         Nan::SetPrototypeMethod(t, "lastRow", LastRow);
         Nan::SetPrototypeMethod(t, "firstCol", FirstCol);
         Nan::SetPrototypeMethod(t, "lastCol", LastCol);
+        Nan::SetPrototypeMethod(t, "firstFilledRow", FirstFilledRow);
+        Nan::SetPrototypeMethod(t, "lastFilledRow", LastFilledRow);
+        Nan::SetPrototypeMethod(t, "firstFilledCol", FirstFilledCol);
+        Nan::SetPrototypeMethod(t, "lastFilledCol", LastFilledCol);
         Nan::SetPrototypeMethod(t, "displayGridlines", DisplayGridlines);
         Nan::SetPrototypeMethod(t, "setDisplayGridlines", SetDisplayGridlines);
         Nan::SetPrototypeMethod(t, "printGridlines", PrintGridlines);
@@ -2491,7 +2681,9 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setMarginBottom", SetMarginBottom);
         Nan::SetPrototypeMethod(t, "printRowCol", PrintRowCol);
         Nan::SetPrototypeMethod(t, "setPrintRowCol", SetPrintRowCol);
+        Nan::SetPrototypeMethod(t, "printRepeatRows", PrintRepeatRows);
         Nan::SetPrototypeMethod(t, "setPrintRepeatRows", SetPrintRepeatRows);
+        Nan::SetPrototypeMethod(t, "printRepeatCols", PrintRepeatCols);
         Nan::SetPrototypeMethod(t, "setPrintRepeatCols", SetPrintRepeatCols);
         Nan::SetPrototypeMethod(t, "setPrintArea", SetPrintArea);
         Nan::SetPrototypeMethod(t, "clearPrintRepeats", ClearPrintRepeats);
@@ -2657,6 +2849,10 @@ namespace node_libxl {
         NODE_DEFINE_CONSTANT(exports, SHEETSTATE_VISIBLE);
         NODE_DEFINE_CONSTANT(exports, SHEETSTATE_HIDDEN);
         NODE_DEFINE_CONSTANT(exports, SHEETSTATE_VERYHIDDEN);
+
+        NODE_DEFINE_CONSTANT(exports, POSITION_MOVE_AND_SIZE);
+        NODE_DEFINE_CONSTANT(exports, POSITION_ONLY_MOVE);
+        NODE_DEFINE_CONSTANT(exports, POSITION_ABSOLUTE);
     }
 
 }  // namespace node_libxl
