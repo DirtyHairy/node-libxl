@@ -5,7 +5,8 @@ var outputDir = path.join(__dirname, 'output'),
     writeTestFile = path.join(outputDir, 'writetest.xls'),
     tempFile = path.join(outputDir, 'tempfile'),
     filesDir = path.join(__dirname, 'files'),
-    testPicture = path.join(filesDir, 'dummy.jpg');
+    testPicture = path.join(filesDir, 'dummy.jpg'),
+    xlsxTableFile = path.join(filesDir, 'table.xlsx');
 
 module.exports = {
     initFilesystem: function () {
@@ -24,6 +25,10 @@ module.exports = {
 
     getTempFile: function () {
         return tempFile;
+    },
+
+    getXlsxTableFile: function () {
+        return xlsxTableFile;
     },
 
     shouldThrow: function (fun, scope) {

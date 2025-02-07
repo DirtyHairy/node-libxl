@@ -1268,6 +1268,47 @@ describe('The sheet class', function () {
         }
     );
 
+    it('sheet.tableSize gets the number of tables on the sheet', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.loadSync(testUtils.getXlsxTableFile());
+
+        const sheet = book.getSheet(0);
+
+        shouldThrow(sheet.tableSize, {});
+
+        expect(sheet.tableSize()).toBe(1);
+    });
+
+    it('sheet.table retrieves a table by index', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.loadSync(testUtils.getXlsxTableFile());
+
+        const sheet = book.getSheet(0);
+
+        shouldThrow(sheet.table, sheet, 'a');
+        shouldThrow(sheet.table, {}, 0);
+
+        expect(sheet.table(0)).toEqual({ rowFirst: 1, rowLast: 10, colFirst: 1, colLast: 4, totalRowCount: 1 });
+    });
+
+    it('sheet.getTable retrieves a table by nyme', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.loadSync(testUtils.getXlsxTableFile());
+
+        const sheet = book.getSheet(0);
+
+        shouldThrow(sheet.getTable, sheet, 1);
+        shouldThrow(sheet.getTable, {}, 'Table');
+
+        expect(sheet.getTable('Table')).toEqual({
+            rowFirst: 1,
+            rowLast: 10,
+            colFirst: 1,
+            colLast: 4,
+            totalRowCount: 1,
+        });
+    });
+
     it('sheet.name and sheet.setName manage the sheet name', function () {
         var sheet = book.addSheet('bazzaraz');
 

@@ -2296,6 +2296,88 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::GetTable) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(name, arguments.GetString(0));
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int rowFirst, rowLast, colFirst, colLast, headerRowCount, totalRowCount;
+        if (!that->GetWrapped()->getTable(*name, &rowFirst, &rowLast, &colFirst, &colLast,
+                                          &headerRowCount, &totalRowCount)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+        Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(),
+                 Nan::New<Integer>(colFirst));
+        Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("totalRowCount").ToLocalChecked(),
+                 Nan::New<Integer>(headerRowCount));
+        Nan::Set(result, Nan::New<String>("totalRowCount").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+
+        info.GetReturnValue().Set(result);
+    }
+
+    NAN_METHOD(Sheet::TableSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->tableSize()));
+    }
+
+    NAN_METHOD(Sheet::Table) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int rowFirst, rowLast, colFirst, colLast, headerRowCount, totalRowCount;
+        if (!that->GetWrapped()->table(index, &rowFirst, &rowLast, &colFirst, &colLast,
+                                       &headerRowCount, &totalRowCount)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+        Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(),
+                 Nan::New<Integer>(colFirst));
+        Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("totalRowCount").ToLocalChecked(),
+                 Nan::New<Integer>(headerRowCount));
+        Nan::Set(result, Nan::New<String>("totalRowCount").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+
+        info.GetReturnValue().Set(result);
+    }
+
     NAN_METHOD(Sheet::DelNamedRange) {
         Nan::HandleScope scope;
 
@@ -2690,7 +2772,11 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "clearPrintArea", ClearPrintArea);
         Nan::SetPrototypeMethod(t, "getNamedRange", GetNamedRange);
         Nan::SetPrototypeMethod(t, "setNamedRange", SetNamedRange);
+        Nan::SetPrototypeMethod(t, "setNamedRange", SetNamedRange);
         Nan::SetPrototypeMethod(t, "delNamedRange", DelNamedRange);
+        Nan::SetPrototypeMethod(t, "getTable", GetTable);
+        Nan::SetPrototypeMethod(t, "tableSize", TableSize);
+        Nan::SetPrototypeMethod(t, "table", Table);
         Nan::SetPrototypeMethod(t, "namedRangeSize", NamedRangeSize);
         Nan::SetPrototypeMethod(t, "namedRange", NamedRange);
         Nan::SetPrototypeMethod(t, "name", Name);

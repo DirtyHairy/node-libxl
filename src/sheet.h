@@ -177,6 +177,9 @@ namespace node_libxl {
         static NAN_METHOD(DelNamedRange);
         static NAN_METHOD(NamedRangeSize);
         static NAN_METHOD(NamedRange);
+        static NAN_METHOD(GetTable);
+        static NAN_METHOD(TableSize);
+        static NAN_METHOD(Table);
         static NAN_METHOD(Name);
         static NAN_METHOD(SetName);
         static NAN_METHOD(Protect);
