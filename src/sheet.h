@@ -180,6 +180,11 @@ namespace node_libxl {
         static NAN_METHOD(GetTable);
         static NAN_METHOD(TableSize);
         static NAN_METHOD(Table);
+        static NAN_METHOD(HyperlinkSize);
+        static NAN_METHOD(Hyperlink);
+        static NAN_METHOD(DelHyperlink);
+        static NAN_METHOD(AddHyperlink);
+        static NAN_METHOD(HyperlinkIndex);
         static NAN_METHOD(Name);
         static NAN_METHOD(SetName);
         static NAN_METHOD(Protect);
@@ -192,6 +197,12 @@ namespace node_libxl {
         static NAN_METHOD(SetTopLeftView);
         static NAN_METHOD(AddrToRowCol);
         static NAN_METHOD(RowColToAddr);
+        static NAN_METHOD(SetAutoFitArea);
+        static NAN_METHOD(TabColor);
+        static NAN_METHOD(SetTabColor);
+        static NAN_METHOD(SetTabColorComponents);
+        static NAN_METHOD(GetTabColor);
+        static NAN_METHOD(AddIgnoredError);
 
        private:
         const libxl::Sheet* wrappedSheet;

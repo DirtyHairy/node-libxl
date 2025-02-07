@@ -2378,6 +2378,104 @@ namespace node_libxl {
         info.GetReturnValue().Set(result);
     }
 
+    NAN_METHOD(Sheet::HyperlinkSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->hyperlinkSize()));
+    }
+
+    NAN_METHOD(Sheet::Hyperlink) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int rowFirst, rowLast, colFirst, colLast;
+        const char* hyperlink =
+            that->GetWrapped()->hyperlink(index, &rowFirst, &rowLast, &colFirst, &colLast);
+
+        if (!hyperlink) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("hyperlink").ToLocalChecked(),
+                 Nan::New<String>(hyperlink).ToLocalChecked());
+        Nan::Set(result, Nan::New<String>("rowFirst").ToLocalChecked(),
+                 Nan::New<Integer>(rowFirst));
+        Nan::Set(result, Nan::New<String>("rowLast").ToLocalChecked(), Nan::New<Integer>(rowLast));
+        Nan::Set(result, Nan::New<String>("colFirst").ToLocalChecked(),
+                 Nan::New<Integer>(colFirst));
+        Nan::Set(result, Nan::New<String>("colLast").ToLocalChecked(), Nan::New<Integer>(colLast));
+
+        info.GetReturnValue().Set(result);
+    }
+
+    NAN_METHOD(Sheet::DelHyperlink) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->delHyperlink(index)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::AddHyperlink) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(hyperlink, arguments.GetString(0));
+        int rowFirst = arguments.GetInt(1);
+        int rowLast = arguments.GetInt(2);
+        int colFirst = arguments.GetInt(3);
+        int colLast = arguments.GetInt(4);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->addHyperlink(*hyperlink, rowFirst, rowLast, colFirst, colLast);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::HyperlinkIndex) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int index = that->GetWrapped()->hyperlinkIndex(row, col);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(index));
+    }
+
     NAN_METHOD(Sheet::DelNamedRange) {
         Nan::HandleScope scope;
 
@@ -2626,6 +2724,114 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<String>(addr).ToLocalChecked());
     }
 
+    NAN_METHOD(Sheet::SetAutoFitArea) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int rowFirst = arguments.GetInt(0, 0);
+        int colFirst = arguments.GetInt(1, 0);
+        int rowLast = arguments.GetInt(2, -1);
+        int colLast = arguments.GetInt(3, -1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->setAutoFitArea(rowFirst, colFirst, rowLast, colLast);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::TabColor) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Color color = that->GetWrapped()->tabColor();
+
+        info.GetReturnValue().Set(Nan::New<Integer>(color));
+    }
+
+    NAN_METHOD(Sheet::SetTabColor) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        ArgumentHelper arguments(info);
+
+        switch (arguments.Length()) {
+            case 1: {
+                int color = arguments.GetInt(0);
+                ASSERT_ARGUMENTS(arguments);
+
+                that->GetWrapped()->setTabColor(static_cast<libxl::Color>(color));
+
+                break;
+            }
+
+            case 3: {
+                int red = arguments.GetInt(0);
+                int green = arguments.GetInt(1);
+                int blue = arguments.GetInt(2);
+                ASSERT_ARGUMENTS(arguments);
+
+                that->GetWrapped()->setTabColor(red, green, blue);
+
+                break;
+            }
+
+            default:
+                return Nan::ThrowError("Invalid number of arguments");
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::GetTabColor) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int red, green, blue;
+        if (!that->GetWrapped()->getTabColor(&red, &green, &blue)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("red").ToLocalChecked(), Nan::New<Integer>(red));
+        Nan::Set(result, Nan::New<String>("green").ToLocalChecked(), Nan::New<Integer>(green));
+        Nan::Set(result, Nan::New<String>("blue").ToLocalChecked(), Nan::New<Integer>(blue));
+
+        info.GetReturnValue().Set(result);
+    }
+
+    NAN_METHOD(Sheet::AddIgnoredError) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int rowFirst = arguments.GetInt(0);
+        int colFirst = arguments.GetInt(1);
+        int rowLast = arguments.GetInt(2);
+        int colLast = arguments.GetInt(3);
+        int iError = arguments.GetInt(4);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->addIgnoredError(rowFirst, colFirst, rowLast, colLast,
+                                                 static_cast<libxl::IgnoredError>(iError))) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     // Init
 
     void Sheet::Initialize(Local<Object> exports) {
@@ -2791,6 +2997,16 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setTopLeftView", SetTopLeftView);
         Nan::SetPrototypeMethod(t, "addrToRowCol", AddrToRowCol);
         Nan::SetPrototypeMethod(t, "rowColToAddr", RowColToAddr);
+        Nan::SetPrototypeMethod(t, "hyperlinkSize", HyperlinkSize);
+        Nan::SetPrototypeMethod(t, "hyperlink", Hyperlink);
+        Nan::SetPrototypeMethod(t, "delHyperlink", DelHyperlink);
+        Nan::SetPrototypeMethod(t, "addHyperlink", AddHyperlink);
+        Nan::SetPrototypeMethod(t, "hyperlinkIndex", HyperlinkIndex);
+        Nan::SetPrototypeMethod(t, "setAutoFitArea", SetAutoFitArea);
+        Nan::SetPrototypeMethod(t, "tabColor", TabColor);
+        Nan::SetPrototypeMethod(t, "setTabColor", SetTabColor);
+        Nan::SetPrototypeMethod(t, "getTabColor", GetTabColor);
+        Nan::SetPrototypeMethod(t, "addIgnoredError", AddIgnoredError);
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
@@ -2939,6 +3155,78 @@ namespace node_libxl {
         NODE_DEFINE_CONSTANT(exports, POSITION_MOVE_AND_SIZE);
         NODE_DEFINE_CONSTANT(exports, POSITION_ONLY_MOVE);
         NODE_DEFINE_CONSTANT(exports, POSITION_ABSOLUTE);
+
+        NODE_DEFINE_CONSTANT(exports, COLOR_BLACK);
+        NODE_DEFINE_CONSTANT(exports, COLOR_WHITE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_RED);
+        NODE_DEFINE_CONSTANT(exports, COLOR_BRIGHTGREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_BLUE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_YELLOW);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PINK);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TURQUOISE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKRED);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKBLUE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKYELLOW);
+        NODE_DEFINE_CONSTANT(exports, COLOR_VIOLET);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TEAL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GRAY25);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GRAY50);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PERIWINKLE_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PLUM_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_IVORY_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTTURQUOISE_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKPURPLE_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_CORAL_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_OCEANBLUE_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_ICEBLUE_CF);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKBLUE_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PINK_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_YELLOW_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TURQUOISE_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_VIOLET_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKRED_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TEAL_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_BLUE_CL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_SKYBLUE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTTURQUOISE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTGREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTYELLOW);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PALEBLUE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_ROSE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LAVENDER);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TAN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTBLUE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_AQUA);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIME);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GOLD);
+        NODE_DEFINE_CONSTANT(exports, COLOR_LIGHTORANGE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_ORANGE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_BLUEGRAY);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GRAY40);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKTEAL);
+        NODE_DEFINE_CONSTANT(exports, COLOR_SEAGREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DARKGREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_OLIVEGREEN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_BROWN);
+        NODE_DEFINE_CONSTANT(exports, COLOR_PLUM);
+        NODE_DEFINE_CONSTANT(exports, COLOR_INDIGO);
+        NODE_DEFINE_CONSTANT(exports, COLOR_GRAY80);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DEFAULT_FOREGROUND);
+        NODE_DEFINE_CONSTANT(exports, COLOR_DEFAULT_BACKGROUND);
+        NODE_DEFINE_CONSTANT(exports, COLOR_TOOLTIP);
+        NODE_DEFINE_CONSTANT(exports, COLOR_NONE);
+        NODE_DEFINE_CONSTANT(exports, COLOR_AUTO);
+
+        NODE_DEFINE_CONSTANT(exports, IERR_NO_ERROR);
+        NODE_DEFINE_CONSTANT(exports, IERR_EVAL_ERROR);
+        NODE_DEFINE_CONSTANT(exports, IERR_EMPTY_CELLREF);
+        NODE_DEFINE_CONSTANT(exports, IERR_NUMBER_STORED_AS_TEXT);
+        NODE_DEFINE_CONSTANT(exports, IERR_INCONSIST_RANGE);
+        NODE_DEFINE_CONSTANT(exports, IERR_INCONSIST_FMLA);
+        NODE_DEFINE_CONSTANT(exports, IERR_TWODIG_TEXTYEAR);
+        NODE_DEFINE_CONSTANT(exports, IERR_UNLOCK_FMLA);
+        NODE_DEFINE_CONSTANT(exports, IERR_DATA_VALIDATION);
     }
 
 }  // namespace node_libxl

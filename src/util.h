@@ -25,6 +25,8 @@
 #ifndef BINDINGS_UTIL
 #define BINDINGS_UTIL
 
+#include <cstring>
+
 #include "book.h"
 #include "book_wrapper.h"
 #include "common.h"
@@ -56,7 +58,17 @@ namespace node_libxl {
 
             libxl::Book* book = UnwrapBook(wrappedBook);
 
-            return Nan::ThrowError(book ? book->errorMessage() : "");
+            const char* errorMessage = "";
+
+            if (book) {
+                errorMessage = book->errorMessage();
+
+                if (errorMessage && strcmp(errorMessage, "ok") == 0) {
+                    errorMessage = "not found";
+                }
+            }
+
+            return Nan::ThrowError(errorMessage ? errorMessage : "");
         }
 
         template <typename T, typename U>

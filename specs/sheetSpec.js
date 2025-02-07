@@ -1371,4 +1371,67 @@ describe('The sheet class', function () {
         expect(sheet.rowColToAddr(0, 0)).toBe('A1');
         expect(sheet.rowColToAddr(0, 0, false, false)).toBe('$A$1');
     });
+
+    it('the hyperlink family of functions manages hyperlinks', () => {
+        shouldThrow(sheet.hyperlinkSize, {});
+        expect(sheet.hyperlinkSize()).toBe(0);
+
+        shouldThrow(sheet.addHyperlink, sheet, 1, row, row + 2, 1, 3);
+        shouldThrow(sheet.addHyperlink, {}, 'http://foo.bar', row, 1, row + 2, 3);
+
+        expect(sheet.addHyperlink('http://foo.bar', row, row + 2, 1, 3)).toBe(sheet);
+        expect(sheet.hyperlinkSize()).toBe(1);
+
+        shouldThrow(sheet.hyperlinkIndex, 'a', 1);
+        shouldThrow(sheet.hyperlinkIndex, {}, row, 4);
+
+        expect(sheet.hyperlinkIndex(row, 4)).toBe(-1);
+        expect(sheet.hyperlinkIndex(row, 1)).toBe(1);
+
+        shouldThrow(sheet.hyperlink, sheet, 'a');
+        shouldThrow(sheet.hyperlink, {}, 0);
+
+        expect(sheet.hyperlink(0)).toEqual({
+            colFirst: 1,
+            colLast: 3,
+            rowFirst: row,
+            rowLast: row + 2,
+            hyperlink: 'http://foo.bar',
+        });
+
+        shouldThrow(sheet.delHyperlink, sheet, 'a');
+        shouldThrow(sheet.delHyperlink, {}, 0);
+
+        expect(sheet.delHyperlink(0)).toBe(sheet);
+        expect(sheet.hyperlinkSize()).toBe(0);
+
+        row++;
+    });
+
+    it('sheet.setAutoFitArea sets the auto fit area', () => {
+        shouldThrow(sheet.setAutoFitArea, sheet, 1, 1, 10, 'a');
+
+        expect(sheet.setAutoFitArea(1, 1, 10, 10)).toBe(sheet);
+    });
+
+    it('sheet.setTabColor, sheet.getTabColor and sheet.tabColor manage the tab color', () => {
+        shouldThrow(sheet.setTabColor, sheet, 'a');
+        shouldThrow(sheet.setTabColor, {}, xl.COLOR_BLACK);
+        shouldThrow(sheet.setTabColor, sheet, 255, 200, 'a');
+        shouldThrow(sheet.setTabColor, {}, 255, 200, 180);
+        shouldThrow(sheet.tabColor, {});
+
+        expect(sheet.setTabColor(xl.COLOR_BLACK)).toBe(sheet);
+        expect(sheet.tabColor()).toBe(xl.COLOR_BLACK);
+
+        expect(sheet.setTabColor(255, 200, 180)).toBe(sheet);
+        expect(sheet.getTabColor()).toEqual({ red: 255, green: 200, blue: 180 });
+    });
+
+    it('sheet.addIgnoredError configures the ignored error class for a range of cells', () => {
+        shouldThrow(sheet.addIgnoredError, sheet, row, 1, row + 2, 3, 'a');
+        shouldThrow(sheet.addIgnoredError, {}, row, 1, row + 2, 3, xl.IERR_EVAL_ERROR);
+
+        expect(sheet.addIgnoredError(row, 1, row + 2, 3, xl.IERR_TWODIG_TEXTYEAR)).toBe(sheet);
+    });
 });
