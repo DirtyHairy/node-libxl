@@ -828,10 +828,12 @@ describe('The book class', function () {
     });
 
     it('book.setLocale sets the locale', () => {
-        shouldThrow(book.setLocale, book, 1);
-        shouldThrow(book.setLocale, {}, 'en_GB');
+        const locale = process.env["LANG"] ?? 'en_GB';
 
-        expect(book.setLocale('en_GB')).toBe(book);
+        shouldThrow(book.setLocale, book, 1);
+        shouldThrow(book.setLocale, {}, locale);
+
+        expect(book.setLocale(locale)).toBe(book);
     });
 
     it('book.remveVBA removes all VBA macros', () => {
