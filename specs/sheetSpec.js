@@ -60,7 +60,7 @@ describe('The sheet class', function () {
         }).toThrow();
 
         var cellFormat = sheet.cellFormat(row, 0);
-        expect(format instanceof format.constructor).toBe(true);
+        expect(format instanceof xl.Format).toBe(true);
     });
 
     it('sheet.setCellFormat sets the cell format', function () {
@@ -91,7 +91,7 @@ describe('The sheet class', function () {
         var formatRef = {};
         expect(sheet.readStr(row, 0)).toBe('foo');
         expect(sheet.readStr(row, 0, formatRef)).toBe('foo');
-        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(formatRef.format instanceof xl.Format).toBe(true);
 
         row++;
     });
@@ -126,7 +126,7 @@ describe('The sheet class', function () {
         var formatRef = {};
         expect(sheet.readNum(row, 0)).toEqual(10);
         expect(sheet.readNum(row, 0, formatRef)).toEqual(10);
-        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(formatRef.format instanceof xl.Format).toBe(true);
 
         row++;
     });
@@ -161,7 +161,7 @@ describe('The sheet class', function () {
         var formatRef = {};
         expect(sheet.readBool(row, 0)).toEqual(true);
         expect(sheet.readBool(row, 0, formatRef)).toEqual(true);
-        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(formatRef.format instanceof xl.Format).toBe(true);
 
         row++;
     });
@@ -195,9 +195,9 @@ describe('The sheet class', function () {
         }).toThrow();
 
         var formatRef = {};
-        expect(sheet.readBlank(row, 0) instanceof format.constructor).toBe(true);
-        expect(sheet.readBlank(row, 0, formatRef) instanceof format.constructor).toBe(true);
-        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(sheet.readBlank(row, 0) instanceof xl.Format).toBe(true);
+        expect(sheet.readBlank(row, 0, formatRef) instanceof xl.Format).toBe(true);
+        expect(formatRef.format instanceof xl.Format).toBe(true);
         expect(function () {
             sheet.readBlank(row, 1);
         }).toThrow();
@@ -244,7 +244,7 @@ describe('The sheet class', function () {
         }).toThrow();
         expect(sheet.readFormula(row, 0)).toBe('SUM(A1:A10)');
         expect(sheet.readFormula(row, 0, formatRef)).toBe('SUM(A1:A10)');
-        expect(formatRef.format instanceof format.constructor).toBe(true);
+        expect(formatRef.format instanceof xl.Format).toBe(true);
 
         row++;
     });
@@ -513,7 +513,7 @@ describe('The sheet class', function () {
         shouldThrow(sheet.colFormat, sheet, '0');
         shouldThrow(sheet.colFormat, {}, 0);
 
-        expect(sheet.colFormat(0) instanceof format.constructor).toBeTrue();
+        expect(sheet.colFormat(0) instanceof xl.Format).toBeTrue();
     });
 
     it('sheet.rowFormat retrieves a row format', () => {
@@ -522,7 +522,7 @@ describe('The sheet class', function () {
         shouldThrow(sheet.rowFormat, sheet, '1');
         shouldThrow(sheet.rowFormat, {}, 1);
 
-        expect(sheet.rowFormat(1) instanceof format.constructor).toBeTrue();
+        expect(sheet.rowFormat(1) instanceof xl.Format).toBeTrue();
     });
 
     it('sheet.rowHidden checks whether a row is hidden', function () {

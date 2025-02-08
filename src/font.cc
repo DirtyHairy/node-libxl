@@ -290,6 +290,7 @@ namespace node_libxl {
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
+        Nan::Set(exports, Nan::New<String>("Font").ToLocalChecked(), Nan::New(constructor));
 
         NODE_DEFINE_CONSTANT(exports, UNDERLINE_NONE);
         NODE_DEFINE_CONSTANT(exports, UNDERLINE_SINGLE);

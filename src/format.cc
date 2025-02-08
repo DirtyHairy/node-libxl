@@ -725,6 +725,7 @@ namespace node_libxl {
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
+        Nan::Set(exports, Nan::New<String>("Format").ToLocalChecked(), Nan::New(constructor));
 
         NODE_DEFINE_CONSTANT(exports, NUMFORMAT_GENERAL);
         NODE_DEFINE_CONSTANT(exports, NUMFORMAT_NUMBER);

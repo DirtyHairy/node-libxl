@@ -543,7 +543,7 @@ describe('The book class', function () {
         var format = book.addFormat();
         shouldThrow(book.format, book, 'a');
         shouldThrow(book.format, {}, 0);
-        expect(book.format(0) instanceof format.constructor).toBe(true);
+        expect(book.format(0) instanceof xl.Format).toBe(true);
     });
 
     it('book.formatSize counts the number of formats', function () {
@@ -557,7 +557,7 @@ describe('The book class', function () {
         var font = book.addFont();
         shouldThrow(book.font, book, -1);
         shouldThrow(book.font, {}, 0);
-        expect(book.font(0) instanceof font.constructor).toBe(true);
+        expect(book.font(0) instanceof xl.Font).toBe(true);
     });
 
     it('book.fontSize counts the number of fonts', function () {
@@ -825,6 +825,14 @@ describe('The book class', function () {
     it('book.isWriteProtected checks for write protection', () => {
         shouldThrow(book.isWriteProtected, {});
         expect(book.isWriteProtected()).toBe(false);
+    });
+
+    it('book.getCoreProperty retrieves core properties', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        shouldThrow(book.coreProperties, {});
+
+        expect(book.coreProperties()).toBeInstanceOf(xl.CoreProperties);
     });
 
     it('book.setLocale sets the locale', () => {

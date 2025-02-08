@@ -10,7 +10,7 @@ describe('The format class', function () {
 
     it('format.font returns the font', function () {
         shouldThrow(format.font, {});
-        expect(format.font() instanceof font.constructor).toBe(true);
+        expect(format.font() instanceof xl.Font).toBe(true);
     });
 
     it('format.setFont sets the font', function () {

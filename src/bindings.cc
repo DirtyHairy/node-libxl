@@ -27,6 +27,7 @@
 #include "font.h"
 #include "format.h"
 #include "sheet.h"
+#include "core_properties.h"
 
 using namespace v8;
 using namespace node_libxl;
@@ -36,6 +37,7 @@ void Initialize(Local<Object> exports) {
     Sheet::Initialize(exports);
     Format::Initialize(exports);
     Font::Initialize(exports);
+    CoreProperties::Initialize(exports);
 }
 
 NODE_MODULE(libxl, Initialize)

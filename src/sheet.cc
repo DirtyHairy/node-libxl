@@ -3191,6 +3191,7 @@ namespace node_libxl {
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
+        Nan::Set(exports, Nan::New<String>("Sheet").ToLocalChecked(), Nan::New(constructor));
 
         NODE_DEFINE_CONSTANT(exports, CELLTYPE_EMPTY);
         NODE_DEFINE_CONSTANT(exports, CELLTYPE_NUMBER);

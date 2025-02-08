@@ -44,7 +44,7 @@ namespace node_libxl {
             return Wrapper<libxl::CoreProperties>::Unwrap<CoreProperties>(object);
         }
 
-        static v8::Local<v8::Object> NewInstance(libxl::CoreProperties* font,
+        static v8::Local<v8::Object> NewInstance(libxl::CoreProperties* coreProperties,
                                                  v8::Local<v8::Value> book);
 
        protected:

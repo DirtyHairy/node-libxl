@@ -457,5 +457,6 @@ namespace node_libxl {
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
+        Nan::Set(exports, Nan::New<String>("CoreProperties").ToLocalChecked(), Nan::New(constructor));
     }
 }  // namespace node_libxl
