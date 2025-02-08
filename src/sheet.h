@@ -203,6 +203,14 @@ namespace node_libxl {
         static NAN_METHOD(SetTabColorComponents);
         static NAN_METHOD(GetTabColor);
         static NAN_METHOD(AddIgnoredError);
+        static NAN_METHOD(AddDataValidation);
+        static NAN_METHOD(AddDataValidationDouble);
+        static NAN_METHOD(RemoveDataValidations);
+        static NAN_METHOD(GetActiveCell);
+        static NAN_METHOD(SetActiveCell);
+        static NAN_METHOD(SelectionRange);
+        static NAN_METHOD(AddSelectionRange);
+        static NAN_METHOD(RemoveSelection);
 
        private:
         const libxl::Sheet* wrappedSheet;

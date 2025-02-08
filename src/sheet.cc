@@ -2832,6 +2832,179 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    /*
+            virtual             void XLAPIENTRY addDataValidation(DataValidationType type,
+       DataValidationOperator op, int rowFirst, int rowLast, int colFirst, int colLast, const TCHAR*
+       value1, const TCHAR* value2 = 0, bool allowBlank = true, bool hideDropDown = false, bool
+       showInputMessage = true, bool showErrorMessage = true, const TCHAR* promptTitle = 0, const
+       TCHAR* prompt = 0, const TCHAR* errorTitle = 0, const TCHAR* error = 0,
+       DataValidationErrorStyle errorStyle = VALIDATION_ERRSTYLE_STOP) = 0;
+
+    */
+
+    NAN_METHOD(Sheet::AddDataValidation) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        auto type = static_cast<libxl::DataValidationType>(arguments.GetInt(0));
+        auto op = static_cast<libxl::DataValidationOperator>(arguments.GetInt(1));
+        int rowFirst = arguments.GetInt(2);
+        int rowLast = arguments.GetInt(3);
+        int colFirst = arguments.GetInt(4);
+        int colLast = arguments.GetInt(5);
+        CSNanUtf8Value(value1, arguments.GetString(6));
+        CSNanUtf8Value(value2, arguments.GetString(7, ""));
+        bool allowBlank = arguments.GetBoolean(8, true);
+        bool hideDropDown = arguments.GetBoolean(9, false);
+        bool showInputMessage = arguments.GetBoolean(10, true);
+        bool showErrorMessage = arguments.GetBoolean(11, true);
+        CSNanUtf8Value(promptTitle, arguments.GetString(12, ""));
+        CSNanUtf8Value(prompt, arguments.GetString(13, ""));
+        CSNanUtf8Value(errorTitle, arguments.GetString(14, ""));
+        CSNanUtf8Value(error, arguments.GetString(15, ""));
+        auto errorStyle = static_cast<libxl::DataValidationErrorStyle>(
+            arguments.GetInt(16, libxl::VALIDATION_ERRSTYLE_STOP));
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->addDataValidation(type, op, rowFirst, rowLast, colFirst, colLast,
+                                              *value1, *value2, allowBlank, hideDropDown,
+                                              showInputMessage, showErrorMessage, *promptTitle,
+                                              *prompt, *errorTitle, *error, errorStyle);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::AddDataValidationDouble) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        auto type = static_cast<libxl::DataValidationType>(arguments.GetInt(0));
+        auto op = static_cast<libxl::DataValidationOperator>(arguments.GetInt(1));
+        int rowFirst = arguments.GetInt(2);
+        int rowLast = arguments.GetInt(3);
+        int colFirst = arguments.GetInt(4);
+        int colLast = arguments.GetInt(5);
+        double value1 = arguments.GetDouble(6);
+        double value2 = arguments.GetDouble(7);
+        bool allowBlank = arguments.GetBoolean(8, true);
+        bool hideDropDown = arguments.GetBoolean(9, false);
+        bool showInputMessage = arguments.GetBoolean(10, true);
+        bool showErrorMessage = arguments.GetBoolean(11, true);
+        CSNanUtf8Value(promptTitle, arguments.GetString(12, ""));
+        CSNanUtf8Value(prompt, arguments.GetString(13, ""));
+        CSNanUtf8Value(errorTitle, arguments.GetString(14, ""));
+        CSNanUtf8Value(error, arguments.GetString(15, ""));
+        auto errorStyle = static_cast<libxl::DataValidationErrorStyle>(
+            arguments.GetInt(16, libxl::VALIDATION_ERRSTYLE_STOP));
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->addDataValidationDouble(
+            type, op, rowFirst, rowLast, colFirst, colLast, value1, value2, allowBlank,
+            hideDropDown, showInputMessage, showErrorMessage, *promptTitle, *prompt, *errorTitle,
+            *error, errorStyle);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::RemoveDataValidations) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->removeDataValidations();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::GetActiveCell) {
+        Nan::HandleScope scope;
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        int row, col;
+        that->GetWrapped()->getActiveCell(&row, &col);
+
+        Local<Object> result = Nan::New<Object>();
+        Nan::Set(result, Nan::New<String>("row").ToLocalChecked(), Nan::New<Integer>(row));
+        Nan::Set(result, Nan::New<String>("col").ToLocalChecked(), Nan::New<Integer>(col));
+
+        info.GetReturnValue().Set(result);
+    }
+
+    NAN_METHOD(Sheet::SetActiveCell) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->setActiveCell(row, col);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::SelectionRange) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        const char* result = that->GetWrapped()->selectionRange();
+        if (!result) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
+    }
+
+    NAN_METHOD(Sheet::AddSelectionRange) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(sqref, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->addSelectionRange(*sqref);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::RemoveSelection) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->removeSelection();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     // Init
 
     void Sheet::Initialize(Local<Object> exports) {
@@ -3007,6 +3180,14 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setTabColor", SetTabColor);
         Nan::SetPrototypeMethod(t, "getTabColor", GetTabColor);
         Nan::SetPrototypeMethod(t, "addIgnoredError", AddIgnoredError);
+        Nan::SetPrototypeMethod(t, "addDataValidation", AddDataValidation);
+        Nan::SetPrototypeMethod(t, "addDataValidationDouble", AddDataValidationDouble);
+        Nan::SetPrototypeMethod(t, "removeDataValidations", RemoveDataValidations);
+        Nan::SetPrototypeMethod(t, "getActiveCell", GetActiveCell);
+        Nan::SetPrototypeMethod(t, "setActiveCell", SetActiveCell);
+        Nan::SetPrototypeMethod(t, "selectionRange", SelectionRange);
+        Nan::SetPrototypeMethod(t, "addSelectionRange", AddSelectionRange);
+        Nan::SetPrototypeMethod(t, "removeSelection", RemoveSelection);
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
@@ -3227,6 +3408,28 @@ namespace node_libxl {
         NODE_DEFINE_CONSTANT(exports, IERR_TWODIG_TEXTYEAR);
         NODE_DEFINE_CONSTANT(exports, IERR_UNLOCK_FMLA);
         NODE_DEFINE_CONSTANT(exports, IERR_DATA_VALIDATION);
+
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_NONE);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_WHOLE);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_DECIMAL);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_LIST);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_DATE);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_TIME);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_TEXTLENGTH);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_TYPE_CUSTOM);
+
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_BETWEEN);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_NOTBETWEEN);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_EQUAL);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_NOTEQUAL);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_LESSTHAN);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_LESSTHANOREQUAL);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_GREATERTHAN);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_OP_GREATERTHANOREQUAL);
+
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_ERRSTYLE_STOP);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_ERRSTYLE_WARNING);
+        NODE_DEFINE_CONSTANT(exports, VALIDATION_ERRSTYLE_INFORMATION);
     }
 
 }  // namespace node_libxl

@@ -1434,4 +1434,220 @@ describe('The sheet class', function () {
 
         expect(sheet.addIgnoredError(row, 1, row + 2, 3, xl.IERR_TWODIG_TEXTYEAR)).toBe(sheet);
     });
+
+    it('sheet.addDataValidation adds a string data validation for a range of cell', () => {
+        shouldThrow(
+            sheet.addDataValidation,
+            sheet,
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            'a',
+            'b',
+            false,
+            false,
+            false,
+            false,
+            'hanni',
+            'nanni',
+            'fanni',
+            'wanni',
+            'a'
+        );
+
+        shouldThrow(
+            sheet.addDataValidation,
+            {},
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            'a',
+            'b',
+            false,
+            false,
+            false,
+            false,
+            'hanni',
+            'nanni',
+            'fanni',
+            'wanni',
+            xl.VALIDATION_ERRSTYLE_STOP
+        );
+
+        shouldThrow(sheet.addDataValidation, sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1);
+        shouldThrow(sheet.addDataValidation, {}, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 'a');
+        shouldThrow(sheet.addDataValidation, sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5);
+
+        expect(
+            sheet.addDataValidation(
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                'a',
+                'b',
+                false,
+                false,
+                false,
+                false,
+                'hanni',
+                'nanni',
+                'fanni',
+                'wanni',
+                xl.VALIDATION_ERRSTYLE_STOP
+            )
+        ).toBe(sheet);
+
+        expect(sheet.addDataValidation(xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 'a', 'b')).toBe(
+            sheet
+        );
+    });
+
+    it('sheet.addDataValidationDouble adds a double data validation for a range of cell', () => {
+        shouldThrow(
+            sheet.addDataValidationDouble,
+            sheet,
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            1,
+            2,
+            false,
+            false,
+            false,
+            false,
+            'hanni',
+            'nanni',
+            'fanni',
+            'wanni',
+            'a'
+        );
+
+        shouldThrow(
+            sheet.addDataValidationDouble,
+            {},
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            1,
+            2,
+            false,
+            false,
+            false,
+            false,
+            'hanni',
+            'nanni',
+            'fanni',
+            'wanni',
+            xl.VALIDATION_ERRSTYLE_STOP
+        );
+
+        shouldThrow(
+            sheet.addDataValidationDouble,
+            sheet,
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            1,
+            'a'
+        );
+        shouldThrow(
+            sheet.addDataValidationDouble,
+            {},
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            1,
+            2
+        );
+        shouldThrow(
+            sheet.addDataValidationDouble,
+            sheet,
+            xl.VALIDATION_TYPE_WHOLE,
+            xl.VALIDATION_OP_EQUAL,
+            1,
+            5,
+            1,
+            5,
+            1
+        );
+
+        expect(
+            sheet.addDataValidationDouble(
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                1,
+                2,
+                false,
+                false,
+                false,
+                false,
+                'hanni',
+                'nanni',
+                'fanni',
+                'wanni',
+                xl.VALIDATION_ERRSTYLE_STOP
+            )
+        ).toBe(sheet);
+
+        expect(sheet.addDataValidationDouble(xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1, 2)).toBe(
+            sheet
+        );
+    });
+
+    it('sheet.removeDataValidations removes all data validations', () => {
+        expect(sheet.removeDataValidations()).toBe(sheet);
+    });
+
+    it('sheet.getActiveSell and sheet.setActiveCell manage the active cell', () => {
+        shouldThrow(sheet.setActiveCell, sheet, 1, 'a');
+        shouldThrow(sheet.setActiveCell, {}, 1, 1);
+
+        expect(sheet.setActiveCell(1, 1)).toBe(sheet);
+
+        shouldThrow(sheet.getActiveCell, {});
+
+        expect(sheet.getActiveCell()).toEqual({ row: 1, col: 1 });
+    });
+
+    it('sheet.addSectionRange, sheet.removeSelection and sheet.selectionRange manage the selection range', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.removeSelection, {});
+        expect(sheet.removeSelection()).toBe(sheet);
+
+        shouldThrow(sheet.addSelectionRange, sheet, 1);
+        shouldThrow(sheet.addSelectionRange, {}, 'A1:A12');
+
+        expect(sheet.addSelectionRange('A2:A10')).toBe(sheet);
+
+        shouldThrow(sheet.selectionRange, {});
+
+        expect(sheet.selectionRange()).toBe('A2:A10');
+    });
 });
