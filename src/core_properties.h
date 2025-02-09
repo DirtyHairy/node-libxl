@@ -50,6 +50,27 @@ namespace node_libxl {
        protected:
         static NAN_METHOD(Title);
         static NAN_METHOD(SetTitle);
+        static NAN_METHOD(Subject);
+        static NAN_METHOD(SetSubject);
+        static NAN_METHOD(Creator);
+        static NAN_METHOD(SetCreator);
+        static NAN_METHOD(LastModifiedBy);
+        static NAN_METHOD(SetLastModifiedBy);
+        static NAN_METHOD(Created);
+        static NAN_METHOD(SetCreated);
+        static NAN_METHOD(CreatedAsDouble);
+        static NAN_METHOD(SetCreatedAsDouble);
+        static NAN_METHOD(Modified);
+        static NAN_METHOD(ModifiedAsDouble);
+        static NAN_METHOD(SetModifiedAsDouble);
+        static NAN_METHOD(Tags);
+        static NAN_METHOD(SetTags);
+        static NAN_METHOD(Categories);
+        static NAN_METHOD(SetCategories);
+        static NAN_METHOD(Comments);
+        static NAN_METHOD(SetComments);
+        static NAN_METHOD(RemoveAll);
+        static NAN_METHOD(SetModified);
 
        private:
         CoreProperties(const CoreProperties&);

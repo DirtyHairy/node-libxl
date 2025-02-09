@@ -85,6 +85,339 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(CoreProperties::Subject) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* subject = that->GetWrapped()->subject();
+        if (!subject) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(subject).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetSubject) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(subject, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setSubject(*subject);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Creator) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* creator = that->GetWrapped()->creator();
+        if (!creator) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(creator).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetCreator) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(creator, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setCreator(*creator);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::LastModifiedBy) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* lastModifiedBy = that->GetWrapped()->lastModifiedBy();
+        if (!lastModifiedBy) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(lastModifiedBy).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetLastModifiedBy) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(lastModifiedBy, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setLastModifiedBy(*lastModifiedBy);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Created) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* created = that->GetWrapped()->created();
+        if (!created) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(created).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetCreated) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(created, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setCreated(*created);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::CreatedAsDouble) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        double created = that->GetWrapped()->createdAsDouble();
+        info.GetReturnValue().Set(Nan::New<Number>(created));
+    }
+
+    NAN_METHOD(CoreProperties::SetCreatedAsDouble) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        double created = arguments.GetDouble(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setCreatedAsDouble(created);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Modified) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* modified = that->GetWrapped()->modified();
+        if (!modified) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(modified).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetModified) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(modified, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setModified(*modified);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::ModifiedAsDouble) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        double modified = that->GetWrapped()->modifiedAsDouble();
+        info.GetReturnValue().Set(Nan::New<Number>(modified));
+    }
+
+    NAN_METHOD(CoreProperties::SetModifiedAsDouble) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        double modified = arguments.GetDouble(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setModifiedAsDouble(modified);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Tags) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* tags = that->GetWrapped()->tags();
+        if (!tags) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(tags).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetTags) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(tags, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setTags(*tags);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Categories) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* categories = that->GetWrapped()->categories();
+        if (!categories) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(categories).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetCategories) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(categories, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setCategories(*categories);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::Comments) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        const char* comments = that->GetWrapped()->comments();
+        if (!comments) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Nan::New<String>(comments).ToLocalChecked());
+    }
+
+    NAN_METHOD(CoreProperties::SetComments) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(comments, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setComments(*comments);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(CoreProperties::RemoveAll) {
+        Nan::HandleScope scope;
+
+        CoreProperties* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->removeAll();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     // Init
 
     void CoreProperties::Initialize(Local<Object> exports) {
@@ -100,6 +433,27 @@ namespace node_libxl {
 
         Nan::SetPrototypeMethod(t, "title", Title);
         Nan::SetPrototypeMethod(t, "setTitle", SetTitle);
+        Nan::SetPrototypeMethod(t, "subject", Subject);
+        Nan::SetPrototypeMethod(t, "setSubject", SetSubject);
+        Nan::SetPrototypeMethod(t, "creator", Creator);
+        Nan::SetPrototypeMethod(t, "setCreator", SetCreator);
+        Nan::SetPrototypeMethod(t, "lastModifiedBy", LastModifiedBy);
+        Nan::SetPrototypeMethod(t, "setLastModifiedBy", SetLastModifiedBy);
+        Nan::SetPrototypeMethod(t, "created", Created);
+        Nan::SetPrototypeMethod(t, "setCreated", SetCreated);
+        Nan::SetPrototypeMethod(t, "createdAsDouble", CreatedAsDouble);
+        Nan::SetPrototypeMethod(t, "setCreatedAsDouble", SetCreatedAsDouble);
+        Nan::SetPrototypeMethod(t, "modified", Modified);
+        Nan::SetPrototypeMethod(t, "setModified", SetModified);
+        Nan::SetPrototypeMethod(t, "modifiedAsDouble", ModifiedAsDouble);
+        Nan::SetPrototypeMethod(t, "setModifiedAsDouble", SetModifiedAsDouble);
+        Nan::SetPrototypeMethod(t, "tags", Tags);
+        Nan::SetPrototypeMethod(t, "setTags", SetTags);
+        Nan::SetPrototypeMethod(t, "categories", Categories);
+        Nan::SetPrototypeMethod(t, "setCategories", SetCategories);
+        Nan::SetPrototypeMethod(t, "comments", Comments);
+        Nan::SetPrototypeMethod(t, "setComments", SetComments);
+        Nan::SetPrototypeMethod(t, "removeAll", RemoveAll);
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
