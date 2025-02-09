@@ -114,6 +114,7 @@ namespace node_libxl {
         static NAN_METHOD(SetTemplate);
         static NAN_METHOD(SetKey);
         static NAN_METHOD(IsWriteProtected);
+        static NAN_METHOD(CoreProperties);
         static NAN_METHOD(SetLocale);
         static NAN_METHOD(RemoveVBA);
         static NAN_METHOD(RemovePrinterSettings);

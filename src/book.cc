@@ -31,6 +31,7 @@
 #include "assert.h"
 #include "async_worker.h"
 #include "buffer_copy.h"
+#include "core_properties.h"
 #include "font.h"
 #include "format.h"
 #include "sheet.h"
@@ -1515,6 +1516,23 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isWriteProtected()));
     }
 
+    NAN_METHOD(Book::CoreProperties) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        libxl::CoreProperties* coreProperties = that->GetWrapped()->coreProperties();
+        if (!coreProperties) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(CoreProperties::NewInstance(coreProperties, info.This()));
+    }
+
     NAN_METHOD(Book::SetLocale) {
         Nan::HandleScope scope;
 
@@ -1677,6 +1695,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setTemplate", SetTemplate);
         Nan::SetPrototypeMethod(t, "setKey", SetKey);
         Nan::SetPrototypeMethod(t, "isWriteProtected", IsWriteProtected);
+        Nan::SetPrototypeMethod(t, "coreProperties", CoreProperties);
         Nan::SetPrototypeMethod(t, "setLocale", SetLocale);
         Nan::SetPrototypeMethod(t, "removeVBA", RemoveVBA);
         Nan::SetPrototypeMethod(t, "removePrinterSettings", RemovePrinterSettings);
