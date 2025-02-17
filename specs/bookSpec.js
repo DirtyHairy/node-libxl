@@ -525,6 +525,13 @@ describe('The book class', function () {
         expect(book.addFont(font1).name()).toBe('times');
     });
 
+    it('book.addRichString adds a rich string', () => {
+        shouldThrow(book.addRichString, {});
+
+        const richString = book.addRichString();
+        expect(richString instanceof xl.RichString).toBe(true);
+    });
+
     it('book.addCusomtNumFormat adds a custom number format', function () {
         shouldThrow(book.addCusomtNumFormat, book, 10);
         shouldThrow(book.addCusomtNumFormat, {}, '000');
@@ -836,7 +843,7 @@ describe('The book class', function () {
     });
 
     it('book.setLocale sets the locale', () => {
-        const locale = process.env["LANG"] ?? 'en_GB';
+        const locale = process.env['LANG'] ?? 'en_GB';
 
         shouldThrow(book.setLocale, book, 1);
         shouldThrow(book.setLocale, {}, locale);

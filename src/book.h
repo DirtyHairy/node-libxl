@@ -81,6 +81,7 @@ namespace node_libxl {
         static NAN_METHOD(AddFormat);
         static NAN_METHOD(AddFormatFromStyle);
         static NAN_METHOD(AddFont);
+        static NAN_METHOD(AddRichString);
         static NAN_METHOD(AddCustomNumFormat);
         static NAN_METHOD(CustomNumFormat);
         static NAN_METHOD(Format);

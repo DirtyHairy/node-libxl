@@ -13,7 +13,8 @@
                 'src/book_wrapper.cc',
                 'src/string_copy.cc',
                 'src/buffer_copy.cc',
-                'src/core_properties.cc'
+                'src/core_properties.cc',
+                'src/rich_string.cc'
             ],
             'include_dirs': [
                 'deps/libxl/include_cpp',

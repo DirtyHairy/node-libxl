@@ -34,6 +34,7 @@
 #include "core_properties.h"
 #include "font.h"
 #include "format.h"
+#include "rich_string.h"
 #include "sheet.h"
 #include "string_copy.h"
 #include "util.h"
@@ -852,6 +853,23 @@ namespace node_libxl {
         info.GetReturnValue().Set(Font::NewInstance(libxlFont, info.This()));
     }
 
+    NAN_METHOD(Book::AddRichString) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = Unwrap(info.This());
+        ASSERT_THIS(that);
+
+        libxl::RichString* richString = that->GetWrapped()->addRichString();
+        if (!richString) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(RichString::NewInstance(richString, info.This()));
+    }
+
     NAN_METHOD(Book::AddCustomNumFormat) {
         Nan::HandleScope scope;
 
@@ -1659,6 +1677,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "addFormat", AddFormat);
         Nan::SetPrototypeMethod(t, "addFormatFromStyle", AddFormatFromStyle);
         Nan::SetPrototypeMethod(t, "addFont", AddFont);
+        Nan::SetPrototypeMethod(t, "addRichString", AddRichString);
         Nan::SetPrototypeMethod(t, "addCustomNumFormat", AddCustomNumFormat);
         Nan::SetPrototypeMethod(t, "customNumFormat", CustomNumFormat);
         Nan::SetPrototypeMethod(t, "format", Format);
