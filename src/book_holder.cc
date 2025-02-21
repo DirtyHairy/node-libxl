@@ -22,49 +22,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINDINGS_FONT_H
-#define BINDINGS_FONT_H
-
 #include "book_holder.h"
-#include "common.h"
-#include "wrapper.h"
+
+#include <cstdlib>
+#include <iostream>
+
+using namespace v8;
 
 namespace node_libxl {
 
-    class Font : public Wrapper<libxl::Font, Font>,
-                 public BookHolder
+    BookHolder::BookHolder(Local<Value> bookHandle) {
+        if (!Book::FromJS(bookHandle)) {
+            std::cerr << "libxl bindings: internal error: handle is not a book instance"
+                      << std::endl;
 
-    {
-       public:
-        Font(libxl::Font* font, v8::Local<v8::Value> book);
+            abort();
+        }
 
-        static void Initialize(v8::Local<v8::Object> exports);
+        this->bookHandle.Reset(bookHandle);
+    }
 
-        static v8::Local<v8::Object> NewInstance(libxl::Font* font, v8::Local<v8::Value> book);
+    BookHolder::~BookHolder() { bookHandle.Reset(); }
 
-       protected:
-        static NAN_METHOD(Size);
-        static NAN_METHOD(SetSize);
-        static NAN_METHOD(Italic);
-        static NAN_METHOD(SetItalic);
-        static NAN_METHOD(StrikeOut);
-        static NAN_METHOD(SetStrikeOut);
-        static NAN_METHOD(Color);
-        static NAN_METHOD(SetColor);
-        static NAN_METHOD(Bold);
-        static NAN_METHOD(SetBold);
-        static NAN_METHOD(Script);
-        static NAN_METHOD(SetScript);
-        static NAN_METHOD(Underline);
-        static NAN_METHOD(SetUnderline);
-        static NAN_METHOD(Name);
-        static NAN_METHOD(SetName);
+    v8::Local<v8::Value> BookHolder::GetBookHandle() {
+        Nan::EscapableHandleScope scope;
 
-       private:
-        Font(const Font&);
-        const Font& operator=(const Font&);
-    };
+        return scope.Escape(Nan::New(bookHandle));
+    }
+
+    Book* BookHolder::GetBook() {
+        Nan::HandleScope scope;
+
+        return Book::FromJS(Nan::New(bookHandle));
+    }
 
 }  // namespace node_libxl
-
-#endif  // BINDINGS_FONT_H

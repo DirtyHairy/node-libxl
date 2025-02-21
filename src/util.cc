@@ -77,19 +77,19 @@ namespace node_libxl {
 
         Book* GetBook(Book* book) { return book; }
 
-        Book* GetBook(BookWrapper* bookWrapper) { return bookWrapper->GetBook(); }
+        Book* GetBook(BookHolder* bookWrapper) { return bookWrapper->GetBook(); }
 
         libxl::Book* UnwrapBook(libxl::Book* book) { return book; }
 
         libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle) {
-            Book* book = Book::Unwrap(bookHandle);
+            Book* book = Book::FromJS(bookHandle);
 
             return book ? book->GetWrapped() : NULL;
         }
 
         libxl::Book* UnwrapBook(Book* book) { return book ? book->GetWrapped() : NULL; }
 
-        libxl::Book* UnwrapBook(BookWrapper* bookWrapper) {
+        libxl::Book* UnwrapBook(BookHolder* bookWrapper) {
             Book* book = bookWrapper->GetBook();
             return book ? book->GetWrapped() : NULL;
         }

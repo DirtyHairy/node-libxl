@@ -10,7 +10,7 @@
                 'src/sheet.cc',
                 'src/format.cc',
                 'src/font.cc',
-                'src/book_wrapper.cc',
+                'src/book_holder.cc',
                 'src/string_copy.cc',
                 'src/buffer_copy.cc',
                 'src/core_properties.cc',

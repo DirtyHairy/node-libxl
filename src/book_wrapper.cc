@@ -31,8 +31,8 @@ using namespace v8;
 
 namespace node_libxl {
 
-    BookWrapper::BookWrapper(Local<Value> bookHandle) {
-        if (!Book::Unwrap(bookHandle)) {
+    BookHolder::BookHolder(Local<Value> bookHandle) {
+        if (!Book::FromJS(bookHandle)) {
             std::cerr << "libxl bindings: internal error: handle is not a book instance"
                       << std::endl;
 
@@ -42,18 +42,18 @@ namespace node_libxl {
         this->bookHandle.Reset(bookHandle);
     }
 
-    BookWrapper::~BookWrapper() { bookHandle.Reset(); }
+    BookHolder::~BookHolder() { bookHandle.Reset(); }
 
-    v8::Local<v8::Value> BookWrapper::GetBookHandle() {
+    v8::Local<v8::Value> BookHolder::GetBookHandle() {
         Nan::EscapableHandleScope scope;
 
         return scope.Escape(Nan::New(bookHandle));
     }
 
-    Book* BookWrapper::GetBook() {
+    Book* BookHolder::GetBook() {
         Nan::HandleScope scope;
 
-        return Book::Unwrap(Nan::New(bookHandle));
+        return Book::FromJS(Nan::New(bookHandle));
     }
 
 }  // namespace node_libxl

@@ -28,7 +28,7 @@
 #include <cstring>
 
 #include "book.h"
-#include "book_wrapper.h"
+#include "book_holder.h"
 #include "common.h"
 
 namespace node_libxl {
@@ -45,12 +45,12 @@ namespace node_libxl {
         v8::Local<v8::Value> CallStubConstructor(v8::Local<v8::Function> constructor);
 
         Book* GetBook(Book*);
-        Book* GetBook(BookWrapper*);
+        Book* GetBook(BookHolder*);
 
         libxl::Book* UnwrapBook(libxl::Book* book);
         libxl::Book* UnwrapBook(v8::Local<v8::Value> bookHandle);
         libxl::Book* UnwrapBook(Book* book);
-        libxl::Book* UnwrapBook(BookWrapper* bookWrapper);
+        libxl::Book* UnwrapBook(BookHolder* bookWrapper);
 
         template <typename T>
         Nan::NAN_METHOD_RETURN_TYPE ThrowLibxlError(T wrappedBook) {

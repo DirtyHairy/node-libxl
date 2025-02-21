@@ -83,7 +83,7 @@ namespace node_libxl {
 
     template <typename T>
     T *ArgumentHelper::GetWrapped(size_t pos) {
-        T *unwrapped = T::Unwrap(arguments[pos]);
+        T *unwrapped = T::FromJS(arguments[pos]);
         if (!unwrapped) RaiseException("Invalid type for argument", pos);
         return unwrapped;
     }

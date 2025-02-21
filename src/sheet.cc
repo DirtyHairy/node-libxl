@@ -43,7 +43,7 @@ namespace node_libxl {
     // Lifecycle
 
     Sheet::Sheet(libxl::Sheet* sheet, Local<Value> book)
-        : Wrapper<libxl::Sheet, Sheet>(sheet), BookWrapper(book), wrappedSheet(sheet) {}
+        : Wrapper<libxl::Sheet, Sheet>(sheet), BookHolder(book), wrappedSheet(sheet) {}
 
     Local<Object> Sheet::NewInstance(libxl::Sheet* libxlSheet, Local<Value> book) {
         Nan::EscapableHandleScope scope;
@@ -68,7 +68,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::CellType cellType = that->GetWrapped()->cellType(row, col);
@@ -88,7 +88,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isFormula(row, col)));
@@ -103,7 +103,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = that->GetWrapped()->cellFormat(row, col);
@@ -124,7 +124,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(2);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         ASSERT_SAME_BOOK(that, format);
 
@@ -142,7 +142,7 @@ namespace node_libxl {
         Local<Value> formatRef = info[2];
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
@@ -170,7 +170,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(3, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -193,7 +193,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = nullptr;
@@ -222,7 +222,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         ASSERT_SAME_BOOK(that, richString);
@@ -245,7 +245,7 @@ namespace node_libxl {
         Local<Value> formatRef = info[2];
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
@@ -270,7 +270,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(3, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -292,7 +292,7 @@ namespace node_libxl {
         Local<Value> formatRef = info[2];
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
@@ -317,7 +317,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(3, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -339,7 +339,7 @@ namespace node_libxl {
         Local<Value> formatRef = info[2];
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
@@ -367,7 +367,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(2);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         ASSERT_SAME_BOOK(that, format);
 
@@ -387,7 +387,7 @@ namespace node_libxl {
         Local<Value> formatRef = info[2];
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* libxlFormat = NULL;
@@ -415,7 +415,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(3, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -441,7 +441,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(4, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -467,7 +467,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(4, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -493,7 +493,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(4, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -515,7 +515,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         const char* value = that->GetWrapped()->readComment(row, col);
@@ -539,7 +539,7 @@ namespace node_libxl {
         int height = arguments.GetInt(5, 75);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (info[3]->IsString()) {
@@ -559,7 +559,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->removeComment(row, col);
@@ -576,7 +576,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->readError(row, col)));
@@ -593,7 +593,7 @@ namespace node_libxl {
         Format* format = arguments.GetWrapped<Format>(3, nullptr);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -613,7 +613,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate(row, col)));
@@ -627,7 +627,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isRichStr(row, col)));
@@ -641,7 +641,7 @@ namespace node_libxl {
         int col = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->colWidth(col)));
@@ -655,7 +655,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeight(row)));
@@ -669,7 +669,7 @@ namespace node_libxl {
         int col = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->colWidthPx(col)));
@@ -683,7 +683,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->rowHeightPx(row)));
@@ -701,7 +701,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(4, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -727,7 +727,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(4, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -752,7 +752,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(3, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -777,7 +777,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(3, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
         if (format) {
             ASSERT_SAME_BOOK(that, format);
@@ -799,7 +799,7 @@ namespace node_libxl {
         int col = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* format = that->GetWrapped()->colFormat(col);
@@ -818,7 +818,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Format* format = that->GetWrapped()->rowFormat(row);
@@ -837,7 +837,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rowHidden(row)));
@@ -852,7 +852,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setRowHidden(row, hidden)) {
@@ -870,7 +870,7 @@ namespace node_libxl {
         int col = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->colHidden(col)));
@@ -885,7 +885,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setColHidden(col, hidden)) {
@@ -901,7 +901,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->defaultRowHeight()));
@@ -914,7 +914,7 @@ namespace node_libxl {
         double height = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setDefaultRowHeight(height);
@@ -930,7 +930,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
@@ -961,7 +961,7 @@ namespace node_libxl {
         int colLast = arguments.GetInt(3);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setMerge(rowFirst, rowLast, colFirst, colLast)) {
@@ -979,7 +979,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delMerge(row, col)) {
@@ -995,7 +995,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->mergeSize()));
@@ -1009,7 +1009,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
@@ -1037,7 +1037,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delMergeByIndex(index)) {
@@ -1050,7 +1050,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::PictureSize) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->pictureSize()));
@@ -1064,7 +1064,7 @@ namespace node_libxl {
         int sheetIndex = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowTop, colLeft, rowBottom, colRight, width, height, offset_x, offset_y;
@@ -1108,7 +1108,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removePicture(row, col)) {
@@ -1126,7 +1126,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removePictureByIndex(index)) {
@@ -1147,7 +1147,7 @@ namespace node_libxl {
         auto pos = static_cast<libxl::Position>(arguments.GetInt(6, libxl::POSITION_MOVE_AND_SIZE));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPicture(row, col, id, scale, offset_x, offset_y, pos);
@@ -1167,7 +1167,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPicture2(row, col, id, width, height, offset_x, offset_y, pos);
@@ -1183,7 +1183,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreak(index)));
@@ -1192,7 +1192,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetHorPageBreakSize) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getHorPageBreakSize()));
@@ -1206,7 +1206,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreak(index)));
@@ -1215,7 +1215,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetVerPageBreakSize) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->getVerPageBreakSize()));
@@ -1230,7 +1230,7 @@ namespace node_libxl {
         bool pagebreak = arguments.GetBoolean(1, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHorPageBreak(row, pagebreak)) {
@@ -1249,7 +1249,7 @@ namespace node_libxl {
         bool pagebreak = arguments.GetBoolean(1, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setVerPageBreak(col, pagebreak)) {
@@ -1267,7 +1267,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->split(row, col);
@@ -1281,7 +1281,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int row, col;
@@ -1306,7 +1306,7 @@ namespace node_libxl {
         bool collapsed = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->groupRows(rowFirst, rowLast, collapsed)) {
@@ -1325,7 +1325,7 @@ namespace node_libxl {
         bool collapsed = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->groupCols(colFirst, colLast, collapsed)) {
@@ -1338,7 +1338,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GroupSummaryBelow) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryBelow()));
@@ -1352,7 +1352,7 @@ namespace node_libxl {
         bool summaryBelow = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setGroupSummaryBelow(summaryBelow);
@@ -1363,7 +1363,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GroupSummaryRight) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->groupSummaryRight()));
@@ -1377,7 +1377,7 @@ namespace node_libxl {
         bool summaryRight = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setGroupSummaryRight(summaryRight);
@@ -1394,7 +1394,7 @@ namespace node_libxl {
             colFirst = arguments.GetInt(2, 0), colLast = arguments.GetInt(3, 16383);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->clear(rowFirst, rowLast, colFirst, colLast);
@@ -1411,7 +1411,7 @@ namespace node_libxl {
         bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->insertRow(rowFirst, rowLast, updateNamedRanges)) {
@@ -1455,7 +1455,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), rowFirst,
@@ -1473,7 +1473,7 @@ namespace node_libxl {
         bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->insertCol(colFirst, colLast, updateNamedRanges)) {
@@ -1517,7 +1517,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), colFirst,
@@ -1535,7 +1535,7 @@ namespace node_libxl {
         bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removeRow(rowFirst, rowLast, updateNamedRanges)) {
@@ -1579,7 +1579,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), rowFirst,
@@ -1622,7 +1622,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), colFirst,
@@ -1640,7 +1640,7 @@ namespace node_libxl {
         bool updateNamedRanges = arguments.GetBoolean(2, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->removeCol(colFirst, colLast, updateNamedRanges)) {
@@ -1659,7 +1659,7 @@ namespace node_libxl {
             rowDst = arguments.GetInt(2), colDst = arguments.GetInt(3);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->copyCell(rowSrc, colSrc, rowDst, colDst)) {
@@ -1672,7 +1672,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstRow) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstRow()));
@@ -1681,7 +1681,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::LastRow) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastRow()));
@@ -1690,7 +1690,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstCol) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstCol()));
@@ -1699,7 +1699,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::LastCol) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastCol()));
@@ -1708,7 +1708,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstFilledRow) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstFilledRow()));
@@ -1717,7 +1717,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::LastFilledRow) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastFilledRow()));
@@ -1726,7 +1726,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstFilledCol) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->firstFilledCol()));
@@ -1735,7 +1735,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::LastFilledCol) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->lastFilledCol()));
@@ -1744,7 +1744,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::DisplayGridlines) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->displayGridlines()));
@@ -1758,7 +1758,7 @@ namespace node_libxl {
         bool displayGridlines = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setDisplayGridlines(displayGridlines);
@@ -1769,7 +1769,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::PrintGridlines) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printGridlines()));
@@ -1783,7 +1783,7 @@ namespace node_libxl {
         bool printGridlines = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintGridlines(printGridlines);
@@ -1794,7 +1794,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Zoom) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->zoom()));
@@ -1808,7 +1808,7 @@ namespace node_libxl {
         int zoom = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setZoom(zoom);
@@ -1819,7 +1819,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::PrintZoom) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->printZoom()));
@@ -1833,7 +1833,7 @@ namespace node_libxl {
         int zoom = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintZoom(zoom);
@@ -1844,7 +1844,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetPrintFit) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int wPages, hPages;
@@ -1871,7 +1871,7 @@ namespace node_libxl {
         int wPages = arguments.GetInt(0, 1), hPages = arguments.GetInt(1, 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintFit(wPages, hPages);
@@ -1882,7 +1882,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Landscape) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->landscape()));
@@ -1896,7 +1896,7 @@ namespace node_libxl {
         bool landscape = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setLandscape(landscape);
@@ -1907,7 +1907,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Paper) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->paper()));
@@ -1921,7 +1921,7 @@ namespace node_libxl {
         int paper = arguments.GetInt(0, libxl::PAPER_DEFAULT);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPaper(static_cast<libxl::Paper>(paper));
@@ -1932,7 +1932,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Header) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->header()).ToLocalChecked());
@@ -1947,7 +1947,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(1, 0.5);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHeader(*header, margin)) {
@@ -1960,7 +1960,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::HeaderMargin) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->headerMargin()));
@@ -1969,7 +1969,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Footer) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->footer()).ToLocalChecked());
@@ -1984,7 +1984,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(1, 0.5);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setFooter(*footer, margin)) {
@@ -1997,7 +1997,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FooterMargin) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->footerMargin()));
@@ -2006,7 +2006,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::HCenter) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->hCenter()));
@@ -2020,7 +2020,7 @@ namespace node_libxl {
         bool center = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setHCenter(center);
@@ -2031,7 +2031,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::VCenter) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->vCenter()));
@@ -2045,7 +2045,7 @@ namespace node_libxl {
         bool center = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setVCenter(center);
@@ -2056,7 +2056,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginLeft) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginLeft()));
@@ -2070,7 +2070,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginLeft(margin);
@@ -2081,7 +2081,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginRight) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginRight()));
@@ -2095,7 +2095,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginRight(margin);
@@ -2106,7 +2106,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginTop) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginTop()));
@@ -2120,7 +2120,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginTop(margin);
@@ -2131,7 +2131,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginBottom) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->marginBottom()));
@@ -2145,7 +2145,7 @@ namespace node_libxl {
         double margin = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setMarginBottom(margin);
@@ -2156,7 +2156,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::PrintRowCol) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->printRowCol()));
@@ -2170,7 +2170,7 @@ namespace node_libxl {
         bool printRowCol = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRowCol(printRowCol);
@@ -2184,7 +2184,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast;
@@ -2209,7 +2209,7 @@ namespace node_libxl {
         int rowFirst = arguments.GetInt(0), rowLast = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRepeatRows(rowFirst, rowLast);
@@ -2223,7 +2223,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int colFirst, colLast;
@@ -2248,7 +2248,7 @@ namespace node_libxl {
         int colFirst = arguments.GetInt(0), colLast = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintRepeatCols(colFirst, colLast);
@@ -2265,7 +2265,7 @@ namespace node_libxl {
             colFirst = arguments.GetInt(2), colLast = arguments.GetInt(3);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setPrintArea(rowFirst, rowLast, colFirst, colLast);
@@ -2276,7 +2276,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::ClearPrintRepeats) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->clearPrintRepeats();
@@ -2287,7 +2287,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::ClearPrintArea) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->clearPrintArea();
@@ -2304,7 +2304,7 @@ namespace node_libxl {
         int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
@@ -2339,7 +2339,7 @@ namespace node_libxl {
             scopeId = arguments.GetInt(5, libxl::SCOPE_UNDEFINED);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setNamedRange(*name, rowFirst, rowLast, colFirst, colLast,
@@ -2359,7 +2359,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast, headerRowCount, totalRowCount;
@@ -2391,7 +2391,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->tableSize()));
@@ -2406,7 +2406,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast, headerRowCount, totalRowCount;
@@ -2438,7 +2438,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->hyperlinkSize()));
@@ -2452,7 +2452,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast;
@@ -2483,7 +2483,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delHyperlink(index)) {
@@ -2505,7 +2505,7 @@ namespace node_libxl {
         int colLast = arguments.GetInt(4);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->addHyperlink(*hyperlink, rowFirst, rowLast, colFirst, colLast);
@@ -2522,7 +2522,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int index = that->GetWrapped()->hyperlinkIndex(row, col);
@@ -2539,7 +2539,7 @@ namespace node_libxl {
         int scopeId = arguments.GetInt(1, libxl::SCOPE_UNDEFINED);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->delNamedRange(*name, static_cast<libxl::Scope>(scopeId))) {
@@ -2552,7 +2552,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::NamedRangeSize) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->namedRangeSize()));
@@ -2566,7 +2566,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int rowFirst, rowLast, colFirst, colLast, scopeId;
@@ -2597,7 +2597,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Name) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<String>(that->GetWrapped()->name()).ToLocalChecked());
@@ -2611,7 +2611,7 @@ namespace node_libxl {
         CSNanUtf8Value(name, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setName(*name);
@@ -2622,7 +2622,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Protect) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->protect()));
@@ -2636,7 +2636,7 @@ namespace node_libxl {
         bool protect = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setProtect(protect);
@@ -2647,7 +2647,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::RightToLeft) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rightToLeft()));
@@ -2661,7 +2661,7 @@ namespace node_libxl {
         bool rightToLeft = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setRightToLeft(rightToLeft);
@@ -2672,7 +2672,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Hidden) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->hidden()));
@@ -2686,7 +2686,7 @@ namespace node_libxl {
         int state = arguments.GetInt(0, libxl::SHEETSTATE_HIDDEN);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->setHidden(static_cast<libxl::SheetState>(state))) {
@@ -2699,7 +2699,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetTopLeftView) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int row, col;
@@ -2721,7 +2721,7 @@ namespace node_libxl {
         int row = arguments.GetInt(0), col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setTopLeftView(row, col);
@@ -2737,7 +2737,7 @@ namespace node_libxl {
         CSNanUtf8Value(addr, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int row = -1, col = -1;
@@ -2766,7 +2766,7 @@ namespace node_libxl {
              colRelative = arguments.GetBoolean(3, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         const char* addr = that->GetWrapped()->rowColToAddr(row, col, rowRelative, colRelative);
@@ -2789,7 +2789,7 @@ namespace node_libxl {
         int colLast = arguments.GetInt(3, -1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setAutoFitArea(rowFirst, colFirst, rowLast, colLast);
@@ -2800,7 +2800,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::TabColor) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::Color color = that->GetWrapped()->tabColor();
@@ -2811,7 +2811,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::SetTabColor) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         ArgumentHelper arguments(info);
@@ -2847,7 +2847,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetTabColor) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int red, green, blue;
@@ -2875,7 +2875,7 @@ namespace node_libxl {
         int iError = arguments.GetInt(4);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         if (!that->GetWrapped()->addIgnoredError(rowFirst, colFirst, rowLast, colLast,
@@ -2921,7 +2921,7 @@ namespace node_libxl {
             arguments.GetInt(16, libxl::VALIDATION_ERRSTYLE_STOP));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->addDataValidation(type, op, rowFirst, rowLast, colFirst, colLast,
@@ -2957,7 +2957,7 @@ namespace node_libxl {
             arguments.GetInt(16, libxl::VALIDATION_ERRSTYLE_STOP));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->addDataValidationDouble(
@@ -2971,7 +2971,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::RemoveDataValidations) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->removeDataValidations();
@@ -2982,7 +2982,7 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetActiveCell) {
         Nan::HandleScope scope;
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         int row, col;
@@ -3004,7 +3004,7 @@ namespace node_libxl {
         int col = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->setActiveCell(row, col);
@@ -3018,7 +3018,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         const char* result = that->GetWrapped()->selectionRange();
@@ -3037,7 +3037,7 @@ namespace node_libxl {
         CSNanUtf8Value(sqref, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->addSelectionRange(*sqref);
@@ -3051,7 +3051,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Sheet* that = Unwrap(info.This());
+        Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         that->GetWrapped()->removeSelection();
@@ -3070,7 +3070,7 @@ namespace node_libxl {
         t->SetClassName(Nan::New<String>("Sheet").ToLocalChecked());
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
-        BookWrapper::Initialize<Sheet>(t);
+        BookHolder::Initialize<Sheet>(t);
 
         Nan::SetPrototypeMethod(t, "cellType", CellType);
         Nan::SetPrototypeMethod(t, "isFormula", IsFormula);

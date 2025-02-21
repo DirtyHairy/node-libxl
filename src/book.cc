@@ -114,7 +114,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->load(
@@ -158,7 +158,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(
@@ -179,7 +179,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->loadSheet(
@@ -231,7 +231,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename,
@@ -254,7 +254,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->loadPartially(
@@ -314,7 +314,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename,
@@ -332,7 +332,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->loadWithoutEmptyCells(*filename)) {
@@ -365,7 +365,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
@@ -382,7 +382,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->loadInfo(*filename)) {
@@ -415,7 +415,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), filename));
@@ -432,7 +432,7 @@ namespace node_libxl {
         bool useTempFile = arguments.GetBoolean(1, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Book* libxlBook = that->GetWrapped();
@@ -476,7 +476,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(
@@ -488,7 +488,7 @@ namespace node_libxl {
     NAN_METHOD(Book::WriteRawSync) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* data;
@@ -542,7 +542,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This()));
@@ -562,7 +562,7 @@ namespace node_libxl {
         bool keepAllSheets = arguments.GetBoolean(4, false);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->loadRaw(node::Buffer::Data(buffer), node::Buffer::Length(buffer),
@@ -616,7 +616,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(arguments.Length() - 1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), buffer,
@@ -634,7 +634,7 @@ namespace node_libxl {
         Sheet* parentSheet = arguments.GetWrapped<Sheet>(1, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
         if (parentSheet) {
             ASSERT_SAME_BOOK(parentSheet, that);
@@ -662,7 +662,7 @@ namespace node_libxl {
         Sheet* parentSheet = arguments.GetWrapped<Sheet>(2, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
         if (parentSheet) {
             ASSERT_SAME_BOOK(parentSheet, that);
@@ -687,7 +687,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Sheet* libxlSheet = that->GetWrapped()->getSheet(index);
@@ -707,7 +707,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* sheetName = that->GetWrapped()->getSheetName(index);
@@ -726,7 +726,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->sheetType(index)));
@@ -741,7 +741,7 @@ namespace node_libxl {
         int destIndex = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->moveSheet(srcIndex, destIndex)) {
@@ -759,7 +759,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         auto libxlSheet = that->GetWrapped()->getSheet(index);
@@ -775,7 +775,7 @@ namespace node_libxl {
     NAN_METHOD(Book::SheetCount) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->sheetCount()));
@@ -789,7 +789,7 @@ namespace node_libxl {
         node_libxl::Format* parentFormat = arguments.GetWrapped<node_libxl::Format>(0, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (parentFormat && parentFormat->GetBook()->AsyncPending()) {
@@ -815,7 +815,7 @@ namespace node_libxl {
         int style = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Book* libxlBook = that->GetWrapped();
@@ -837,7 +837,7 @@ namespace node_libxl {
         node_libxl::Font* parentFont = arguments.GetWrapped<node_libxl::Font>(0, NULL);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (parentFont) {
@@ -860,7 +860,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::RichString* richString = that->GetWrapped()->addRichString();
@@ -879,7 +879,7 @@ namespace node_libxl {
         CSNanUtf8Value(description, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Book* libxlBook = that->GetWrapped();
@@ -900,7 +900,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* formatString = that->GetWrapped()->customNumFormat(index);
@@ -919,7 +919,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Format* format = that->GetWrapped()->format(index);
@@ -933,7 +933,7 @@ namespace node_libxl {
     NAN_METHOD(Book::FormatSize) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->formatSize()));
@@ -947,7 +947,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Font* font = that->GetWrapped()->font(index);
@@ -961,7 +961,7 @@ namespace node_libxl {
     NAN_METHOD(Book::FontSize) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->fontSize()));
@@ -977,7 +977,7 @@ namespace node_libxl {
             second = arguments.GetInt(5, 0), msecond = arguments.GetInt(6, 0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(
@@ -992,7 +992,7 @@ namespace node_libxl {
         double value = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         int year, month, day, hour, minute, second, msecond;
@@ -1021,7 +1021,7 @@ namespace node_libxl {
         int red = arguments.GetInt(0), green = arguments.GetInt(1), blue = arguments.GetInt(2);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(
@@ -1036,7 +1036,7 @@ namespace node_libxl {
         int value = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Local<Object> result = Nan::New<Object>();
@@ -1054,7 +1054,7 @@ namespace node_libxl {
     NAN_METHOD(Book::ActiveSheet) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->activeSheet()));
@@ -1068,7 +1068,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setActiveSheet(index);
@@ -1079,7 +1079,7 @@ namespace node_libxl {
     NAN_METHOD(Book::PictureSize) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->pictureSize()));
@@ -1093,7 +1093,7 @@ namespace node_libxl {
         int index = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* data;
@@ -1157,7 +1157,7 @@ namespace node_libxl {
         Local<Function> callback = arguments.GetFunction(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), index));
@@ -1170,7 +1170,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         int index;
@@ -1257,7 +1257,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         Local<Function> callback = arguments.GetFunction(1);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (info[0]->IsString()) {
@@ -1291,7 +1291,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         int index = that->GetWrapped()->addPictureAsLink(*filename, insert);
@@ -1344,7 +1344,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         Nan::AsyncQueueWorker(
@@ -1356,7 +1356,7 @@ namespace node_libxl {
     NAN_METHOD(Book::DefaultFont) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         int size;
@@ -1383,7 +1383,7 @@ namespace node_libxl {
         int size = arguments.GetInt(1);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setDefaultFont(*name, size);
@@ -1394,7 +1394,7 @@ namespace node_libxl {
     NAN_METHOD(Book::RefR1C1) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->refR1C1()));
@@ -1408,7 +1408,7 @@ namespace node_libxl {
         bool refR1C1 = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setRefR1C1(refR1C1);
@@ -1419,7 +1419,7 @@ namespace node_libxl {
     NAN_METHOD(Book::RgbMode) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->rgbMode()));
@@ -1433,7 +1433,7 @@ namespace node_libxl {
         bool rgbMode = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setRgbMode(rgbMode);
@@ -1444,7 +1444,7 @@ namespace node_libxl {
     NAN_METHOD(Book::Version) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->version()));
@@ -1453,7 +1453,7 @@ namespace node_libxl {
     NAN_METHOD(Book::BiffVersion) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->biffVersion()));
@@ -1462,7 +1462,7 @@ namespace node_libxl {
     NAN_METHOD(Book::IsDate1904) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isDate1904()));
@@ -1476,7 +1476,7 @@ namespace node_libxl {
         bool date1904 = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setDate1904(date1904);
@@ -1487,7 +1487,7 @@ namespace node_libxl {
     NAN_METHOD(Book::IsTemplate) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isTemplate()));
@@ -1501,7 +1501,7 @@ namespace node_libxl {
         bool isTemplate = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setTemplate(isTemplate);
@@ -1518,7 +1518,7 @@ namespace node_libxl {
         CSNanUtf8Value(key, arguments.GetString(1));
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setKey(*name, *key);
@@ -1529,7 +1529,7 @@ namespace node_libxl {
     NAN_METHOD(Book::IsWriteProtected) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isWriteProtected()));
@@ -1541,7 +1541,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::CoreProperties* coreProperties = that->GetWrapped()->coreProperties();
@@ -1560,7 +1560,7 @@ namespace node_libxl {
         CSNanUtf8Value(locale, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->setLocale(*locale)) return util::ThrowLibxlError(that);
@@ -1571,7 +1571,7 @@ namespace node_libxl {
     NAN_METHOD(Book::RemoveVBA) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->removeVBA();
@@ -1582,7 +1582,7 @@ namespace node_libxl {
     NAN_METHOD(Book::RemovePrinterSettings) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->removePrinterSettings();
@@ -1593,7 +1593,7 @@ namespace node_libxl {
     NAN_METHOD(Book::RemoveAllPhonetics) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->removeAllPhonetics();
@@ -1604,7 +1604,7 @@ namespace node_libxl {
     NAN_METHOD(Book::DpiAwareness) {
         Nan::HandleScope scope;
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->dpiAwareness()));
@@ -1618,7 +1618,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        Book* that = Unwrap(info.This());
+        Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setDpiAwareness(dpiAwareness);

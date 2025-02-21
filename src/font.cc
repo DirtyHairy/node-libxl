@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     Font::Font(libxl::Font* font, Local<Value> book)
-        : Wrapper<libxl::Font, Font>(font), BookWrapper(book) {}
+        : Wrapper<libxl::Font, Font>(font), BookHolder(book) {}
 
     Local<Object> Font::NewInstance(libxl::Font* libxlFont, Local<Value> book) {
         Nan::EscapableHandleScope scope;
@@ -59,7 +59,7 @@ namespace node_libxl {
         int size = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setSize(size);
@@ -70,7 +70,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Size) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->size()));
@@ -79,7 +79,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Italic) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->italic()));
@@ -93,7 +93,7 @@ namespace node_libxl {
         bool italic = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setItalic(italic);
@@ -104,7 +104,7 @@ namespace node_libxl {
     NAN_METHOD(Font::StrikeOut) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->strikeOut()));
@@ -118,7 +118,7 @@ namespace node_libxl {
         bool strikeOut = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setStrikeOut(strikeOut);
@@ -129,7 +129,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Color) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->color()));
@@ -143,7 +143,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setColor(static_cast<libxl::Color>(color));
@@ -154,7 +154,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Bold) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->bold()));
@@ -168,7 +168,7 @@ namespace node_libxl {
         bool bold = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBold(bold);
@@ -179,7 +179,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Script) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->script()));
@@ -193,7 +193,7 @@ namespace node_libxl {
         int script = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setScript(static_cast<libxl::Script>(script));
@@ -204,7 +204,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Underline) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->underline()));
@@ -218,7 +218,7 @@ namespace node_libxl {
         int underline = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setUnderline(static_cast<libxl::Underline>(underline));
@@ -229,7 +229,7 @@ namespace node_libxl {
     NAN_METHOD(Font::Name) {
         Nan::HandleScope scope;
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* name = that->GetWrapped()->name();
@@ -248,7 +248,7 @@ namespace node_libxl {
         CSNanUtf8Value(name, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        Font* that = Unwrap(info.This());
+        Font* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->setName(*name)) {
@@ -269,7 +269,7 @@ namespace node_libxl {
         t->SetClassName(Nan::New<String>("Font").ToLocalChecked());
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
-        BookWrapper::Initialize<Font>(t);
+        BookHolder::Initialize<Font>(t);
 
         Nan::SetPrototypeMethod(t, "setSize", SetSize);
         Nan::SetPrototypeMethod(t, "size", Size);

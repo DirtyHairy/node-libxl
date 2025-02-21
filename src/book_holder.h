@@ -30,10 +30,10 @@
 
 namespace node_libxl {
 
-    class BookWrapper {
+    class BookHolder {
        public:
-        BookWrapper(v8::Local<v8::Value> bookHandle);
-        ~BookWrapper();
+        BookHolder(v8::Local<v8::Value> bookHandle);
+        ~BookHolder();
 
         v8::Local<v8::Value> GetBookHandle();
         Book* GetBook();
@@ -52,15 +52,15 @@ namespace node_libxl {
         template <typename T>
         static NAN_GETTER(BookAccessor);
 
-        BookWrapper();
-        BookWrapper(const BookWrapper&);
-        const BookWrapper& operator=(const BookWrapper&);
+        BookHolder();
+        BookHolder(const BookHolder&);
+        const BookHolder& operator=(const BookHolder&);
     };
 
     // Implementation
 
     template <typename T>
-    void BookWrapper::Initialize(v8::Local<v8::FunctionTemplate> constructor) {
+    void BookHolder::Initialize(v8::Local<v8::FunctionTemplate> constructor) {
         v8::Local<v8::ObjectTemplate> instanceTemplate = constructor->InstanceTemplate();
 
         Nan::SetAccessor(instanceTemplate, Nan::New<v8::String>("book").ToLocalChecked(),
@@ -69,11 +69,11 @@ namespace node_libxl {
     }
 
     template <typename T>
-    NAN_GETTER(BookWrapper::BookAccessor) {
+    NAN_GETTER(BookHolder::BookAccessor) {
         Nan::HandleScope scope;
 
-        BookWrapper* bookWrapper =
-            dynamic_cast<BookWrapper*>(Nan::ObjectWrap::Unwrap<T>(info.This()));
+        BookHolder* bookWrapper =
+            dynamic_cast<BookHolder*>(Nan::ObjectWrap::Unwrap<T>(info.This()));
 
         if (bookWrapper) {
             info.GetReturnValue().Set(Nan::New(bookWrapper->bookHandle));

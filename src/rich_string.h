@@ -25,12 +25,12 @@
 #ifndef NODE_LIBXL_RICH_STRING_H
 #define NODE_LIBXL_RICH_STRING_H
 
-#include "book_wrapper.h"
+#include "book_holder.h"
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
-    class RichString : public Wrapper<libxl::RichString, RichString>, public BookWrapper {
+    class RichString : public Wrapper<libxl::RichString, RichString>, public BookHolder {
        public:
         RichString(libxl::RichString* richString, v8::Local<v8::Value> book);
 

@@ -53,7 +53,7 @@ namespace node_libxl {
     template <typename T>
     AsyncWorker<T>::AsyncWorker(Nan::Callback *callback, v8::Local<v8::Object> that,
                                 const char *asyncResourceName)
-        : Nan::AsyncWorker(callback, asyncResourceName), that(T::Unwrap(that)) {
+        : Nan::AsyncWorker(callback, asyncResourceName), that(T::FromJS(that)) {
         util::GetBook(this->that)->StartAsync();
         SaveToPersistent("that", that);
     }

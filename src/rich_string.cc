@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     RichString::RichString(libxl::RichString* richString, Local<Value> book)
-        : Wrapper<libxl::RichString, RichString>(richString), BookWrapper(book) {}
+        : Wrapper<libxl::RichString, RichString>(richString), BookHolder(book) {}
 
     Local<Object> RichString::NewInstance(libxl::RichString* libxlRichString, Local<Value> book) {
         Nan::EscapableHandleScope scope;
@@ -58,7 +58,7 @@ namespace node_libxl {
         Font* initFont = arguments.GetWrapped<Font>(0, nullptr);
         ASSERT_ARGUMENTS(arguments);
 
-        RichString* that = Unwrap(info.This());
+        RichString* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (initFont) ASSERT_SAME_BOOK(initFont, that);
@@ -82,7 +82,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        RichString* that = Unwrap(info.This());
+        RichString* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (font) ASSERT_SAME_BOOK(font, that);
@@ -100,7 +100,7 @@ namespace node_libxl {
 
         ASSERT_ARGUMENTS(arguments);
 
-        RichString* that = Unwrap(info.This());
+        RichString* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Font* font = nullptr;
@@ -127,7 +127,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        RichString* that = Unwrap(info.This());
+        RichString* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Number>(that->GetWrapped()->textSize()));
@@ -144,7 +144,7 @@ namespace node_libxl {
         t->SetClassName(Nan::New<String>("RichString").ToLocalChecked());
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
-        BookWrapper::Initialize<RichString>(t);
+        BookHolder::Initialize<RichString>(t);
 
         Nan::SetPrototypeMethod(t, "addFont", AddFont);
         Nan::SetPrototypeMethod(t, "addText", AddText);

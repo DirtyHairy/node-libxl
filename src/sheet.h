@@ -25,14 +25,14 @@
 #ifndef BINDINGS_SHEET_H
 #define BINDINGS_SHEET_H
 
-#include "book_wrapper.h"
+#include "book_holder.h"
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
 
     class Sheet : public Wrapper<libxl::Sheet, Sheet>,
-                  public BookWrapper
+                  public BookHolder
 
     {
        public:

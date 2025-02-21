@@ -25,13 +25,13 @@
 #ifndef BINDINGS_FORMAT_H
 #define BINDINGS_FORMAT_H
 
-#include "book_wrapper.h"
+#include "book_holder.h"
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
 
-    class Format : public Wrapper<libxl::Format, Format>, public BookWrapper {
+    class Format : public Wrapper<libxl::Format, Format>, public BookHolder {
        public:
         Format(libxl::Format* format, v8::Local<v8::Value> book);
 

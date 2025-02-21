@@ -38,7 +38,7 @@ namespace node_libxl {
         T* GetWrapped() { return wrapped; }
 
         static bool InstanceOf(v8::Local<v8::Value> object);
-        static U* Unwrap(v8::Local<v8::Value> object);
+        static U* FromJS(v8::Local<v8::Value> object);
 
        protected:
         static Nan::Persistent<v8::Function> constructor;
@@ -66,7 +66,7 @@ namespace node_libxl {
     }
 
     template <typename T, typename U>
-    U* Wrapper<T, U>::Unwrap(v8::Local<v8::Value> object) {
+    U* Wrapper<T, U>::FromJS(v8::Local<v8::Value> object) {
         if (InstanceOf(object)) {
             return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
         } else {

@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     CoreProperties::CoreProperties(libxl::CoreProperties* coreProperties, Local<Value> book)
-        : Wrapper<libxl::CoreProperties, CoreProperties>(coreProperties), BookWrapper(book) {}
+        : Wrapper<libxl::CoreProperties, CoreProperties>(coreProperties), BookHolder(book) {}
 
     Local<Object> CoreProperties::NewInstance(libxl::CoreProperties* libxlCoreProperties,
                                               Local<Value> book) {
@@ -58,7 +58,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* title = that->GetWrapped()->title();
@@ -77,7 +77,7 @@ namespace node_libxl {
         CSNanUtf8Value(title, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setTitle(*title);
@@ -91,7 +91,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* subject = that->GetWrapped()->subject();
@@ -110,7 +110,7 @@ namespace node_libxl {
         CSNanUtf8Value(subject, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setSubject(*subject);
@@ -124,7 +124,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* creator = that->GetWrapped()->creator();
@@ -143,7 +143,7 @@ namespace node_libxl {
         CSNanUtf8Value(creator, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setCreator(*creator);
@@ -157,7 +157,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* lastModifiedBy = that->GetWrapped()->lastModifiedBy();
@@ -176,7 +176,7 @@ namespace node_libxl {
         CSNanUtf8Value(lastModifiedBy, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setLastModifiedBy(*lastModifiedBy);
@@ -190,7 +190,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* created = that->GetWrapped()->created();
@@ -209,7 +209,7 @@ namespace node_libxl {
         CSNanUtf8Value(created, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setCreated(*created);
@@ -223,7 +223,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         double created = that->GetWrapped()->createdAsDouble();
@@ -238,7 +238,7 @@ namespace node_libxl {
         double created = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setCreatedAsDouble(created);
@@ -252,7 +252,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* modified = that->GetWrapped()->modified();
@@ -271,7 +271,7 @@ namespace node_libxl {
         CSNanUtf8Value(modified, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setModified(*modified);
@@ -285,7 +285,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         double modified = that->GetWrapped()->modifiedAsDouble();
@@ -300,7 +300,7 @@ namespace node_libxl {
         double modified = arguments.GetDouble(0);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setModifiedAsDouble(modified);
@@ -314,7 +314,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* tags = that->GetWrapped()->tags();
@@ -333,7 +333,7 @@ namespace node_libxl {
         CSNanUtf8Value(tags, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setTags(*tags);
@@ -347,7 +347,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* categories = that->GetWrapped()->categories();
@@ -366,7 +366,7 @@ namespace node_libxl {
         CSNanUtf8Value(categories, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setCategories(*categories);
@@ -380,7 +380,7 @@ namespace node_libxl {
         ArgumentHelper arguments(info);
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         const char* comments = that->GetWrapped()->comments();
@@ -399,7 +399,7 @@ namespace node_libxl {
         CSNanUtf8Value(comments, arguments.GetString(0));
         ASSERT_ARGUMENTS(arguments);
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setComments(*comments);
@@ -410,7 +410,7 @@ namespace node_libxl {
     NAN_METHOD(CoreProperties::RemoveAll) {
         Nan::HandleScope scope;
 
-        CoreProperties* that = Unwrap(info.This());
+        CoreProperties* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->removeAll();
@@ -429,7 +429,7 @@ namespace node_libxl {
         t->SetClassName(Nan::New<String>("CoreProperties").ToLocalChecked());
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
-        BookWrapper::Initialize<CoreProperties>(t);
+        BookHolder::Initialize<CoreProperties>(t);
 
         Nan::SetPrototypeMethod(t, "title", Title);
         Nan::SetPrototypeMethod(t, "setTitle", SetTitle);

@@ -25,14 +25,14 @@
 #ifndef BINDINGS_CORE_PROPERTIES_H
 #define BINDINGS_CORE_PROPERTIES_H
 
-#include "book_wrapper.h"
+#include "book_holder.h"
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
 
     class CoreProperties : public Wrapper<libxl::CoreProperties, CoreProperties>,
-                           public BookWrapper
+                           public BookHolder
 
     {
        public:

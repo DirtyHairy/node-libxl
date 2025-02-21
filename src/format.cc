@@ -36,7 +36,7 @@ namespace node_libxl {
     // Lifecycle
 
     Format::Format(libxl::Format* format, Local<Value> book)
-        : Wrapper<libxl::Format, Format>(format), BookWrapper(book) {}
+        : Wrapper<libxl::Format, Format>(format), BookHolder(book) {}
 
     Local<Object> Format::NewInstance(libxl::Format* libxlFormat, Local<Value> book) {
         Nan::EscapableHandleScope scope;
@@ -55,7 +55,7 @@ namespace node_libxl {
     NAN_METHOD(Format::Font) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         libxl::Font* font = that->GetWrapped()->font();
@@ -74,7 +74,7 @@ namespace node_libxl {
         node_libxl::Font* font = arguments.GetWrapped<node_libxl::Font>(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->setFont(font->GetWrapped())) {
@@ -92,7 +92,7 @@ namespace node_libxl {
         int format = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setNumFormat(format);
@@ -103,7 +103,7 @@ namespace node_libxl {
     NAN_METHOD(Format::NumFormat) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->numFormat()));
@@ -112,7 +112,7 @@ namespace node_libxl {
     NAN_METHOD(Format::AlignH) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->alignH()));
@@ -126,7 +126,7 @@ namespace node_libxl {
         int align = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setAlignH(static_cast<libxl::AlignH>(align));
@@ -137,7 +137,7 @@ namespace node_libxl {
     NAN_METHOD(Format::AlignV) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->alignV()));
@@ -151,7 +151,7 @@ namespace node_libxl {
         int align = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setAlignV(static_cast<libxl::AlignV>(align));
@@ -162,7 +162,7 @@ namespace node_libxl {
     NAN_METHOD(Format::GetWrap) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->wrap()));
@@ -175,7 +175,7 @@ namespace node_libxl {
         bool wrap = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setWrap(wrap);
@@ -186,7 +186,7 @@ namespace node_libxl {
     NAN_METHOD(Format::Rotation) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->rotation()));
@@ -200,7 +200,7 @@ namespace node_libxl {
         int rotation = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         if (!that->GetWrapped()->setRotation(rotation)) {
@@ -213,7 +213,7 @@ namespace node_libxl {
     NAN_METHOD(Format::Indent) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->indent()));
@@ -227,7 +227,7 @@ namespace node_libxl {
         int indent = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setIndent(indent);
@@ -238,7 +238,7 @@ namespace node_libxl {
     NAN_METHOD(Format::ShrinkToFit) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->shrinkToFit()));
@@ -252,7 +252,7 @@ namespace node_libxl {
         bool shrink = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setShrinkToFit(shrink);
@@ -268,7 +268,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorder(static_cast<libxl::BorderStyle>(border));
@@ -284,7 +284,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderColor(static_cast<libxl::Color>(color));
@@ -295,7 +295,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderLeft) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderLeft()));
@@ -309,7 +309,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderLeft(static_cast<libxl::BorderStyle>(border));
@@ -320,7 +320,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderRight) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderRight()));
@@ -334,7 +334,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderRight(static_cast<libxl::BorderStyle>(border));
@@ -345,7 +345,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderTop) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderTop()));
@@ -359,7 +359,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderTop(static_cast<libxl::BorderStyle>(border));
@@ -370,7 +370,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderBottom) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderBottom()));
@@ -384,7 +384,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderBottom(static_cast<libxl::BorderStyle>(border));
@@ -395,7 +395,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderLeftColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderLeftColor()));
@@ -409,7 +409,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderLeftColor(static_cast<libxl::Color>(color));
@@ -419,7 +419,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderRightColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderRightColor()));
@@ -433,7 +433,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderRightColor(static_cast<libxl::Color>(color));
@@ -443,7 +443,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderTopColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderTopColor()));
@@ -457,7 +457,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderTopColor(static_cast<libxl::Color>(color));
@@ -467,7 +467,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderBottomColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderBottomColor()));
@@ -481,7 +481,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderBottomColor(static_cast<libxl::Color>(color));
@@ -491,7 +491,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderDiagonal) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderDiagonal()));
@@ -505,7 +505,7 @@ namespace node_libxl {
         int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderDiagonal(static_cast<libxl::BorderDiagonal>(border));
@@ -516,7 +516,7 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderDiagonalColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->borderDiagonalColor()));
@@ -530,7 +530,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setBorderDiagonalColor(static_cast<libxl::Color>(color));
@@ -540,7 +540,7 @@ namespace node_libxl {
     NAN_METHOD(Format::FillPattern) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->fillPattern()));
@@ -554,7 +554,7 @@ namespace node_libxl {
         int pattern = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setFillPattern(static_cast<libxl::FillPattern>(pattern));
@@ -565,7 +565,7 @@ namespace node_libxl {
     NAN_METHOD(Format::PatternBackgroundColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->patternBackgroundColor()));
@@ -579,7 +579,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setPatternBackgroundColor(static_cast<libxl::Color>(color));
@@ -590,7 +590,7 @@ namespace node_libxl {
     NAN_METHOD(Format::PatternForegroundColor) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->patternForegroundColor()));
@@ -604,7 +604,7 @@ namespace node_libxl {
         int color = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setPatternForegroundColor(static_cast<libxl::Color>(color));
@@ -615,7 +615,7 @@ namespace node_libxl {
     NAN_METHOD(Format::Locked) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->locked()));
@@ -629,7 +629,7 @@ namespace node_libxl {
         bool locked = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setLocked(locked);
@@ -640,7 +640,7 @@ namespace node_libxl {
     NAN_METHOD(Format::Hidden) {
         Nan::HandleScope scope;
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->hidden()));
@@ -654,7 +654,7 @@ namespace node_libxl {
         bool hidden = arguments.GetBoolean(0);
         ASSERT_ARGUMENTS(arguments);
 
-        Format* that = Unwrap(info.This());
+        Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         that->GetWrapped()->setHidden(hidden);
@@ -672,7 +672,7 @@ namespace node_libxl {
         t->SetClassName(Nan::New<String>("Format").ToLocalChecked());
         t->InstanceTemplate()->SetInternalFieldCount(1);
 
-        BookWrapper::Initialize<Format>(t);
+        BookHolder::Initialize<Format>(t);
 
         Nan::SetPrototypeMethod(t, "font", Font);
         Nan::SetPrototypeMethod(t, "setFont", SetFont);
