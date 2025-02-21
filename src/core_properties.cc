@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     CoreProperties::CoreProperties(libxl::CoreProperties* coreProperties, Local<Value> book)
-        : Wrapper<libxl::CoreProperties>(coreProperties), BookWrapper(book) {}
+        : Wrapper<libxl::CoreProperties, CoreProperties>(coreProperties), BookWrapper(book) {}
 
     Local<Object> CoreProperties::NewInstance(libxl::CoreProperties* libxlCoreProperties,
                                               Local<Value> book) {
@@ -457,6 +457,7 @@ namespace node_libxl {
 
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
-        Nan::Set(exports, Nan::New<String>("CoreProperties").ToLocalChecked(), Nan::New(constructor));
+        Nan::Set(exports, Nan::New<String>("CoreProperties").ToLocalChecked(),
+                 Nan::New(constructor));
     }
 }  // namespace node_libxl

@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     RichString::RichString(libxl::RichString* richString, Local<Value> book)
-        : Wrapper<libxl::RichString>(richString), BookWrapper(book) {}
+        : Wrapper<libxl::RichString, RichString>(richString), BookWrapper(book) {}
 
     Local<Object> RichString::NewInstance(libxl::RichString* libxlRichString, Local<Value> book) {
         Nan::EscapableHandleScope scope;

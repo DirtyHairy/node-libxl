@@ -31,7 +31,7 @@
 
 namespace node_libxl {
 
-    class Sheet : public Wrapper<libxl::Sheet>,
+    class Sheet : public Wrapper<libxl::Sheet, Sheet>,
                   public BookWrapper
 
     {
@@ -39,10 +39,6 @@ namespace node_libxl {
         Sheet(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static Sheet* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::Sheet>::Unwrap<Sheet>(object);
-        }
 
         static v8::Local<v8::Object> NewInstance(libxl::Sheet* sheet, v8::Local<v8::Value> book);
 

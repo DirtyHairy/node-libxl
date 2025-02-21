@@ -31,15 +31,11 @@
 
 namespace node_libxl {
 
-    class Format : public Wrapper<libxl::Format>, public BookWrapper {
+    class Format : public Wrapper<libxl::Format, Format>, public BookWrapper {
        public:
         Format(libxl::Format* format, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static Format* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::Format>::Unwrap<Format>(object);
-        }
 
         static v8::Local<v8::Object> NewInstance(libxl::Format* format, v8::Local<v8::Value> book);
 

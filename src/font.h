@@ -31,7 +31,7 @@
 
 namespace node_libxl {
 
-    class Font : public Wrapper<libxl::Font>,
+    class Font : public Wrapper<libxl::Font, Font>,
                  public BookWrapper
 
     {
@@ -39,10 +39,6 @@ namespace node_libxl {
         Font(libxl::Font* font, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static Font* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::Font>::Unwrap<Font>(object);
-        }
 
         static v8::Local<v8::Object> NewInstance(libxl::Font* font, v8::Local<v8::Value> book);
 

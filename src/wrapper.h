@@ -29,7 +29,7 @@
 
 namespace node_libxl {
 
-    template <typename T>
+    template <typename T, typename U>
     class Wrapper : public Nan::ObjectWrap {
        public:
         Wrapper() : wrapped(NULL) {}
@@ -38,7 +38,6 @@ namespace node_libxl {
         T* GetWrapped() { return wrapped; }
 
         static bool InstanceOf(v8::Local<v8::Value> object);
-        template <typename U>
         static U* Unwrap(v8::Local<v8::Value> object);
 
        protected:
@@ -46,17 +45,17 @@ namespace node_libxl {
         T* wrapped;
 
        private:
-        Wrapper(const Wrapper<T>&);
-        const Wrapper<T>& operator=(const Wrapper<T>&);
+        Wrapper(const Wrapper<T, U>&);
+        const Wrapper<T, U>& operator=(const Wrapper<T, U>&);
     };
 
     // Implementation
 
-    template <typename T>
-    Nan::Persistent<v8::Function> Wrapper<T>::constructor;
+    template <typename T, typename U>
+    Nan::Persistent<v8::Function> Wrapper<T, U>::constructor;
 
-    template <typename T>
-    bool Wrapper<T>::InstanceOf(v8::Local<v8::Value> object) {
+    template <typename T, typename U>
+    bool Wrapper<T, U>::InstanceOf(v8::Local<v8::Value> object) {
         Nan::HandleScope scope;
 
         return object->IsObject() &&
@@ -66,9 +65,8 @@ namespace node_libxl {
                        .ToLocalChecked());
     }
 
-    template <typename T>
-    template <typename U>
-    U* Wrapper<T>::Unwrap(v8::Local<v8::Value> object) {
+    template <typename T, typename U>
+    U* Wrapper<T, U>::Unwrap(v8::Local<v8::Value> object) {
         if (InstanceOf(object)) {
             return Nan::ObjectWrap::Unwrap<U>(object.As<v8::Object>());
         } else {

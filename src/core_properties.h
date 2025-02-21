@@ -31,7 +31,7 @@
 
 namespace node_libxl {
 
-    class CoreProperties : public Wrapper<libxl::CoreProperties>,
+    class CoreProperties : public Wrapper<libxl::CoreProperties, CoreProperties>,
                            public BookWrapper
 
     {
@@ -39,10 +39,6 @@ namespace node_libxl {
         CoreProperties(libxl::CoreProperties* coreProperties, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static CoreProperties* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::CoreProperties>::Unwrap<CoreProperties>(object);
-        }
 
         static v8::Local<v8::Object> NewInstance(libxl::CoreProperties* coreProperties,
                                                  v8::Local<v8::Value> book);

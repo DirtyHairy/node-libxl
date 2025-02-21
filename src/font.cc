@@ -35,7 +35,7 @@ namespace node_libxl {
     // Lifecycle
 
     Font::Font(libxl::Font* font, Local<Value> book)
-        : Wrapper<libxl::Font>(font), BookWrapper(book) {}
+        : Wrapper<libxl::Font, Font>(font), BookWrapper(book) {}
 
     Local<Object> Font::NewInstance(libxl::Font* libxlFont, Local<Value> book) {
         Nan::EscapableHandleScope scope;

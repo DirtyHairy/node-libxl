@@ -45,7 +45,8 @@ namespace node_libxl {
 
     // Lifecycle
 
-    Book::Book(libxl::Book* libxlBook) : Wrapper<libxl::Book>(libxlBook), asyncPending(false) {}
+    Book::Book(libxl::Book* libxlBook)
+        : Wrapper<libxl::Book, Book>(libxlBook), asyncPending(false) {}
 
     Book::~Book() { wrapped->release(); }
 

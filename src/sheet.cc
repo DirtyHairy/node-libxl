@@ -43,7 +43,7 @@ namespace node_libxl {
     // Lifecycle
 
     Sheet::Sheet(libxl::Sheet* sheet, Local<Value> book)
-        : Wrapper<libxl::Sheet>(sheet), BookWrapper(book), wrappedSheet(sheet) {}
+        : Wrapper<libxl::Sheet, Sheet>(sheet), BookWrapper(book), wrappedSheet(sheet) {}
 
     Local<Object> Sheet::NewInstance(libxl::Sheet* libxlSheet, Local<Value> book) {
         Nan::EscapableHandleScope scope;

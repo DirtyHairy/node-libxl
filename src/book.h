@@ -34,7 +34,7 @@ namespace node_libxl {
 
     enum { BOOK_TYPE_XLS, BOOK_TYPE_XLSX };
 
-    class Book : public Wrapper<libxl::Book> {
+    class Book : public Wrapper<libxl::Book, Book> {
        public:
         Book(libxl::Book* libxlBook);
         ~Book();
@@ -46,10 +46,6 @@ namespace node_libxl {
         bool IsValidSheet(const libxl::Sheet* sheet) const;
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static Book* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::Book>::Unwrap<Book>(object);
-        }
 
        protected:
         static NAN_METHOD(New);

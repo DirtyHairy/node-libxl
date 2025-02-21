@@ -30,15 +30,11 @@
 #include "wrapper.h"
 
 namespace node_libxl {
-    class RichString : public Wrapper<libxl::RichString>, public BookWrapper {
+    class RichString : public Wrapper<libxl::RichString, RichString>, public BookWrapper {
        public:
         RichString(libxl::RichString* richString, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
-
-        static RichString* Unwrap(v8::Local<v8::Value> object) {
-            return Wrapper<libxl::RichString>::Unwrap<RichString>(object);
-        }
 
         static v8::Local<v8::Object> NewInstance(libxl::RichString* libxlRichString,
                                                  v8::Local<v8::Value> book);

@@ -32,7 +32,7 @@ using namespace v8;
 namespace node_libxl {
 
     BookWrapper::BookWrapper(Local<Value> bookHandle) {
-        if (!Wrapper<libxl::Book>::Unwrap<Book>(bookHandle)) {
+        if (!Book::Unwrap(bookHandle)) {
             std::cerr << "libxl bindings: internal error: handle is not a book instance"
                       << std::endl;
 
