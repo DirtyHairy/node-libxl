@@ -24,11 +24,23 @@
 
 #include "book_wrapper.h"
 
+#include <cstdlib>
+#include <iostream>
+
 using namespace v8;
 
 namespace node_libxl {
 
-    BookWrapper::BookWrapper(Local<Value> bookHandle) { this->bookHandle.Reset(bookHandle); }
+    BookWrapper::BookWrapper(Local<Value> bookHandle) {
+        if (!Wrapper<libxl::Book>::Unwrap<Book>(bookHandle)) {
+            std::cerr << "libxl bindings: internal error: handle is not a book instance"
+                      << std::endl;
+
+            abort();
+        }
+
+        this->bookHandle.Reset(bookHandle);
+    }
 
     BookWrapper::~BookWrapper() { bookHandle.Reset(); }
 

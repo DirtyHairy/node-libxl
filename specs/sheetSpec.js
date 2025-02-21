@@ -113,6 +113,36 @@ describe('The sheet class', function () {
         row++;
     });
 
+    it('sheet.readRichStr and sheet.writeRichStr read and write a rich string', () => {
+        const anotherBook = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        const format = book.addFormat();
+        const anotherFormat = anotherBook.addFormat();
+
+        const richString = book.addRichString();
+        const anotherRichString = anotherBook.addRichString();
+
+        shouldThrow(sheet.writeRichStr, sheet, row, 'a', richString);
+        shouldThrow(sheet.writeRichStr, {}, row, 0, richString);
+        shouldThrow(sheet.writeRichStr, sheet, row, 0, anotherRichString);
+        shouldThrow(sheet.writeRichStr, sheet, row, 0, richString, anotherFormat);
+
+        expect(sheet.writeRichStr(row, 0, richString)).toBe(sheet);
+        expect(sheet.writeRichStr(row, 1, richString, format)).toBe(sheet);
+
+        shouldThrow(sheet.readRichStr, sheet, row, 'a');
+        shouldThrow(sheet.readRichStr, {}, row, 0);
+
+        let formatRef = {};
+        expect(sheet.readRichStr(row, 0) instanceof xl.RichString).toBeTrue();
+        expect(sheet.readRichStr(row, 0, formatRef)).toBeInstanceOf(xl.RichString);
+        expect(formatRef.format).toBeInstanceOf(xl.Format);
+
+        formatRef = {};
+        expect(sheet.readRichStr(row, 1, formatRef)).toBeInstanceOf(xl.RichString);
+        expect(formatRef.format).toBeInstanceOf(xl.Format);
+    });
+
     it('sheet.readNum reads a number', function () {
         sheet.writeNum(row, 0, 10);
 

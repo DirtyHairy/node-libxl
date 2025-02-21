@@ -69,7 +69,7 @@ namespace node_libxl {
             return util::ThrowLibxlError(that);
         }
 
-        info.GetReturnValue().Set(Font::NewInstance(font, info.This()));
+        info.GetReturnValue().Set(Font::NewInstance(font, that->GetBookHandle()));
     }
 
     NAN_METHOD(RichString::AddText) {
@@ -97,6 +97,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
         int index = arguments.GetInt(0);
+
         ASSERT_ARGUMENTS(arguments);
 
         RichString* that = Unwrap(info.This());
@@ -114,7 +115,7 @@ namespace node_libxl {
                  Nan::New<String>(text).ToLocalChecked());
         if (font) {
             Nan::Set(result, Nan::New<String>("font").ToLocalChecked(),
-                     Font::NewInstance(font, info.This()));
+                     Font::NewInstance(font, that->GetBookHandle()));
         }
 
         info.GetReturnValue().Set(result);

@@ -53,6 +53,8 @@ namespace node_libxl {
         static NAN_METHOD(SetCellFormat);
         static NAN_METHOD(ReadStr);
         static NAN_METHOD(WriteStr);
+        static NAN_METHOD(ReadRichStr);
+        static NAN_METHOD(WriteRichStr);
         static NAN_METHOD(ReadNum);
         static NAN_METHOD(WriteNum);
         static NAN_METHOD(ReadBool);

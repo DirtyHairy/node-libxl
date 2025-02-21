@@ -28,6 +28,7 @@
 #include "assert.h"
 #include "async_worker.h"
 #include "format.h"
+#include "rich_string.h"
 #include "util.h"
 
 using namespace v8;
@@ -176,6 +177,59 @@ namespace node_libxl {
         }
 
         if (!that->GetWrapped()->writeStr(row, col, *value, format ? format->GetWrapped() : NULL)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::ReadRichStr) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        Local<Value> formatRef = info[2];
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Format* libxlFormat = nullptr;
+        libxl::RichString* richString = that->GetWrapped()->readRichStr(row, col, &libxlFormat);
+        if (!richString) {
+            return util::ThrowLibxlError(that);
+        }
+
+        if (formatRef->IsObject() && libxlFormat) {
+            Nan::Set(formatRef.As<Object>(), Nan::New<String>("format").ToLocalChecked(),
+                     Format::NewInstance(libxlFormat, that->GetBookHandle()));
+        }
+
+        info.GetReturnValue().Set(RichString::NewInstance(richString, that->GetBookHandle()));
+    }
+
+    NAN_METHOD(Sheet::WriteRichStr) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int row = arguments.GetInt(0);
+        int col = arguments.GetInt(1);
+        RichString* richString = arguments.GetWrapped<RichString>(2);
+        Format* format = arguments.GetWrapped<Format>(3, nullptr);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = Unwrap(info.This());
+        ASSERT_SHEET(that);
+
+        ASSERT_SAME_BOOK(that, richString);
+        if (format) ASSERT_SAME_BOOK(that, format);
+
+        if (!that->GetWrapped()->writeRichStr(row, col, richString->GetWrapped(),
+                                              format ? format->GetWrapped() : nullptr)) {
             return util::ThrowLibxlError(that);
         }
 
@@ -753,7 +807,7 @@ namespace node_libxl {
             return util::ThrowLibxlError(that);
         }
 
-        info.GetReturnValue().Set(Format::NewInstance(format, info.This()));
+        info.GetReturnValue().Set(Format::NewInstance(format, that->GetBookHandle()));
     }
 
     NAN_METHOD(Sheet::RowFormat) {
@@ -772,7 +826,7 @@ namespace node_libxl {
             return util::ThrowLibxlError(that);
         }
 
-        info.GetReturnValue().Set(Format::NewInstance(format, info.This()));
+        info.GetReturnValue().Set(Format::NewInstance(format, that->GetBookHandle()));
     }
 
     NAN_METHOD(Sheet::RowHidden) {
@@ -3024,6 +3078,8 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "setCellFormat", SetCellFormat);
         Nan::SetPrototypeMethod(t, "readStr", ReadStr);
         Nan::SetPrototypeMethod(t, "readString", ReadStr);
+        Nan::SetPrototypeMethod(t, "readRichStr", ReadRichStr);
+        Nan::SetPrototypeMethod(t, "writeRichStr", WriteRichStr);
         Nan::SetPrototypeMethod(t, "writeString", WriteStr);
         Nan::SetPrototypeMethod(t, "writeStr", WriteStr);
         Nan::SetPrototypeMethod(t, "readNum", ReadNum);
