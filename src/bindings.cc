@@ -25,6 +25,7 @@
 #include "book.h"
 #include "common.h"
 #include "core_properties.h"
+#include "filter_column.h"
 #include "font.h"
 #include "format.h"
 #include "rich_string.h"
@@ -40,6 +41,7 @@ void Initialize(Local<Object> exports) {
     Font::Initialize(exports);
     CoreProperties::Initialize(exports);
     RichString::Initialize(exports);
+    FilterColumn::Initialize(exports);
 }
 
 NODE_MODULE(libxl, Initialize)
