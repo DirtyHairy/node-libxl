@@ -33,10 +33,10 @@ using namespace v8;
 namespace node_libxl {
     // Lifecycle
 
-    FilterColumn::FilterColumn(libxl::IFilterColumnT<char>* filterColumn, Local<Value> book)
-        : Wrapper<libxl::IFilterColumnT<char>, FilterColumn>(filterColumn), BookHolder(book) {}
+    FilterColumn::FilterColumn(libxl::FilterColumn* filterColumn, Local<Value> book)
+        : Wrapper<libxl::FilterColumn, FilterColumn>(filterColumn), BookHolder(book) {}
 
-    Local<Object> FilterColumn::NewInstance(libxl::IFilterColumnT<char>* libxlFilterColumn,
+    Local<Object> FilterColumn::NewInstance(libxl::FilterColumn* libxlFilterColumn,
                                             Local<Value> book) {
         Nan::EscapableHandleScope scope;
 

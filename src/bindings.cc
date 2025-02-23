@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#include "auto_filter.h"
 #include "book.h"
 #include "common.h"
 #include "core_properties.h"
@@ -41,6 +42,7 @@ void Initialize(Local<Object> exports) {
     Font::Initialize(exports);
     CoreProperties::Initialize(exports);
     RichString::Initialize(exports);
+    AutoFilter::Initialize(exports);
     FilterColumn::Initialize(exports);
 }
 

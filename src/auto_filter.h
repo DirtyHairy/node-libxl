@@ -22,39 +22,39 @@
  * THE SOFTWARE.
  */
 
-#ifndef NODE_LIBXL_FILTER_COLUMN_H
-#define NODE_LIBXL_FILTER_COLUMN_H
+#ifndef NODE_LIBXL_AUTO_FILTER_H
+#define NODE_LIBXL_AUTO_FILTER_H
 
 #include "book_holder.h"
 #include "common.h"
 #include "wrapper.h"
 
 namespace node_libxl {
-    class FilterColumn : public Wrapper<libxl::FilterColumn, FilterColumn>, public BookHolder {
+    class AutoFilter : public Wrapper<libxl::AutoFilter, AutoFilter>, public BookHolder {
        public:
-        FilterColumn(libxl::FilterColumn* filterColumn, v8::Local<v8::Value> book);
+        AutoFilter(libxl::AutoFilter* autoFilter, v8::Local<v8::Value> book);
 
         static void Initialize(v8::Local<v8::Object> exports);
 
-        static v8::Local<v8::Object> NewInstance(libxl::FilterColumn* libxlFilterColumn,
+        static v8::Local<v8::Object> NewInstance(libxl::AutoFilter* libxlAutoFilter,
                                                  v8::Local<v8::Value> book);
 
        protected:
-        static NAN_METHOD(Index);
-        static NAN_METHOD(FilterType);
-        static NAN_METHOD(FilterSize);
-        static NAN_METHOD(Filter);
-        static NAN_METHOD(AddFilter);
-        static NAN_METHOD(GetTop10);
-        static NAN_METHOD(SetTop10);
-        static NAN_METHOD(GetCustomFilter);
-        static NAN_METHOD(SetCustomFilter);
-        static NAN_METHOD(Clear);
+        static NAN_METHOD(GetRef);
+        static NAN_METHOD(SetRef);
+        static NAN_METHOD(Column);
+        static NAN_METHOD(ColumnSize);
+        static NAN_METHOD(ColumnByIndex);
+        static NAN_METHOD(GetSortRange);
+        static NAN_METHOD(SortLevels);
+        static NAN_METHOD(GetSort);
+        static NAN_METHOD(SetSort);
+        static NAN_METHOD(AddSort);
 
        private:
-        FilterColumn(const FilterColumn&);
-        FilterColumn& operator=(const FilterColumn&);
+        AutoFilter(const AutoFilter&);
+        AutoFilter& operator=(const AutoFilter&);
     };
 }  // namespace node_libxl
 
-#endif  // NODE_LIBXL_FILTER_COLUMN_H
+#endif  // NODE_LIBXL_AUTO_FILTER_H

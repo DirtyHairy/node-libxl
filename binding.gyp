@@ -15,6 +15,7 @@
                 'src/buffer_copy.cc',
                 'src/core_properties.cc',
                 'src/rich_string.cc',
+                'src/auto_filter.cc',
                 'src/filter_column.cc',
             ],
             'include_dirs': [
