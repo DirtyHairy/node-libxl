@@ -183,6 +183,10 @@ namespace node_libxl {
         static NAN_METHOD(DelHyperlink);
         static NAN_METHOD(AddHyperlink);
         static NAN_METHOD(HyperlinkIndex);
+        static NAN_METHOD(IsAutoFilter);
+        static NAN_METHOD(AutoFilter);
+        static NAN_METHOD(ApplyFilter);
+        static NAN_METHOD(RemoveFilter);
         static NAN_METHOD(Name);
         static NAN_METHOD(SetName);
         static NAN_METHOD(Protect);

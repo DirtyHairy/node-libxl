@@ -27,6 +27,7 @@
 #include "argument_helper.h"
 #include "assert.h"
 #include "async_worker.h"
+#include "auto_filter.h"
 #include "format.h"
 #include "rich_string.h"
 #include "util.h"
@@ -2530,6 +2531,51 @@ namespace node_libxl {
         info.GetReturnValue().Set(Nan::New<Integer>(index));
     }
 
+    NAN_METHOD(Sheet::IsAutoFilter) {
+        Nan::HandleScope scope;
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->isAutoFilter()));
+    }
+
+    NAN_METHOD(Sheet::AutoFilter) {
+        Nan::HandleScope scope;
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::AutoFilter* autoFilter = that->GetWrapped()->autoFilter();
+        if (!autoFilter) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(AutoFilter::NewInstance(autoFilter, that->GetBookHandle()));
+    }
+
+    NAN_METHOD(Sheet::ApplyFilter) {
+        Nan::HandleScope scope;
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->applyFilter();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::RemoveFilter) {
+        Nan::HandleScope scope;
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->removeFilter();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     NAN_METHOD(Sheet::DelNamedRange) {
         Nan::HandleScope scope;
 
@@ -3231,6 +3277,10 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "delHyperlink", DelHyperlink);
         Nan::SetPrototypeMethod(t, "addHyperlink", AddHyperlink);
         Nan::SetPrototypeMethod(t, "hyperlinkIndex", HyperlinkIndex);
+        Nan::SetPrototypeMethod(t, "isAutoFilter", IsAutoFilter);
+        Nan::SetPrototypeMethod(t, "autoFilter", AutoFilter);
+        Nan::SetPrototypeMethod(t, "applyFilter", ApplyFilter);
+        Nan::SetPrototypeMethod(t, "removeFilter", RemoveFilter);
         Nan::SetPrototypeMethod(t, "setAutoFitArea", SetAutoFitArea);
         Nan::SetPrototypeMethod(t, "tabColor", TabColor);
         Nan::SetPrototypeMethod(t, "setTabColor", SetTabColor);

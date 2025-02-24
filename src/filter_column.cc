@@ -196,7 +196,7 @@ namespace node_libxl {
         auto op1 = static_cast<libxl::Operator>(arguments.GetInt(0));
         CSNanUtf8Value(v1, arguments.GetString(1));
         auto op2 = static_cast<libxl::Operator>(arguments.GetInt(2, libxl::OPERATOR_EQUAL));
-        CSNanUtf8Value(v2, arguments.GetString(3, nullptr));
+        CSNanUtf8Value(v2, arguments.GetString(3, ""));
         bool andOp = arguments.GetBoolean(4, false);
 
         ASSERT_ARGUMENTS(arguments);
@@ -204,7 +204,8 @@ namespace node_libxl {
         FilterColumn* that = FromJS(info.This());
         ASSERT_THIS(that);
 
-        that->GetWrapped()->setCustomFilter(op1, *v1, op2, *v2, andOp);
+        that->GetWrapped()->setCustomFilter(op1, *v1, op2, info[3]->IsUndefined() ? nullptr : *v2,
+                                            andOp);
 
         info.GetReturnValue().Set(info.This());
     }
@@ -239,7 +240,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "index", Index);
         Nan::SetPrototypeMethod(t, "filterType", FilterType);
         Nan::SetPrototypeMethod(t, "filterSize", FilterSize);
-        Nan::SetPrototypeMethod(t, "getFilter", Filter);
+        Nan::SetPrototypeMethod(t, "filter", Filter);
         Nan::SetPrototypeMethod(t, "addFilter", AddFilter);
         Nan::SetPrototypeMethod(t, "getTop10", GetTop10);
         Nan::SetPrototypeMethod(t, "setTop10", SetTop10);

@@ -1,3 +1,5 @@
+const exp = require('constants');
+
 var xl = require('../lib/libxl'),
     util = require('util'),
     testUtils = require('./testUtils'),
@@ -1436,6 +1438,29 @@ describe('The sheet class', function () {
         expect(sheet.hyperlinkSize()).toBe(0);
 
         row++;
+    });
+
+    it('the autofilter family of functions manages the auto filter', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.isAutoFilter, {});
+
+        expect(sheet.isAutoFilter()).toBe(false);
+
+        shouldThrow(sheet.autoFilter, {});
+
+        expect(sheet.autoFilter()).toBeInstanceOf(xl.AutoFilter);
+
+        shouldThrow(sheet.applyFilter, {});
+
+        expect(sheet.applyFilter()).toBe(sheet);
+        expect(sheet.isAutoFilter()).toBe(true);
+
+        shouldThrow(sheet.removeFilter, {});
+
+        expect(sheet.removeFilter()).toBe(sheet);
+        expect(sheet.isAutoFilter()).toBe(false);
     });
 
     it('sheet.setAutoFitArea sets the auto fit area', () => {
