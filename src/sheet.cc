@@ -28,6 +28,7 @@
 #include "assert.h"
 #include "async_worker.h"
 #include "auto_filter.h"
+#include "form_control.h"
 #include "format.h"
 #include "rich_string.h"
 #include "util.h"
@@ -3025,6 +3026,37 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::FormControlSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->formControlSize()));
+    }
+
+    NAN_METHOD(Sheet::FormControl) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::FormControl* formControl = that->GetWrapped()->formControl(index);
+        if (!formControl) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(FormControl::NewInstance(formControl, that->GetBookHandle()));
+    }
+
     NAN_METHOD(Sheet::GetActiveCell) {
         Nan::HandleScope scope;
 
@@ -3289,6 +3321,8 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "addDataValidation", AddDataValidation);
         Nan::SetPrototypeMethod(t, "addDataValidationDouble", AddDataValidationDouble);
         Nan::SetPrototypeMethod(t, "removeDataValidations", RemoveDataValidations);
+        Nan::SetPrototypeMethod(t, "formControlSize", FormControlSize);
+        Nan::SetPrototypeMethod(t, "formControl", FormControl);
         Nan::SetPrototypeMethod(t, "getActiveCell", GetActiveCell);
         Nan::SetPrototypeMethod(t, "setActiveCell", SetActiveCell);
         Nan::SetPrototypeMethod(t, "selectionRange", SelectionRange);

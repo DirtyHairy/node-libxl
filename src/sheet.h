@@ -208,6 +208,8 @@ namespace node_libxl {
         static NAN_METHOD(AddDataValidation);
         static NAN_METHOD(AddDataValidationDouble);
         static NAN_METHOD(RemoveDataValidations);
+        static NAN_METHOD(FormControlSize);
+        static NAN_METHOD(FormControl);
         static NAN_METHOD(GetActiveCell);
         static NAN_METHOD(SetActiveCell);
         static NAN_METHOD(SelectionRange);

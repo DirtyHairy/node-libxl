@@ -1,3 +1,4 @@
+const { get } = require('http');
 var path = require('path'),
     fs = require('fs');
 
@@ -6,7 +7,8 @@ var outputDir = path.join(__dirname, 'output'),
     tempFile = path.join(outputDir, 'tempfile'),
     filesDir = path.join(__dirname, 'files'),
     testPicture = path.join(filesDir, 'dummy.jpg'),
-    xlsxTableFile = path.join(filesDir, 'table.xlsx');
+    xlsxTableFile = path.join(filesDir, 'table.xlsx'),
+    xlsmFormControlFile = path.join(filesDir, 'control.xlsm');
 
 module.exports = {
     initFilesystem: function () {
@@ -29,6 +31,10 @@ module.exports = {
 
     getXlsxTableFile: function () {
         return xlsxTableFile;
+    },
+
+    getXlsmFormControlFile: function () {
+        return xlsmFormControlFile;
     },
 
     shouldThrow: function (fun, scope) {

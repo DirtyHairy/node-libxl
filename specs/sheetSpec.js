@@ -1678,6 +1678,29 @@ describe('The sheet class', function () {
         expect(sheet.removeDataValidations()).toBe(sheet);
     });
 
+    it('sheet.formControlSize returns the number of form controls', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.loadSync(testUtils.getXlsmFormControlFile());
+
+        const sheet = book.getSheet(0);
+
+        shouldThrow(sheet.formControlSize, {});
+
+        expect(sheet.formControlSize()).toBe(1);
+    });
+
+    it('sheet.formControl retrieves a form control by index', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.loadSync(testUtils.getXlsmFormControlFile());
+
+        const sheet = book.getSheet(0);
+
+        shouldThrow(sheet.formControl, sheet, 'a');
+        shouldThrow(sheet.formControl, {}, 0);
+
+        expect(sheet.formControl(0)).toBeInstanceOf(xl.FormControl);
+    });
+
     it('sheet.getActiveSell and sheet.setActiveCell manage the active cell', () => {
         shouldThrow(sheet.setActiveCell, sheet, 1, 'a');
         shouldThrow(sheet.setActiveCell, {}, 1, 1);

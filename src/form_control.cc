@@ -129,7 +129,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->fmlaLink();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -161,7 +161,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->fmlaRange();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -223,7 +223,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->name();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -240,7 +240,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->linkedCell();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -257,11 +257,10 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->listFillRange();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
-        info.GetReturnValue().Set(
-            Nan::New<String>(that->GetWrapped()->listFillRange()).ToLocalChecked());
+        info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
     }
 
     NAN_METHOD(FormControl::Macro) {
@@ -275,7 +274,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->macro();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -292,7 +291,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->altText();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -306,6 +305,7 @@ namespace node_libxl {
 
         FormControl* that = FromJS(info.This());
         ASSERT_THIS(that);
+
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->locked()));
     }
 
@@ -317,6 +317,7 @@ namespace node_libxl {
 
         FormControl* that = FromJS(info.This());
         ASSERT_THIS(that);
+
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->defaultSize()));
     }
 
@@ -328,6 +329,7 @@ namespace node_libxl {
 
         FormControl* that = FromJS(info.This());
         ASSERT_THIS(that);
+
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->print()));
     }
 
@@ -339,6 +341,7 @@ namespace node_libxl {
 
         FormControl* that = FromJS(info.This());
         ASSERT_THIS(that);
+
         info.GetReturnValue().Set(Nan::New<Boolean>(that->GetWrapped()->disabled()));
     }
 
@@ -355,7 +358,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->item(index);
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -617,7 +620,7 @@ namespace node_libxl {
 
         const char* result = that->GetWrapped()->multiSel();
         if (!result) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         info.GetReturnValue().Set(Nan::New<String>(result).ToLocalChecked());
@@ -676,7 +679,7 @@ namespace node_libxl {
 
         int col, colOff, row, rowOff;
         if (!that->GetWrapped()->fromAnchor(&col, &colOff, &row, &rowOff)) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         Local<Object> result = Nan::New<Object>();
@@ -699,7 +702,7 @@ namespace node_libxl {
 
         int col, colOff, row, rowOff;
         if (!that->GetWrapped()->toAnchor(&col, &colOff, &row, &rowOff)) {
-            return info.GetReturnValue().Set(Nan::Undefined());
+            return util::ThrowLibxlError(that);
         }
 
         Local<Object> result = Nan::New<Object>();
