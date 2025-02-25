@@ -17,6 +17,7 @@
                 'src/rich_string.cc',
                 'src/auto_filter.cc',
                 'src/filter_column.cc',
+                'src/form_control.cc'
             ],
             'include_dirs': [
                 'deps/libxl/include_cpp',

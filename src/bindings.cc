@@ -28,6 +28,7 @@
 #include "core_properties.h"
 #include "filter_column.h"
 #include "font.h"
+#include "form_control.h"
 #include "format.h"
 #include "rich_string.h"
 #include "sheet.h"
@@ -44,6 +45,7 @@ void Initialize(Local<Object> exports) {
     RichString::Initialize(exports);
     AutoFilter::Initialize(exports);
     FilterColumn::Initialize(exports);
+    FormControl::Initialize(exports);
 }
 
 NODE_MODULE(libxl, Initialize)
