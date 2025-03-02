@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Christian Speckner <cnspeckn@googlemail.com>
+ * Copyright (c) 2025 Christian Speckner <cnspeckn@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,34 +22,13 @@
  * THE SOFTWARE.
  */
 
-#include "auto_filter.h"
-#include "book.h"
 #include "common.h"
-#include "conditional_format.h"
-#include "core_properties.h"
-#include "enum.h"
-#include "filter_column.h"
-#include "font.h"
-#include "form_control.h"
-#include "format.h"
-#include "rich_string.h"
-#include "sheet.h"
 
-using namespace v8;
-using namespace node_libxl;
+#ifndef NODE_LIBXL_ENUM_H
+#define NODE_LIBXL_ENUM_H
 
-void Initialize(Local<Object> exports) {
-    Book::Initialize(exports);
-    Sheet::Initialize(exports);
-    Format::Initialize(exports);
-    Font::Initialize(exports);
-    CoreProperties::Initialize(exports);
-    RichString::Initialize(exports);
-    AutoFilter::Initialize(exports);
-    FilterColumn::Initialize(exports);
-    FormControl::Initialize(exports);
-    ConditionalFormat::Initialize(exports);
-    DefineEnums(exports);
+namespace node_libxl {
+    void DefineEnums(v8::Local<v8::Object> exports);
 }
 
-NODE_MODULE(libxl, Initialize)
+#endif  // NODE_LIBXL_ENUM_H

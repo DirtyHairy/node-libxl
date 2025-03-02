@@ -251,21 +251,5 @@ namespace node_libxl {
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
         Nan::Set(exports, Nan::New<String>("FilterColumn").ToLocalChecked(), Nan::New(constructor));
-
-        NODE_DEFINE_CONSTANT(exports, FILTER_VALUE);
-        NODE_DEFINE_CONSTANT(exports, FILTER_TOP10);
-        NODE_DEFINE_CONSTANT(exports, FILTER_CUSTOM);
-        NODE_DEFINE_CONSTANT(exports, FILTER_DYNAMIC);
-        NODE_DEFINE_CONSTANT(exports, FILTER_COLOR);
-        NODE_DEFINE_CONSTANT(exports, FILTER_ICON);
-        NODE_DEFINE_CONSTANT(exports, FILTER_EXT);
-        NODE_DEFINE_CONSTANT(exports, FILTER_NOT_SET);
-
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_EQUAL);
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_GREATER_THAN);
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_GREATER_THAN_OR_EQUAL);
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_LESS_THAN);
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_LESS_THAN_OR_EQUAL);
-        NODE_DEFINE_CONSTANT(exports, OPERATOR_NOT_EQUAL);
     }
 }  // namespace node_libxl

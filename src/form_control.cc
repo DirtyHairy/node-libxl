@@ -776,22 +776,5 @@ namespace node_libxl {
         t->ReadOnlyPrototype();
         constructor.Reset(Nan::GetFunction(t).ToLocalChecked());
         Nan::Set(exports, Nan::New<String>("FormControl").ToLocalChecked(), Nan::New(constructor));
-
-        NODE_DEFINE_CONSTANT(exports, OBJECT_UNKNOWN);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_BUTTON);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_CHECKBOX);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_DROP);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_GBOX);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_LABEL);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_LIST);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_RADIO);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_SCROLL);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_SPIN);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_EDITBOX);
-        NODE_DEFINE_CONSTANT(exports, OBJECT_DIALOG);
-
-        NODE_DEFINE_CONSTANT(exports, CHECKEDTYPE_UNCHECKED);
-        NODE_DEFINE_CONSTANT(exports, CHECKEDTYPE_CHECKED);
-        NODE_DEFINE_CONSTANT(exports, CHECKEDTYPE_MIXED);
     }
 }  // namespace node_libxl
