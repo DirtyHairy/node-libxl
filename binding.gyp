@@ -19,6 +19,7 @@
                 'src/filter_column.cc',
                 'src/form_control.cc',
                 'src/conditional_format.cc',
+                'src/conditional_formatting.cc',
                 'src/enum.cc'
             ],
             'include_dirs': [

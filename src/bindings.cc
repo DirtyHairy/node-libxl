@@ -26,6 +26,7 @@
 #include "book.h"
 #include "common.h"
 #include "conditional_format.h"
+#include "conditional_formatting.h"
 #include "core_properties.h"
 #include "enum.h"
 #include "filter_column.h"
@@ -49,6 +50,7 @@ void Initialize(Local<Object> exports) {
     FilterColumn::Initialize(exports);
     FormControl::Initialize(exports);
     ConditionalFormat::Initialize(exports);
+    ConditionalFormatting::Initialize(exports);
     DefineEnums(exports);
 }
 
