@@ -525,6 +525,14 @@ describe('The book class', function () {
         expect(book.addFont(font1).name()).toBe('times');
     });
 
+    it('book.addConditionalFormat adds a conditional format', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        shouldThrow(book.addConditionalFormat, {});
+
+        expect(book.addConditionalFormat()).toBeInstanceOf(xl.ConditionalFormat);
+    });
+
     it('book.addRichString adds a rich string', () => {
         shouldThrow(book.addRichString, {});
 

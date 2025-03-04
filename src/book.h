@@ -84,6 +84,7 @@ namespace node_libxl {
         static NAN_METHOD(FormatSize);
         static NAN_METHOD(Font);
         static NAN_METHOD(FontSize);
+        static NAN_METHOD(AddConditionalFormat);
         static NAN_METHOD(DatePack);
         static NAN_METHOD(DateUnpack);
         static NAN_METHOD(ColorPack);

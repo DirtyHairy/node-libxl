@@ -31,6 +31,7 @@
 #include "assert.h"
 #include "async_worker.h"
 #include "buffer_copy.h"
+#include "conditional_format.h"
 #include "core_properties.h"
 #include "font.h"
 #include "format.h"
@@ -775,6 +776,9 @@ namespace node_libxl {
     NAN_METHOD(Book::SheetCount) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -933,6 +937,9 @@ namespace node_libxl {
     NAN_METHOD(Book::FormatSize) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -961,10 +968,31 @@ namespace node_libxl {
     NAN_METHOD(Book::FontSize) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
         info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->fontSize()));
+    }
+
+    NAN_METHOD(Book::AddConditionalFormat) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        libxl::ConditionalFormat* conditionalFormat = that->GetWrapped()->addConditionalFormat();
+        if (!conditionalFormat) {
+            return util::ThrowLibxlError(that);
+        }
+
+        return info.GetReturnValue().Set(
+            ConditionalFormat::NewInstance(conditionalFormat, info.This()));
     }
 
     NAN_METHOD(Book::DatePack) {
@@ -1053,6 +1081,9 @@ namespace node_libxl {
 
     NAN_METHOD(Book::ActiveSheet) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -1444,6 +1475,9 @@ namespace node_libxl {
     NAN_METHOD(Book::Version) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -1453,6 +1487,9 @@ namespace node_libxl {
     NAN_METHOD(Book::BiffVersion) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -1461,6 +1498,9 @@ namespace node_libxl {
 
     NAN_METHOD(Book::IsDate1904) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -1486,6 +1526,9 @@ namespace node_libxl {
 
     NAN_METHOD(Book::IsTemplate) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -1529,6 +1572,9 @@ namespace node_libxl {
     NAN_METHOD(Book::IsWriteProtected) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -1571,6 +1617,9 @@ namespace node_libxl {
     NAN_METHOD(Book::RemoveVBA) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -1581,6 +1630,9 @@ namespace node_libxl {
 
     NAN_METHOD(Book::RemovePrinterSettings) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -1593,6 +1645,9 @@ namespace node_libxl {
     NAN_METHOD(Book::RemoveAllPhonetics) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -1603,6 +1658,9 @@ namespace node_libxl {
 
     NAN_METHOD(Book::DpiAwareness) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Book* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -1678,6 +1736,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "addFormat", AddFormat);
         Nan::SetPrototypeMethod(t, "addFormatFromStyle", AddFormatFromStyle);
         Nan::SetPrototypeMethod(t, "addFont", AddFont);
+        Nan::SetPrototypeMethod(t, "addConditionalFormat", AddConditionalFormat);
         Nan::SetPrototypeMethod(t, "addRichString", AddRichString);
         Nan::SetPrototypeMethod(t, "addCustomNumFormat", AddCustomNumFormat);
         Nan::SetPrototypeMethod(t, "customNumFormat", CustomNumFormat);

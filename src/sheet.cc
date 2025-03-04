@@ -1194,6 +1194,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GetHorPageBreakSize) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1216,6 +1219,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::GetVerPageBreakSize) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1340,6 +1346,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::GroupSummaryBelow) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1364,6 +1373,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::GroupSummaryRight) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1674,6 +1686,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstRow) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1682,6 +1697,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::LastRow) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1692,6 +1710,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstCol) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1700,6 +1721,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::LastCol) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1710,6 +1734,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstFilledRow) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1718,6 +1745,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::LastFilledRow) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1728,6 +1758,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FirstFilledCol) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1737,6 +1770,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::LastFilledCol) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1745,6 +1781,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::DisplayGridlines) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1771,6 +1810,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::PrintGridlines) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1796,6 +1838,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Zoom) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1820,6 +1865,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::PrintZoom) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1884,6 +1932,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Landscape) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1909,6 +1960,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Paper) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1933,6 +1987,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::Header) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1962,6 +2019,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::HeaderMargin) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -1970,6 +2030,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::Footer) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -1999,6 +2062,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::FooterMargin) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2007,6 +2073,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::HCenter) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2033,6 +2102,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::VCenter) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2057,6 +2129,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::MarginLeft) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2083,6 +2158,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginRight) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2107,6 +2185,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::MarginTop) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2133,6 +2214,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::MarginBottom) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2157,6 +2241,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::PrintRowCol) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2278,6 +2365,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::ClearPrintRepeats) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2288,6 +2378,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::ClearPrintArea) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2535,6 +2628,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::IsAutoFilter) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2543,6 +2639,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::AutoFilter) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2558,6 +2657,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::ApplyFilter) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2568,6 +2670,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::RemoveFilter) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2598,6 +2703,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::NamedRangeSize) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2644,6 +2752,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::Name) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2668,6 +2779,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::Protect) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2694,6 +2808,9 @@ namespace node_libxl {
     NAN_METHOD(Sheet::RightToLeft) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
@@ -2718,6 +2835,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::Hidden) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
@@ -2846,6 +2966,9 @@ namespace node_libxl {
 
     NAN_METHOD(Sheet::TabColor) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);

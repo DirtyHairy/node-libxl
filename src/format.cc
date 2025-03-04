@@ -370,6 +370,9 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderBottom) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -395,6 +398,9 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderLeftColor) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -418,6 +424,9 @@ namespace node_libxl {
 
     NAN_METHOD(Format::BorderRightColor) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -443,6 +452,9 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderTopColor) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -467,6 +479,9 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderBottomColor) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -490,6 +505,9 @@ namespace node_libxl {
 
     NAN_METHOD(Format::BorderDiagonal) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -516,6 +534,9 @@ namespace node_libxl {
     NAN_METHOD(Format::BorderDiagonalColor) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -539,6 +560,9 @@ namespace node_libxl {
 
     NAN_METHOD(Format::FillPattern) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -565,6 +589,9 @@ namespace node_libxl {
     NAN_METHOD(Format::PatternBackgroundColor) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -589,6 +616,9 @@ namespace node_libxl {
 
     NAN_METHOD(Format::PatternForegroundColor) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
@@ -615,6 +645,9 @@ namespace node_libxl {
     NAN_METHOD(Format::Locked) {
         Nan::HandleScope scope;
 
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
 
@@ -639,6 +672,9 @@ namespace node_libxl {
 
     NAN_METHOD(Format::Hidden) {
         Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
         ASSERT_THIS(that);
