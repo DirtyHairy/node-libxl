@@ -172,7 +172,7 @@ package directory.
 
 ## Coverage
 
-The bindings cover the current (version 4.5.1) libxl API completely.
+The bindings cover the current (version 4.5.0) libxl API completely.
 
 # Platform and Node.js support
 
