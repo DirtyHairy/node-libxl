@@ -110,23 +110,17 @@ is possible to chain calls
 Errors are handled by throwing exceptions.
 
 Functions that return multiple values by reference in C++ (like
-Book::dateUnpack) return a object with the return values as properties.
+Book::dateUnpack) usually return a object with the return values as properties.
 
-See 'Differences...' below for a more detailed description of the methods whose
-behavior differs from their C++ counterpart.
+If in doubt on how to call a method, please check the specs in the `spec`
+directory for invocation examples. Every methods is covered with at least one tests.
 
 **IMPORTANT:** The Javascript API enforces the types defined in its C++
 counterpart for all function arguments; there is no implicit type casting. For
 example, passing a number to Sheet::writeStr will throw a TypeError instead of
 silently converting the string to a number.
 
-## Coverage
-
-The bindings cover the current (version 3.5.4) libxl API completely.
-
-## Implementation details and differences w.r.t. the C++ API
-
-### Asynchroneous variants of libxl calls
+## Asynchroneous variants of libxl calls
 
 The async variants of libxl calls implement the standard Node.js API for
 async functions: a callback is passed as last argument which is called once the
@@ -155,46 +149,15 @@ The following async functions are available:
   available as async implementations `sheet.insertRowAsync` and
   `sheet.insertColAsync`.
 
-### Interface differences
-
-* `book.write`, `book.writeRaw` and their sync versions are also available as
-  `book.save` etc.
-* `book.loadRaw` / `book.loadRawSync` take a node buffer as argument
-* `book.writeRaw` / `book.writeRawSync` return a node buffer
-* `book.getPicture` returns an object with `type` and `data` properties. The
-  `data` property is a node buffer containing the image data.
-* `book.addPicture` and `book.addPictureAsync` are overloaded and can be called
-   with either a file path or a node buffer, thus implementing both
-  `Book.AddPicture` and `Book.AddPicture2` from the libxl API.
-* `book.dateUnpack`: Returns an object with `year`, `month`,
-  `date`, `hour`, `minute`, `seconds` and `mseconds` properties.
-* `book.colorUnpack`: Returns an object with `red`, `green` and `blue`
-  properties.
-* `book.defaultFont`: Returns an object with `name` and `size` properties.
-* `sheet.readStr` & friends: If `sheet.readXXX` is provided with an object as
-  optional second argument, the cell format is returned in the objects `format`
-  property.
-* `sheet.getMerge`: Returns an object with the `rowFirst`, `rowLast`,
-  `colFirst`, `colLast` properties.
-* `sheet.getPrintFit`: Returns either `false` or an object with the `wPages` and
-  `hPages` properties.
-* `sheet.getNamedRange`: Returns an object with `rowFirst`, `rowLast`,
-  `colFirst`, `colLast` and `hidden` properties.
-* `sheet.namedRange`: Returns an object with `rowFirst`, `rowLast`,
-  `colFirst`, `colLast`, `name`, `scopeId`, and `hidden` properties.
-* `sheet.getTopLeftView`: Returns an object with `row` and `col` properties.
-* `sheet.addrToRowCol`: Returns an object with `row`, `col`, `rowRelative`,
-  `colRelative` properties.
-
-### Other differences
+## Other differences
 
 * Book object creation: Books are **not** created via `xlCreateBook` and
   `xlCreateXMLBook`. Instead, object instances are directly constructed from the
   `xl.Book` constructor via either `new xl.Book(xl.BOOK_TYPE_XLS)` or `new xl.Book(xl.BOOK_TYPE_XLSX)`
-* Accessing the parent book: sheet, format and font objects hold a reference to
+* Accessing the parent book: all objects hold a reference to
   their parent book that can be accessed via the `book` property
 
-### Enum constants
+## Enum constants
 
 All C enum constants provided by the library are available as constants on the
 library object, e.g.  `xl.NUMFORMAT_DATE` or `xl.PICTURETYPE_PNG`.
@@ -207,6 +170,10 @@ bindings by modifying `api_key.h` and rebuilding the library via `node-gyp
 rebuild` (you'll have to install node-gyp for this) or `npm install` in the
 package directory.
 
+## Coverage
+
+The bindings cover the current (version 4.5.1) libxl API completely.
+
 # Platform and Node.js support
 
 ## Platforms
@@ -215,9 +182,9 @@ The package supports Linux, Windows and Mac.
 
 ## Node.js
 
-The current branch (0.4.x) supports all current versions of Node.js starting with 10.0.0.
-If you need support for older Node versions, use the 0.3.x and 0.2.x branches --- those support
-Node.js down to version 0.10.0.
+The current branch (0.6.x) supports all current versions of Node.js starting with 18.0.0.
+If you need support for older Node versions you'll have to use an older version of the
+bindings.
 
 Be aware, though, that the build time dependencies have moved on and are starting to use
 ES6 features that break support for Node < 6, even if those older versions of node-libxl
@@ -225,9 +192,6 @@ still support it. If you still need to use such an old version of Node, you'll h
 use lockfiles to pin those transitive dependencies.
 
 ## Restrictions
-
-Some of the newer parts of the libxl API are currently unsupported. Nag me to implement
-them if you miss anything (or provide a pull request).
 
 The async hooks API introduced with Node.js 9 is currently unsupported.
 
@@ -247,7 +211,7 @@ Please report any bugs or feature requests on the github issue tracker.
 As the API is completely covered, I consider the bindings complete. New releases
 will only cover new libxl methods and fix bugs. If you identify parts of
 libxl that are particularily slow, asynchroneous version of those could be added
-as well. Note that only the latest version branch (0.3.x) is maintained and
+as well. Note that only the latest version branch (0.6.x) is maintained and
 supported.
 
 # Credits
