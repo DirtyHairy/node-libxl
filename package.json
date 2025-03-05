@@ -15,7 +15,9 @@
         "specs",
         "lib",
         "src",
-        "binding.gyp"
+        "binding.gyp",
+        "jasmine.sh",
+        "jasmine.json"
     ],
     "homepage": "https://github.com/DirtyHairy/node-libxl",
     "repository": {
