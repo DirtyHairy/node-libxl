@@ -28,6 +28,7 @@
 #include "assert.h"
 #include "async_worker.h"
 #include "auto_filter.h"
+#include "conditional_formatting.h"
 #include "form_control.h"
 #include "format.h"
 #include "rich_string.h"
@@ -3180,6 +3181,25 @@ namespace node_libxl {
         info.GetReturnValue().Set(FormControl::NewInstance(formControl, that->GetBookHandle()));
     }
 
+    NAN_METHOD(Sheet::AddConditionalFormatting) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::ConditionalFormatting* conditionalFormatting =
+            that->GetWrapped()->addConditionalFormatting();
+        if (!conditionalFormatting) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(
+            ConditionalFormatting::NewInstance(conditionalFormatting, that->GetBookHandle()));
+    }
+
     NAN_METHOD(Sheet::GetActiveCell) {
         Nan::HandleScope scope;
 
@@ -3446,6 +3466,7 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "removeDataValidations", RemoveDataValidations);
         Nan::SetPrototypeMethod(t, "formControlSize", FormControlSize);
         Nan::SetPrototypeMethod(t, "formControl", FormControl);
+        Nan::SetPrototypeMethod(t, "addConditionalFormatting", AddConditionalFormatting);
         Nan::SetPrototypeMethod(t, "getActiveCell", GetActiveCell);
         Nan::SetPrototypeMethod(t, "setActiveCell", SetActiveCell);
         Nan::SetPrototypeMethod(t, "selectionRange", SelectionRange);

@@ -1701,6 +1701,15 @@ describe('The sheet class', function () {
         expect(sheet.formControl(0)).toBeInstanceOf(xl.FormControl);
     });
 
+    it('sheet.addConditionalFormatting adds a conditional formatting rule', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.addConditionalFormatting, {});
+
+        expect(sheet.addConditionalFormatting()).toBeInstanceOf(xl.ConditionalFormatting);
+    });
+
     it('sheet.getActiveSell and sheet.setActiveCell manage the active cell', () => {
         shouldThrow(sheet.setActiveCell, sheet, 1, 'a');
         shouldThrow(sheet.setActiveCell, {}, 1, 1);
