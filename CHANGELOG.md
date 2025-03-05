@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+This is a major update.
+
+ * Support all objects and methods as of libxl 4.5.0.
+ * Bug fixes.
+
 ## 0.5.0
 
  * Update dependencies.
