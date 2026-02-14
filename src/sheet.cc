@@ -32,6 +32,7 @@
 #include "form_control.h"
 #include "format.h"
 #include "rich_string.h"
+#include "table.h"
 #include "util.h"
 
 using namespace v8;
@@ -3378,6 +3379,72 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Sheet::AddTable) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(name, arguments.GetString(0));
+        int rowFirst = arguments.GetInt(1);
+        int rowLast = arguments.GetInt(2);
+        int colFirst = arguments.GetInt(3);
+        int colLast = arguments.GetInt(4);
+        bool hasHeaders = arguments.GetBoolean(5, false);
+        int tableStyle = arguments.GetInt(6, libxl::TABLESTYLE_MEDIUM2);
+
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Table* table = that->GetWrapped()->addTable(
+            *name, rowFirst, rowLast, colFirst, colLast, hasHeaders,
+            static_cast<libxl::TableStyle>(tableStyle));
+        if (!table) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Table::NewInstance(table, that->GetBookHandle()));
+    }
+
+    NAN_METHOD(Sheet::GetTableByName) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(name, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Table* table = that->GetWrapped()->getTableByName(*name);
+        if (!table) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Table::NewInstance(table, that->GetBookHandle()));
+    }
+
+    NAN_METHOD(Sheet::GetTableByIndex) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::Table* table = that->GetWrapped()->getTableByIndex(index);
+        if (!table) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(Table::NewInstance(table, that->GetBookHandle()));
+    }
+
     // Init
 
     void Sheet::Initialize(Local<Object> exports) {
@@ -3531,6 +3598,9 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "getTable", GetTable);
         Nan::SetPrototypeMethod(t, "tableSize", TableSize);
         Nan::SetPrototypeMethod(t, "table", Table);
+        Nan::SetPrototypeMethod(t, "addTable", AddTable);
+        Nan::SetPrototypeMethod(t, "getTableByName", GetTableByName);
+        Nan::SetPrototypeMethod(t, "getTableByIndex", GetTableByIndex);
         Nan::SetPrototypeMethod(t, "namedRangeSize", NamedRangeSize);
         Nan::SetPrototypeMethod(t, "namedRange", NamedRange);
         Nan::SetPrototypeMethod(t, "name", Name);

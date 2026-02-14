@@ -1341,6 +1341,38 @@ describe('The sheet class', function () {
         });
     });
 
+    it('sheet.addTable adds a table and returns a Table instance', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.addTable, {});
+        shouldThrow(sheet.addTable, sheet, 'T', 0, 5, 0, 'a');
+
+        expect(sheet.addTable('Table1', 0, 5, 0, 3)).toBeInstanceOf(xl.Table);
+    });
+
+    it('sheet.getTableByName retrieves a table by name', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+        sheet.addTable('MyTable', 0, 5, 0, 3);
+
+        shouldThrow(sheet.getTableByName, sheet, 1);
+        shouldThrow(sheet.getTableByName, {}, 'MyTable');
+
+        expect(sheet.getTableByName('MyTable')).toBeInstanceOf(xl.Table);
+    });
+
+    it('sheet.getTableByIndex retrieves a table by index', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+        sheet.addTable('MyTable', 0, 5, 0, 3);
+
+        shouldThrow(sheet.getTableByIndex, sheet, 'a');
+        shouldThrow(sheet.getTableByIndex, {}, 0);
+
+        expect(sheet.getTableByIndex(0)).toBeInstanceOf(xl.Table);
+    });
+
     it('sheet.name and sheet.setName manage the sheet name', function () {
         var sheet = book.addSheet('bazzaraz');
 

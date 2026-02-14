@@ -35,6 +35,7 @@
 #include "format.h"
 #include "rich_string.h"
 #include "sheet.h"
+#include "table.h"
 
 using namespace v8;
 using namespace node_libxl;
@@ -51,6 +52,7 @@ void Initialize(Local<Object> exports) {
     FormControl::Initialize(exports);
     ConditionalFormat::Initialize(exports);
     ConditionalFormatting::Initialize(exports);
+    Table::Initialize(exports);
     DefineEnums(exports);
 }
 

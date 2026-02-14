@@ -221,6 +221,9 @@ namespace node_libxl {
         static NAN_METHOD(ConditionalFormattingByIndex);
         static NAN_METHOD(RemoveConditionalFormatting);
         static NAN_METHOD(ConditionalFormattingSize);
+        static NAN_METHOD(AddTable);
+        static NAN_METHOD(GetTableByName);
+        static NAN_METHOD(GetTableByIndex);
 
        private:
         const libxl::Sheet* wrappedSheet;
