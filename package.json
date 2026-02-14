@@ -31,7 +31,8 @@
     "main": "./lib/libxl.js",
     "gypfile": true,
     "scripts": {
-        "install": "node install-libxl.js && node-gyp rebuild"
+        "install": "node install-libxl.js && node-gyp rebuild",
+        "prettier": "prettier -w specs/*.js"
     },
     "dependencies": {
         "adm-zip": "~0.5.16",
@@ -42,7 +43,7 @@
         "tmp": "~0.2.3"
     },
     "devDependencies": {
-        "jasmine": "^5.5.0",
-        "jshint": "~2.13.6"
+        "jshint": "~2.13.6",
+        "prettier": "^3.8.1"
     }
 }

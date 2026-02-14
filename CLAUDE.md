@@ -1,0 +1,1 @@
+Always autoformat the spec files after makings edits via `npm run prettier`.
