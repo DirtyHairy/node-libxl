@@ -2,7 +2,7 @@
 [![npm version](https://badge.fury.io/js/libxl.svg)](https://badge.fury.io/js/libxl)
 # What it is
 
-Node.js bindings for [libxl](http://www.libxl.com/). Node versions starting from 10.0.0
+Node.js bindings for [libxl](http://www.libxl.com/). Node versions starting from 18.0.0
 are supported (see 'Platform and Node.js support' below for details).
 
 # Compilation and Installation
@@ -170,9 +170,13 @@ bindings by modifying `api_key.h` and rebuilding the library via `node-gyp
 rebuild` (you'll have to install node-gyp for this) or `npm install` in the
 package directory.
 
+## Typings
+
+The bindings come with a full set of TypeScript typings.
+
 ## Coverage
 
-The bindings cover the current (version 4.5.0) libxl API completely.
+The bindings cover the current (version 5.1.0) libxl API completely.
 
 # Platform and Node.js support
 
@@ -182,7 +186,7 @@ The package supports Linux, Windows and Mac.
 
 ## Node.js
 
-The current branch (0.6.x) supports all current versions of Node.js starting with 18.0.0.
+The current branch (0.7.x) supports all current versions of Node.js starting with 18.0.0.
 If you need support for older Node versions you'll have to use an older version of the
 bindings.
 
@@ -197,10 +201,10 @@ The async hooks API introduced with Node.js 9 is currently unsupported.
 
 # Tests
 
-The bindings are fully covered with jasmine tests. If you have jasmine-node
+The bindings and typings are full covered with tests. If you have jasmine-node
 installed (via NPM), you can run the suite via
 
-    jasmine-node specs/
+    $ ./run_tests.sh
 
 # Reporting bugs
 
@@ -211,7 +215,7 @@ Please report any bugs or feature requests on the github issue tracker.
 As the API is completely covered, I consider the bindings complete. New releases
 will only cover new libxl methods and fix bugs. If you identify parts of
 libxl that are particularily slow, asynchroneous version of those could be added
-as well. Note that only the latest version branch (0.6.x) is maintained and
+as well. Note that only the latest version branch (0.7.x) is maintained and
 supported.
 
 # Credits

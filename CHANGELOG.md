@@ -4,7 +4,6 @@
 
  * Support all objects and methods as of libxl 5.1.0.
  * Drop support for libxl < 5.1.0.
- * Drop support for node < 20.
  * Add TypeScript typings.
  * Minor API fixes.
 
