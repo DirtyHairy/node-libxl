@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     util = require('util'),
     testUtils = require('./testUtils'),
@@ -14,15 +16,15 @@ describe('The book class', function () {
     });
 
     it('Books are created via the book constructor', function () {
-        expect(function () {
+        assert.throws(function () {
             var book = new xl.Book();
-        }).toThrow();
-        expect(function () {
+        });
+        assert.throws(function () {
             var book = new xl.Book(200);
-        }).toThrow();
-        expect(function () {
+        });
+        assert.throws(function () {
             var book = new xl.Book('a');
-        }).toThrow();
+        });
     });
 
     describe('book.writeSync', () => {
@@ -38,7 +40,7 @@ describe('The book class', function () {
             var file = testUtils.getWriteTestFile();
             shouldThrow(book.writeSync, book, 10);
             shouldThrow(book.writeSync, {}, file);
-            expect(book.writeSync(file)).toBe(book);
+            assert.strictEqual(book.writeSync(file), book);
         });
 
         it('supports a tempfile', function () {
@@ -53,7 +55,7 @@ describe('The book class', function () {
             var file = testUtils.getWriteTestFile();
             shouldThrow(book.writeSync, book, 10);
             shouldThrow(book.writeSync, {}, file);
-            expect(book.writeSync(file)).toBe(book, true);
+            assert.strictEqual(book.writeSync(file), book, true);
         });
     });
 
@@ -104,15 +106,15 @@ describe('The book class', function () {
             shouldThrow(book.loadSync, book, 10);
             shouldThrow(book.loadSync, {}, file);
 
-            expect(book.loadSync(file)).toBe(book);
+            assert.strictEqual(book.loadSync(file), book);
             var sheet = book.getSheet(0);
-            expect(sheet.readStr(1, 0)).toBe('bar');
+            assert.strictEqual(sheet.readStr(1, 0), 'bar');
         });
 
         it('supports an optional tempfile', function () {
-            expect(book.loadSync(testUtils.getWriteTestFile(), testUtils.getTempFile())).toBe(book);
+            assert.strictEqual(book.loadSync(testUtils.getWriteTestFile(), testUtils.getTempFile()), book);
             var sheet = book.getSheet(0);
-            expect(sheet.readStr(1, 0)).toBe('bar');
+            assert.strictEqual(sheet.readStr(1, 0), 'bar');
         });
     });
 
@@ -128,13 +130,13 @@ describe('The book class', function () {
 
             await loadResult;
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'bar');
         });
 
         it('supports an optional tempfile', async () => {
             await util.promisify(book.load.bind(book))(testUtils.getWriteTestFile(), testUtils.getTempFile());
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'bar');
         });
     });
 
@@ -144,25 +146,25 @@ describe('The book class', function () {
             shouldThrow(book.loadSyncSheet, book, file, 'a');
             shouldThrow(book.loadSyncSheet, {}, file, 1);
 
-            expect(book.loadSheetSync(file, 1)).toBe(book);
+            assert.strictEqual(book.loadSheetSync(file, 1), book);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports an optional tempfile', () => {
             const file = testUtils.getWriteTestFile();
 
-            expect(book.loadSheetSync(file, 1, testUtils.getTempFile())).toBe(book);
+            assert.strictEqual(book.loadSheetSync(file, 1, testUtils.getTempFile()), book);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports loading all sheets', () => {
             const file = testUtils.getWriteTestFile();
 
-            expect(book.loadSheetSync(file, 1, undefined, true)).toBe(book);
+            assert.strictEqual(book.loadSheetSync(file, 1, undefined, true), book);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
     });
 
@@ -178,7 +180,7 @@ describe('The book class', function () {
 
             await loadResult;
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports an optional tempfile', async () => {
@@ -186,7 +188,7 @@ describe('The book class', function () {
 
             await util.promisify(book.loadSheet.bind(book))(file, 1, testUtils.getTempFile());
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports loading all sheets', async () => {
@@ -194,7 +196,7 @@ describe('The book class', function () {
 
             await util.promisify(book.loadSheet.bind(book))(file, 1, undefined, true);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
     });
 
@@ -204,27 +206,27 @@ describe('The book class', function () {
             shouldThrow(book.loadPartiallySync, book, file, 1, 0, 'a');
             shouldThrow(book.loadPartiallySync, {}, file, 1, 0, 1);
 
-            expect(book.loadPartiallySync(file, 1, 0, 1)).toBe(book);
+            assert.strictEqual(book.loadPartiallySync(file, 1, 0, 1), book);
 
             const sheet = book.getSheet(0);
-            expect(sheet.readStr(1, 0)).toBe('foo');
+            assert.strictEqual(sheet.readStr(1, 0), 'foo');
             shouldThrow(sheet.readStr, sheet, 2, 0);
         });
 
         it('supports an optional tempfile', () => {
             const file = testUtils.getWriteTestFile();
 
-            expect(book.loadPartiallySync(file, 1, 0, 1, testUtils.getTempFile())).toBe(book);
+            assert.strictEqual(book.loadPartiallySync(file, 1, 0, 1, testUtils.getTempFile()), book);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports loading all sheets', () => {
             const file = testUtils.getWriteTestFile();
 
-            expect(book.loadPartiallySync(file, 1, 0, 1, undefined, true)).toBe(book);
+            assert.strictEqual(book.loadPartiallySync(file, 1, 0, 1, undefined, true), book);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
     });
 
@@ -241,7 +243,7 @@ describe('The book class', function () {
             await loadResult;
 
             const sheet = book.getSheet(0);
-            expect(sheet.readStr(1, 0)).toBe('foo');
+            assert.strictEqual(sheet.readStr(1, 0), 'foo');
             shouldThrow(sheet.readStr, sheet, 2, 0);
         });
 
@@ -250,7 +252,7 @@ describe('The book class', function () {
 
             await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, testUtils.getTempFile());
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
 
         it('supports loading all sheets', async () => {
@@ -258,7 +260,7 @@ describe('The book class', function () {
 
             await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, undefined, true);
 
-            expect(book.getSheet(0).readStr(1, 0)).toBe('foo');
+            assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
     });
 
@@ -267,9 +269,9 @@ describe('The book class', function () {
         shouldThrow(book.loadWithoutEmptyCellsSync, book, 10);
         shouldThrow(book.loadWithoutEmptyCellsSync, {}, file);
 
-        expect(book.loadWithoutEmptyCellsSync(file)).toBe(book);
+        assert.strictEqual(book.loadWithoutEmptyCellsSync(file), book);
         var sheet = book.getSheet(0);
-        expect(sheet.readStr(1, 0)).toBe('bar');
+        assert.strictEqual(sheet.readStr(1, 0), 'bar');
     });
 
     it('book.loadWithoutEmptyCells loads a book in async mode without empty cells', async () => {
@@ -283,7 +285,7 @@ describe('The book class', function () {
 
         await loadResult;
 
-        expect(book.getSheet(0).readStr(1, 0)).toBe('bar');
+        assert.strictEqual(book.getSheet(0).readStr(1, 0), 'bar');
     });
 
     it('book.loadInfoSync loads a book in sync mode without data', function () {
@@ -291,8 +293,8 @@ describe('The book class', function () {
         shouldThrow(book.loadInfoSync, book, 10);
         shouldThrow(book.loadInfoSync, {}, file);
 
-        expect(book.loadInfoSync(file)).toBe(book);
-        expect(book.sheetCount()).toBe(2);
+        assert.strictEqual(book.loadInfoSync(file), book);
+        assert.strictEqual(book.sheetCount(), 2);
     });
 
     it('book.loadInfo loads a book in async mode without data', async () => {
@@ -306,7 +308,7 @@ describe('The book class', function () {
 
         await loadResult;
 
-        expect(book.sheetCount()).toBe(2);
+        assert.strictEqual(book.sheetCount(), 2);
     });
 
     it('book.loadRawSync and book.saveRawSync load and save a book into a buffer, sync mode', function () {
@@ -322,9 +324,9 @@ describe('The book class', function () {
         shouldThrow(book2.loadRawSync, book2, 1);
         shouldThrow(book2.loadRawSync, {}, buffer);
 
-        expect(book2.loadRawSync(buffer)).toBe(book2);
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+        assert.strictEqual(book2.loadRawSync(buffer), book2);
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheet(0).readStr(1, 0), 'bar');
     });
 
     it('book.loadRawSync supports extra args for sheet and range', function () {
@@ -337,9 +339,9 @@ describe('The book class', function () {
 
         var book2 = new xl.Book(xl.BOOK_TYPE_XLS);
 
-        expect(book2.loadRawSync(buffer, 0, 0, 1, true)).toBe(book2);
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+        assert.strictEqual(book2.loadRawSync(buffer, 0, 0, 1, true), book2);
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheet(0).readStr(1, 0), 'bar');
     });
 
     it('book.loadRaw and book.saveRaw load and save a book into a buffer, async mode', async () => {
@@ -368,15 +370,15 @@ describe('The book class', function () {
             undefined,
             undefined,
             undefined,
-            function () {}
+            function () {},
         );
 
         const loadResult = util.promisify(book2.loadRaw.bind(book2))(buffer);
         shouldThrow(book2.loadRaw, book2);
         await loadResult;
 
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheet(0).readStr(1, 0), 'bar');
     });
 
     it('book.loadRaw supports extra args for sheet and range', async () => {
@@ -390,8 +392,8 @@ describe('The book class', function () {
 
         await util.promisify(book2.loadRaw.bind(book2))(buffer, 0, 0, 1, true);
 
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheet(0).readStr(1, 0)).toBe('bar');
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheet(0).readStr(1, 0), 'bar');
     });
 
     it('book.addSheet adds a sheet to a book', function () {
@@ -403,7 +405,7 @@ describe('The book class', function () {
         var sheet1 = book.addSheet('foo');
         sheet1.writeStr(1, 0, 'aaa');
         var sheet2 = book.addSheet('bar', sheet1);
-        expect(sheet2.readStr(1, 0)).toBe('aaa');
+        assert.strictEqual(sheet2.readStr(1, 0), 'aaa');
     });
 
     it('book.insertSheet inserts a sheet at a given position', function () {
@@ -414,10 +416,10 @@ describe('The book class', function () {
         shouldThrow(book.insertSheet, book, 2, 'bar');
         shouldThrow(book.insertSheet, {}, 0, 'bar');
         book.insertSheet(0, 'bar');
-        expect(book.sheetCount()).toBe(2);
+        assert.strictEqual(book.sheetCount(), 2);
 
         var sheet2 = book.insertSheet(0, 'baz', sheet1);
-        expect(sheet2.readStr(1, 0)).toBe('bbb');
+        assert.strictEqual(sheet2.readStr(1, 0), 'bbb');
     });
 
     it('book.getSheet retrieves a sheet at a given index', function () {
@@ -429,7 +431,7 @@ describe('The book class', function () {
         shouldThrow(book.getSheet, {}, 0);
 
         var sheet2 = book.getSheet(0);
-        expect(sheet2.readStr(1, 0)).toBe('bar');
+        assert.strictEqual(sheet2.readStr(1, 0), 'bar');
     });
 
     it('book.getSheetName retrieves the name of a sheet', function () {
@@ -439,15 +441,15 @@ describe('The book class', function () {
         shouldThrow(book.getSheetName, book, 1);
         shouldThrow(book.getSheetName, {}, 0);
 
-        expect(book.getSheetName(0)).toBe('foo');
+        assert.strictEqual(book.getSheetName(0), 'foo');
     });
 
     it('book.sheetType determines sheet type', function () {
         var sheet = book.addSheet('foo');
         shouldThrow(book.sheetType, book, 'a');
         shouldThrow(book.sheetType, {}, 0);
-        expect(book.sheetType(0)).toBe(xl.SHEETTYPE_SHEET);
-        expect(book.sheetType(1)).toBe(xl.SHEETTYPE_UNKNOWN);
+        assert.strictEqual(book.sheetType(0), xl.SHEETTYPE_SHEET);
+        assert.strictEqual(book.sheetType(1), xl.SHEETTYPE_UNKNOWN);
     });
 
     it('book.moveSheet moves a sheet', function () {
@@ -460,8 +462,8 @@ describe('The book class', function () {
         shouldThrow(book.moveSheet, book, 'a', 0);
         shouldThrow(book.moveSheet, {}, 1, 0);
 
-        expect(book.moveSheet(2, 0)).toBe(book);
-        expect(book.getSheetName(0)).toBe('baz');
+        assert.strictEqual(book.moveSheet(2, 0), book);
+        assert.strictEqual(book.getSheetName(0), 'baz');
     });
 
     it('book.delSheet removes a sheet', function () {
@@ -470,15 +472,15 @@ describe('The book class', function () {
         shouldThrow(book.delSheet, book, 'a');
         shouldThrow(book.delSheet, book, 3);
         shouldThrow(book.delSheet, {}, 0);
-        expect(book.delSheet(0)).toBe(book);
-        expect(book.sheetCount()).toBe(1);
+        assert.strictEqual(book.delSheet(0), book);
+        assert.strictEqual(book.sheetCount(), 1);
     });
 
     it('book.sheetCount counts the number of sheets in a book', function () {
         shouldThrow(book.sheetCount, {});
-        expect(book.sheetCount()).toBe(0);
+        assert.strictEqual(book.sheetCount(), 0);
         book.addSheet('foo');
-        expect(book.sheetCount()).toBe(1);
+        assert.strictEqual(book.sheetCount(), 1);
     });
 
     it('book.addFormat adds a format', function () {
@@ -500,7 +502,7 @@ describe('The book class', function () {
 
         otherBook.saveRaw(
             function () {},
-            function () {}
+            function () {},
         );
 
         shouldThrow(book.addFormat, book, format1);
@@ -512,7 +514,7 @@ describe('The book class', function () {
         shouldThrow(book.addFormatFromStyle, book, 'a');
         shouldThrow(book.addFormatFromStyle, {}, xl.CELLSTYLE_NORMAL);
 
-        expect(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor).toBe(true);
+        assert.strictEqual(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor, true);
     });
 
     it('book.addFont adds a font', function () {
@@ -522,7 +524,7 @@ describe('The book class', function () {
 
         var font1 = book.addFont();
         font1.setName('times');
-        expect(book.addFont(font1).name()).toBe('times');
+        assert.strictEqual(book.addFont(font1).name(), 'times');
     });
 
     it('book.addConditionalFormat adds a conditional format', () => {
@@ -530,14 +532,14 @@ describe('The book class', function () {
 
         shouldThrow(book.addConditionalFormat, {});
 
-        expect(book.addConditionalFormat()).toBeInstanceOf(xl.ConditionalFormat);
+        assert.ok(book.addConditionalFormat() instanceof xl.ConditionalFormat);
     });
 
     it('book.addRichString adds a rich string', () => {
         shouldThrow(book.addRichString, {});
 
         const richString = book.addRichString();
-        expect(richString instanceof xl.RichString).toBe(true);
+        assert.strictEqual(richString instanceof xl.RichString, true);
     });
 
     it('book.addCusomtNumFormat adds a custom number format', function () {
@@ -551,35 +553,35 @@ describe('The book class', function () {
         shouldThrow(book.customNumFormat, book, 'a');
         shouldThrow(book.customNumFormat, {}, format);
 
-        expect(book.customNumFormat(format)).toBe('000');
+        assert.strictEqual(book.customNumFormat(format), '000');
     });
 
     it('book.format retrieves a format by index', function () {
         var format = book.addFormat();
         shouldThrow(book.format, book, 'a');
         shouldThrow(book.format, {}, 0);
-        expect(book.format(0) instanceof xl.Format).toBe(true);
+        assert.strictEqual(book.format(0) instanceof xl.Format, true);
     });
 
     it('book.formatSize counts the number of formats', function () {
         shouldThrow(book.formatSize, {});
         var n = book.formatSize();
         book.addFormat();
-        expect(book.formatSize()).toBe(n + 1);
+        assert.strictEqual(book.formatSize(), n + 1);
     });
 
     it('book.font gets a font by index', function () {
         var font = book.addFont();
         shouldThrow(book.font, book, -1);
         shouldThrow(book.font, {}, 0);
-        expect(book.font(0) instanceof xl.Font).toBe(true);
+        assert.strictEqual(book.font(0) instanceof xl.Font, true);
     });
 
     it('book.fontSize counts the number of fonts', function () {
         shouldThrow(book.fontSize, {});
         var n = book.fontSize();
         book.addFont();
-        expect(book.fontSize()).toBe(n + 1);
+        assert.strictEqual(book.fontSize(), n + 1);
     });
 
     it('book.datePack packs a date', function () {
@@ -594,13 +596,13 @@ describe('The book class', function () {
         shouldThrow(book.dateUnpack, {}, date);
 
         var unpacked = book.dateUnpack(date);
-        expect(unpacked.year).toBe(1999);
-        expect(unpacked.month).toBe(2);
-        expect(unpacked.day).toBe(3);
-        expect(unpacked.hour).toBe(4);
-        expect(unpacked.minute).toBe(5);
-        expect(unpacked.second).toBe(6);
-        expect(unpacked.msecond).toBe(7);
+        assert.strictEqual(unpacked.year, 1999);
+        assert.strictEqual(unpacked.month, 2);
+        assert.strictEqual(unpacked.day, 3);
+        assert.strictEqual(unpacked.hour, 4);
+        assert.strictEqual(unpacked.minute, 5);
+        assert.strictEqual(unpacked.second, 6);
+        assert.strictEqual(unpacked.msecond, 7);
     });
 
     it('book.colorPack packs a color', function () {
@@ -615,9 +617,9 @@ describe('The book class', function () {
         shouldThrow(book.colorUnpack, {}, color);
 
         var unpacked = book.colorUnpack(color);
-        expect(unpacked.red).toBe(1);
-        expect(unpacked.green).toBe(2);
-        expect(unpacked.blue).toBe(3);
+        assert.strictEqual(unpacked.red, 1);
+        assert.strictEqual(unpacked.green, 2);
+        assert.strictEqual(unpacked.blue, 3);
     });
 
     it("book.activeSheet returns the index of a book's active sheet", function () {
@@ -625,16 +627,16 @@ describe('The book class', function () {
         book.addSheet('bar');
         book.setActiveSheet(0);
         shouldThrow(book.activeSheet, {});
-        expect(book.activeSheet()).toBe(0);
+        assert.strictEqual(book.activeSheet(), 0);
         book.setActiveSheet(1);
-        expect(book.activeSheet()).toBe(1);
+        assert.strictEqual(book.activeSheet(), 1);
     });
 
     it('book.setActiveSheet sets the active sheet', function () {
         book.addSheet('foo');
         shouldThrow(book.setActiveSheet, book, 'a');
         shouldThrow(book.setActiveSheet, {}, 0);
-        expect(book.setActiveSheet(0)).toBe(book);
+        assert.strictEqual(book.setActiveSheet(0), book);
     });
 
     it('book.addPicture, book.pictureSize and book.getPicture ' + 'manage the pictures in a book', function () {
@@ -643,26 +645,26 @@ describe('The book class', function () {
             fileBuffer = fs.readFileSync(file);
 
         shouldThrow(book.pictureSize, {});
-        expect(book.pictureSize()).toBe(0);
+        assert.strictEqual(book.pictureSize(), 0);
 
         shouldThrow(book.addPicture, book, 1);
         shouldThrow(book.addPicture, {}, file);
-        expect(book.addPicture(file)).toBe(0);
-        expect(book.pictureSize()).toBe(1);
+        assert.strictEqual(book.addPicture(file), 0);
+        assert.strictEqual(book.pictureSize(), 1);
 
         shouldThrow(book.getPicture, book, true);
         shouldThrow(book.getPicture, {}, 0);
         var pic0 = book.getPicture(0);
 
-        expect(pic0.type).toBe(xl.PICTURETYPE_JPEG);
-        expect(testUtils.compareBuffers(pic0.data, fileBuffer)).toBe(true);
+        assert.strictEqual(pic0.type, xl.PICTURETYPE_JPEG);
+        assert.strictEqual(testUtils.compareBuffers(pic0.data, fileBuffer), true);
 
-        expect(book.addPicture(fileBuffer)).toBe(1);
-        expect(book.pictureSize()).toBe(2);
+        assert.strictEqual(book.addPicture(fileBuffer), 1);
+        assert.strictEqual(book.pictureSize(), 2);
 
         var pic1 = book.getPicture(1);
-        expect(pic1.type).toBe(xl.PICTURETYPE_JPEG);
-        expect(testUtils.compareBuffers(pic1.data, fileBuffer)).toBe(true);
+        assert.strictEqual(pic1.type, xl.PICTURETYPE_JPEG);
+        assert.strictEqual(testUtils.compareBuffers(pic1.data, fileBuffer), true);
     });
 
     it('book.addPictureAsync and book.getPictureAsync provide async picture management', async () => {
@@ -678,15 +680,15 @@ describe('The book class', function () {
         const addResult = addPictureAsync(file);
         shouldThrow(book.sheetCount, book);
 
-        expect(await addResult).toBe(0);
-        expect(book.pictureSize()).toBe(1);
+        assert.strictEqual(await addResult, 0);
+        assert.strictEqual(book.pictureSize(), 1);
 
-        expect(await addPictureAsync(fileBuffer)).toBe(1);
-        expect(book.pictureSize()).toBe(2);
+        assert.strictEqual(await addPictureAsync(fileBuffer), 1);
+        assert.strictEqual(book.pictureSize(), 2);
 
         const getPictureAsync = (id) =>
             new Promise((resolve, reject) =>
-                book.getPictureAsync(id, (err, type, data) => (err ? reject(err) : resolve([type, data])))
+                book.getPictureAsync(id, (err, type, data) => (err ? reject(err) : resolve([type, data]))),
             );
 
         const getResult = getPictureAsync(0);
@@ -695,11 +697,11 @@ describe('The book class', function () {
         const [type1, buffer1] = await getResult;
         const [type2, buffer2] = await getPictureAsync(1);
 
-        expect(type1).toBe(xl.PICTURETYPE_JPEG);
-        expect(type2).toBe(xl.PICTURETYPE_JPEG);
+        assert.strictEqual(type1, xl.PICTURETYPE_JPEG);
+        assert.strictEqual(type2, xl.PICTURETYPE_JPEG);
 
-        expect(testUtils.compareBuffers(buffer1, fileBuffer)).toBe(true);
-        expect(testUtils.compareBuffers(buffer2, fileBuffer)).toBe(true);
+        assert.strictEqual(testUtils.compareBuffers(buffer1, fileBuffer), true);
+        assert.strictEqual(testUtils.compareBuffers(buffer2, fileBuffer), true);
     });
 
     describe('book.addPictureAsLinkSync', () => {
@@ -710,16 +712,16 @@ describe('The book class', function () {
             shouldThrow(book.addPictureAsLinkSync, book, 1);
             shouldThrow(book.addPictureAsLinkSync, {}, file);
 
-            expect(book.addPictureAsLink(file)).toBe(0);
-            expect(book.pictureSize()).toBe(1);
+            assert.strictEqual(book.addPictureAsLink(file), 0);
+            assert.strictEqual(book.pictureSize(), 1);
         });
 
         it('accepts a second parameter insert', () => {
             const book = new xl.Book(xl.BOOK_TYPE_XLSX);
             const file = testUtils.getTestPicturePath();
 
-            expect(book.addPictureAsLink(file, true)).toBe(0);
-            expect(book.pictureSize()).toBe(1);
+            assert.strictEqual(book.addPictureAsLink(file, true), 0);
+            assert.strictEqual(book.pictureSize(), 1);
         });
     });
 
@@ -734,8 +736,8 @@ describe('The book class', function () {
             const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file);
             shouldThrow(book.sheetCount, book);
 
-            expect(await result).toBe(0);
-            expect(book.pictureSize()).toBe(1);
+            assert.strictEqual(await result, 0);
+            assert.strictEqual(book.pictureSize(), 1);
         });
 
         it('supports a second parameter insert', async () => {
@@ -745,8 +747,8 @@ describe('The book class', function () {
             const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file, true);
             shouldThrow(book.sheetCount, book);
 
-            expect(await result).toBe(0);
-            expect(book.pictureSize()).toBe(1);
+            assert.strictEqual(await result, 0);
+            assert.strictEqual(book.pictureSize(), 1);
         });
     });
 
@@ -755,91 +757,91 @@ describe('The book class', function () {
         shouldThrow(book.defaultFont, {});
 
         var defaultFont = book.defaultFont();
-        expect(defaultFont.name).toBe('times');
-        expect(defaultFont.size).toBe(13);
+        assert.strictEqual(defaultFont.name, 'times');
+        assert.strictEqual(defaultFont.size, 13);
     });
 
     it('book.setDefaultFont sets the default font', function () {
         shouldThrow(book.setDefaultFont, book, 10, 10);
         shouldThrow(book.setDefaultFont, {}, 'times', 10);
-        expect(book.setDefaultFont('times', 10)).toBe(book);
+        assert.strictEqual(book.setDefaultFont('times', 10), book);
     });
 
     it('book.refR1C1 checks for R1C1 mode', function () {
         book.setRefR1C1();
         shouldThrow(book.refR1C1, {});
-        expect(book.refR1C1()).toBe(true);
+        assert.strictEqual(book.refR1C1(), true);
         book.setRefR1C1(false);
-        expect(book.refR1C1()).toBe(false);
+        assert.strictEqual(book.refR1C1(), false);
     });
 
     it('book.setRefR1C1 switches R1C1 mode', function () {
         shouldThrow(book.setRefR1C1, book, 1);
         shouldThrow(book.setRefR1C1, {});
-        expect(book.setRefR1C1(true)).toBe(book);
+        assert.strictEqual(book.setRefR1C1(true), book);
     });
 
     it('book.rgbMode checks for RGB mode', function () {
         book.setRgbMode();
         shouldThrow(book.rgbMode, {});
-        expect(book.rgbMode()).toBe(true);
+        assert.strictEqual(book.rgbMode(), true);
         book.setRgbMode(false);
-        expect(book.rgbMode()).toBe(false);
+        assert.strictEqual(book.rgbMode(), false);
     });
 
     it('book.setRgbMode switches RGB mode', function () {
         shouldThrow(book.setRgbMode, book, 1);
         shouldThrow(book.setRgbMode, {});
-        expect(book.setRgbMode(true)).toBe(book);
+        assert.strictEqual(book.setRgbMode(true), book);
     });
 
     it('book.version returns the libxl version', function () {
         shouldThrow(book.version, {});
-        expect(typeof book.version()).toBe('number');
+        assert.strictEqual(typeof book.version(), 'number');
     });
 
     it('book.biffVersion returns the BIFF format version', function () {
         shouldThrow(book.biffVersion, {});
-        expect(book.biffVersion()).toBe(1536);
+        assert.strictEqual(book.biffVersion(), 1536);
     });
 
     it('book.isDate1904 checks which date system is active', function () {
         book.setDate1904();
         shouldThrow(book.isDate1904, {});
-        expect(book.isDate1904()).toBe(true);
+        assert.strictEqual(book.isDate1904(), true);
         book.setDate1904(false);
-        expect(book.isDate1904()).toBe(false);
+        assert.strictEqual(book.isDate1904(), false);
     });
 
     it('book.setDate1904 sets the active date system', function () {
         shouldThrow(book.setDate1904, book, 1);
         shouldThrow(book.setDate1904, {}, true);
-        expect(book.setDate1904(true)).toBe(book);
+        assert.strictEqual(book.setDate1904(true), book);
     });
 
     it('book.isTemplate checks whether the document is a template', function () {
         book.setTemplate();
         shouldThrow(book.isTemplate, {});
-        expect(book.isTemplate()).toBe(true);
+        assert.strictEqual(book.isTemplate(), true);
         book.setTemplate(false);
-        expect(book.isTemplate()).toBe(false);
+        assert.strictEqual(book.isTemplate(), false);
     });
 
     it('book.setTemplate toggles whether a document is a template', function () {
         shouldThrow(book.setTemplate, book, 1);
         shouldThrow(book.setTemplate, {});
-        expect(book.setTemplate(true)).toBe(book);
+        assert.strictEqual(book.setTemplate(true), book);
     });
 
     it('book.setKey sets the API key', function () {
         shouldThrow(book.setKey, book, 1, 'a');
         shouldThrow(book.setKey, {}, 'a', 'b');
-        expect(book.setKey('a', 'b')).toBe(book);
+        assert.strictEqual(book.setKey('a', 'b'), book);
     });
 
     it('book.isWriteProtected checks for write protection', () => {
         shouldThrow(book.isWriteProtected, {});
-        expect(book.isWriteProtected()).toBe(false);
+        assert.strictEqual(book.isWriteProtected(), false);
     });
 
     it('book.getCoreProperty retrieves core properties', () => {
@@ -847,7 +849,7 @@ describe('The book class', function () {
 
         shouldThrow(book.coreProperties, {});
 
-        expect(book.coreProperties()).toBeInstanceOf(xl.CoreProperties);
+        assert.ok(book.coreProperties() instanceof xl.CoreProperties);
     });
 
     it('book.setLocale sets the locale', () => {
@@ -856,25 +858,25 @@ describe('The book class', function () {
         shouldThrow(book.setLocale, book, 1);
         shouldThrow(book.setLocale, {}, locale);
 
-        expect(book.setLocale(locale)).toBe(book);
+        assert.strictEqual(book.setLocale(locale), book);
     });
 
     it('book.remveVBA removes all VBA macros', () => {
         shouldThrow(book.removeVBA, {});
 
-        expect(book.removeVBA()).toBe(book);
+        assert.strictEqual(book.removeVBA(), book);
     });
 
     it('book.removePrinterSettings removes printer settings', () => {
         shouldThrow(book.removePrinterSettings, {});
 
-        expect(book.removePrinterSettings()).toBe(book);
+        assert.strictEqual(book.removePrinterSettings(), book);
     });
 
     it('book.removeAllPhonetics removes all phonetics', () => {
         shouldThrow(book.removeAllPhonetics, {});
 
-        expect(book.removeAllPhonetics()).toBe(book);
+        assert.strictEqual(book.removeAllPhonetics(), book);
     });
 
     it('book.dpiAwareness and book.setDpiAwareness mange DPI awareness', () => {
@@ -884,10 +886,10 @@ describe('The book class', function () {
         shouldThrow(book.setDpiAwareness, book, 1);
         shouldThrow(book.setDpiAwareness, {}, false);
 
-        expect(book.setDpiAwareness(false)).toBe(book);
-        expect(book.dpiAwareness()).toBe(false);
-        expect(book.setDpiAwareness(true)).toBe(book);
-        expect(book.dpiAwareness()).toBe(true);
+        assert.strictEqual(book.setDpiAwareness(false), book);
+        assert.strictEqual(book.dpiAwareness(), false);
+        assert.strictEqual(book.setDpiAwareness(true), book);
+        assert.strictEqual(book.dpiAwareness(), true);
     });
 
     it('book.setPassword sets a password for encrypted XLSX files', () => {
@@ -896,7 +898,7 @@ describe('The book class', function () {
         shouldThrow(book.setPassword, book, 1);
         shouldThrow(book.setPassword, {}, 'secret');
 
-        expect(book.setPassword('secret')).toBe(book);
+        assert.strictEqual(book.setPassword('secret'), book);
     });
 
     it('book.loadInfoRawSync loads info from a buffer in sync mode', () => {
@@ -909,9 +911,9 @@ describe('The book class', function () {
         shouldThrow(book2.loadInfoRawSync, book2, 1);
         shouldThrow(book2.loadInfoRawSync, {}, buffer);
 
-        expect(book2.loadInfoRawSync(buffer)).toBe(book2);
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheetName(0)).toBe('testSheet');
+        assert.strictEqual(book2.loadInfoRawSync(buffer), book2);
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheetName(0), 'testSheet');
     });
 
     it('book.loadInfoRaw loads info from a buffer in async mode', async () => {
@@ -928,29 +930,29 @@ describe('The book class', function () {
         shouldThrow(book2.loadInfoRaw, book2);
         await loadResult;
 
-        expect(book2.sheetCount()).toBe(1);
-        expect(book2.getSheetName(0)).toBe('asyncSheet');
+        assert.strictEqual(book2.sheetCount(), 1);
+        assert.strictEqual(book2.getSheetName(0), 'asyncSheet');
     });
 
     it('book.errorCode returns an error code number', () => {
         shouldThrow(book.errorCode, {});
-        expect(typeof book.errorCode()).toBe('number');
-        expect(book.errorCode()).toBe(xl.ERRCODE_OK);
+        assert.strictEqual(typeof book.errorCode(), 'number');
+        assert.strictEqual(book.errorCode(), xl.ERRCODE_OK);
     });
 
     it('book.conditionalFormatSize and book.conditionalFormat manage conditional formats', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
         shouldThrow(book.conditionalFormatSize, {});
-        expect(book.conditionalFormatSize()).toBe(0);
+        assert.strictEqual(book.conditionalFormatSize(), 0);
 
         const cf = book.addConditionalFormat();
-        expect(book.conditionalFormatSize()).toBe(1);
+        assert.strictEqual(book.conditionalFormatSize(), 1);
 
         shouldThrow(book.conditionalFormat, book, 'a');
         shouldThrow(book.conditionalFormat, {}, 0);
 
-        expect(book.conditionalFormat(0)).toBeInstanceOf(xl.ConditionalFormat);
+        assert.ok(book.conditionalFormat(0) instanceof xl.ConditionalFormat);
     });
 
     it('book.clear clears all workbook data', () => {
@@ -960,7 +962,7 @@ describe('The book class', function () {
 
         shouldThrow(book.clear, {});
 
-        expect(book.clear()).toBe(book);
-        expect(book.sheetCount()).toBe(0);
+        assert.strictEqual(book.clear(), book);
+        assert.strictEqual(book.sheetCount(), 0);
     });
 });

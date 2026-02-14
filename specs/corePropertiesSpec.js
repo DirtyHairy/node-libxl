@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     util = require('util'),
     testUtils = require('./testUtils'),
@@ -17,8 +19,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setTitle, coreProperties, 1);
         shouldThrow(coreProperties.setTitle, {}, 'Foo');
 
-        expect(coreProperties.setTitle('Foo')).toBe(coreProperties);
-        expect(coreProperties.title()).toBe('Foo');
+        assert.strictEqual(coreProperties.setTitle('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.title(), 'Foo');
     });
 
     it('subject and setSubject change the title', () => {
@@ -26,8 +28,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setSubject, coreProperties, 1);
         shouldThrow(coreProperties.setSubject, {}, 'Foo');
 
-        expect(coreProperties.setSubject('Foo')).toBe(coreProperties);
-        expect(coreProperties.subject()).toBe('Foo');
+        assert.strictEqual(coreProperties.setSubject('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.subject(), 'Foo');
     });
 
     it('creator and setCreator change the title', () => {
@@ -35,8 +37,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setCreator, coreProperties, 1);
         shouldThrow(coreProperties.setCreator, {}, 'Foo');
 
-        expect(coreProperties.setCreator('Foo')).toBe(coreProperties);
-        expect(coreProperties.creator()).toBe('Foo');
+        assert.strictEqual(coreProperties.setCreator('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.creator(), 'Foo');
     });
 
     it('lastModifiedBy and setLastModifiedBy change the title', () => {
@@ -44,8 +46,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setLastModifiedBy, coreProperties, 1);
         shouldThrow(coreProperties.setLastModifiedBy, {}, 'Foo');
 
-        expect(coreProperties.setLastModifiedBy('Foo')).toBe(coreProperties);
-        expect(coreProperties.lastModifiedBy()).toBe('Foo');
+        assert.strictEqual(coreProperties.setLastModifiedBy('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.lastModifiedBy(), 'Foo');
     });
 
     it('created and setCreated change the title', () => {
@@ -56,8 +58,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setCreated, {}, now);
 
         let date = new Date();
-        expect(coreProperties.setCreated(now)).toBe(coreProperties);
-        expect(coreProperties.created()).toBe(now);
+        assert.strictEqual(coreProperties.setCreated(now), coreProperties);
+        assert.strictEqual(coreProperties.created(), now);
     });
 
     it('createdAsDouble and setCreatedAsDouble change the title', () => {
@@ -65,8 +67,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setCreatedAsDouble, coreProperties, 'a');
         shouldThrow(coreProperties.setCreatedAsDouble, {}, 1.0);
 
-        expect(coreProperties.setCreatedAsDouble(1.0)).toBe(coreProperties);
-        expect(coreProperties.createdAsDouble() - 1.0).toBeLessThan(testUtils.epsilon);
+        assert.strictEqual(coreProperties.setCreatedAsDouble(1.0), coreProperties);
+        assert.ok(coreProperties.createdAsDouble() - 1.0 < testUtils.epsilon);
     });
 
     it('modified and setModified change the title', () => {
@@ -77,8 +79,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setModified, {}, now);
 
         let date = new Date();
-        expect(coreProperties.setModified(now)).toBe(coreProperties);
-        expect(coreProperties.modified()).toBe(now);
+        assert.strictEqual(coreProperties.setModified(now), coreProperties);
+        assert.strictEqual(coreProperties.modified(), now);
     });
 
     it('modifiedAsDouble and setModifiedAsDouble change the title', () => {
@@ -86,8 +88,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setModifiedAsDouble, coreProperties, 'a');
         shouldThrow(coreProperties.setModifiedAsDouble, {}, 1.0);
 
-        expect(coreProperties.setModifiedAsDouble(1.0)).toBe(coreProperties);
-        expect(coreProperties.modifiedAsDouble() - 1.0).toBeLessThan(testUtils.epsilon);
+        assert.strictEqual(coreProperties.setModifiedAsDouble(1.0), coreProperties);
+        assert.ok(coreProperties.modifiedAsDouble() - 1.0 < testUtils.epsilon);
     });
 
     it('tags and setTags change the title', () => {
@@ -95,8 +97,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setTags, coreProperties, 1);
         shouldThrow(coreProperties.setTags, {}, 'Foo');
 
-        expect(coreProperties.setTags('Foo')).toBe(coreProperties);
-        expect(coreProperties.tags()).toBe('Foo');
+        assert.strictEqual(coreProperties.setTags('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.tags(), 'Foo');
     });
 
     it('categories and setCategories change the title', () => {
@@ -104,8 +106,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setCategories, coreProperties, 1);
         shouldThrow(coreProperties.setCategories, {}, 'Foo');
 
-        expect(coreProperties.setCategories('Foo')).toBe(coreProperties);
-        expect(coreProperties.categories()).toBe('Foo');
+        assert.strictEqual(coreProperties.setCategories('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.categories(), 'Foo');
     });
 
     it('comments and setComments change the title', () => {
@@ -113,8 +115,8 @@ describe('The CoreProperties class', () => {
         shouldThrow(coreProperties.setComments, coreProperties, 1);
         shouldThrow(coreProperties.setComments, {}, 'Foo');
 
-        expect(coreProperties.setComments('Foo')).toBe(coreProperties);
-        expect(coreProperties.comments()).toBe('Foo');
+        assert.strictEqual(coreProperties.setComments('Foo'), coreProperties);
+        assert.strictEqual(coreProperties.comments(), 'Foo');
     });
 
     it('removeAll unsets all properties', () => {
@@ -122,7 +124,7 @@ describe('The CoreProperties class', () => {
 
         coreProperties.setTitle('Foo');
 
-        expect(coreProperties.removeAll()).toBe(coreProperties);
-        expect(() => coreProperties.title()).toThrow();
+        assert.strictEqual(coreProperties.removeAll(), coreProperties);
+        assert.throws(() => coreProperties.title());
     });
 });

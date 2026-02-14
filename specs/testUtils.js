@@ -1,6 +1,6 @@
-const { get } = require('http');
 var path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    assert = require('node:assert/strict');
 
 var outputDir = path.join(__dirname, 'output'),
     writeTestFile = path.join(outputDir, 'writetest.xls'),
@@ -39,10 +39,9 @@ module.exports = {
 
     shouldThrow: function (fun, scope) {
         var args = Array.prototype.slice.call(arguments, 2);
-
-        expect(function () {
+        assert.throws(function () {
             fun.apply(scope, args);
-        }).toThrow();
+        });
     },
 
     getTestPicturePath: function () {

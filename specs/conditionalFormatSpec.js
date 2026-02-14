@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     testUtils = require('./testUtils'),
     shouldThrow = testUtils.shouldThrow;
@@ -13,7 +15,7 @@ describe('ConditionalFormat', () => {
     it('font gets the associated font', () => {
         shouldThrow(conditionalFormat.font, {});
 
-        expect(conditionalFormat.font()).toBeInstanceOf(xl.Font);
+        assert.ok(conditionalFormat.font() instanceof xl.Font);
     });
 
     it('numFormat and setNumFormat manage the number format', () => {
@@ -21,8 +23,8 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setNumFormat, {}, xl.NUMFORMAT_GENERAL);
         shouldThrow(conditionalFormat.numFormat, {});
 
-        expect(conditionalFormat.setNumFormat(xl.NUMFORMAT_GENERAL)).toBe(conditionalFormat);
-        expect(conditionalFormat.numFormat()).toBe(xl.NUMFORMAT_GENERAL);
+        assert.strictEqual(conditionalFormat.setNumFormat(xl.NUMFORMAT_GENERAL), conditionalFormat);
+        assert.strictEqual(conditionalFormat.numFormat(), xl.NUMFORMAT_GENERAL);
     });
 
     it('customNumFormat and setCustomNumFormat manage the number format', () => {
@@ -30,8 +32,8 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setCustomNumFormat, {}, 'abc');
         shouldThrow(conditionalFormat.customNumFormat, {});
 
-        expect(conditionalFormat.setCustomNumFormat('abc')).toBe(conditionalFormat);
-        expect(conditionalFormat.customNumFormat()).toBe('abc');
+        assert.strictEqual(conditionalFormat.setCustomNumFormat('abc'), conditionalFormat);
+        assert.strictEqual(conditionalFormat.customNumFormat(), 'abc');
     });
 
     it('setBorder sets the border', () => {
@@ -39,15 +41,15 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setBorder, {}, xl.BORDERSTYLE_MEDIUM);
         shouldThrow(conditionalFormat.setBorder, {});
 
-        expect(conditionalFormat.setBorder(xl.BORDERSTYLE_MEDIUM)).toBe(conditionalFormat);
-        expect(conditionalFormat.setBorder()).toBe(conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorder(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorder(), conditionalFormat);
     });
 
     it('setBorderColor sets the border color', () => {
         shouldThrow(conditionalFormat.setBorderColor, conditionalFormat, 'abc');
         shouldThrow(conditionalFormat.setBorderColor, {}, xl.COLOR_RED);
 
-        expect(conditionalFormat.setBorderColor(xl.COLOR_RED)).toBe(conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorderColor(xl.COLOR_RED), conditionalFormat);
     });
 
     it('borderLeft and setBorderLeft manage left border', () => {
@@ -55,9 +57,9 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setBorderLeft, {}, xl.BORDERSTYLE_MEDIUM);
         shouldThrow(conditionalFormat.borderLeft, {});
 
-        expect(conditionalFormat.setBorderLeft()).toBe(conditionalFormat);
-        expect(conditionalFormat.setBorderLeft(xl.BORDERSTYLE_MEDIUM)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderLeft()).toBe(xl.BORDERSTYLE_MEDIUM);
+        assert.strictEqual(conditionalFormat.setBorderLeft(), conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorderLeft(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderLeft(), xl.BORDERSTYLE_MEDIUM);
     });
 
     it('borderRight and setBorderRight manage right border', () => {
@@ -65,9 +67,9 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setBorderRight, {}, xl.BORDERSTYLE_MEDIUM);
         shouldThrow(conditionalFormat.borderRight, {});
 
-        expect(conditionalFormat.setBorderRight()).toBe(conditionalFormat);
-        expect(conditionalFormat.setBorderRight(xl.BORDERSTYLE_MEDIUM)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderRight()).toBe(xl.BORDERSTYLE_MEDIUM);
+        assert.strictEqual(conditionalFormat.setBorderRight(), conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorderRight(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderRight(), xl.BORDERSTYLE_MEDIUM);
     });
 
     it('borderTop and setBorderTop manage top border', () => {
@@ -75,9 +77,9 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setBorderTop, {}, xl.BORDERSTYLE_MEDIUM);
         shouldThrow(conditionalFormat.borderTop, {});
 
-        expect(conditionalFormat.setBorderTop()).toBe(conditionalFormat);
-        expect(conditionalFormat.setBorderTop(xl.BORDERSTYLE_MEDIUM)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderTop()).toBe(xl.BORDERSTYLE_MEDIUM);
+        assert.strictEqual(conditionalFormat.setBorderTop(), conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorderTop(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderTop(), xl.BORDERSTYLE_MEDIUM);
     });
 
     it('borderBottom and setBorderBottom manage bottom border', () => {
@@ -85,41 +87,41 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setBorderBottom, {}, xl.BORDERSTYLE_MEDIUM);
         shouldThrow(conditionalFormat.borderBottom, {});
 
-        expect(conditionalFormat.setBorderBottom()).toBe(conditionalFormat);
-        expect(conditionalFormat.setBorderBottom(xl.BORDERSTYLE_MEDIUM)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderBottom()).toBe(xl.BORDERSTYLE_MEDIUM);
+        assert.strictEqual(conditionalFormat.setBorderBottom(), conditionalFormat);
+        assert.strictEqual(conditionalFormat.setBorderBottom(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderBottom(), xl.BORDERSTYLE_MEDIUM);
     });
 
     it('borderLeftColor and setBorderLeftColor manage left border color', () => {
         shouldThrow(conditionalFormat.borderLeftColor, {});
         shouldThrow(conditionalFormat.setBorderLeftColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setBorderLeftColor(xl.COLOR_RED)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderLeftColor()).toBe(xl.COLOR_RED);
+        assert.strictEqual(conditionalFormat.setBorderLeftColor(xl.COLOR_RED), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderLeftColor(), xl.COLOR_RED);
     });
 
     it('borderRightColor and setBorderRightColor manage right border color', () => {
         shouldThrow(conditionalFormat.borderRightColor, {});
         shouldThrow(conditionalFormat.setBorderRightColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setBorderRightColor(xl.COLOR_GREEN)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderRightColor()).toBe(xl.COLOR_GREEN);
+        assert.strictEqual(conditionalFormat.setBorderRightColor(xl.COLOR_GREEN), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderRightColor(), xl.COLOR_GREEN);
     });
 
     it('borderTopColor and setBorderTopColor manage top border color', () => {
         shouldThrow(conditionalFormat.borderTopColor, {});
         shouldThrow(conditionalFormat.setBorderTopColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setBorderTopColor(xl.COLOR_BLUE)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderTopColor()).toBe(xl.COLOR_BLUE);
+        assert.strictEqual(conditionalFormat.setBorderTopColor(xl.COLOR_BLUE), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderTopColor(), xl.COLOR_BLUE);
     });
 
     it('borderBottomColor and setBorderBottomColor manage bottom border color', () => {
         shouldThrow(conditionalFormat.borderBottomColor, {});
         shouldThrow(conditionalFormat.setBorderBottomColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setBorderBottomColor(xl.COLOR_BLACK)).toBe(conditionalFormat);
-        expect(conditionalFormat.borderBottomColor()).toBe(xl.COLOR_BLACK);
+        assert.strictEqual(conditionalFormat.setBorderBottomColor(xl.COLOR_BLACK), conditionalFormat);
+        assert.strictEqual(conditionalFormat.borderBottomColor(), xl.COLOR_BLACK);
     });
 
     it('fillPattern and setFillPattern manage fill pattern', () => {
@@ -127,23 +129,23 @@ describe('ConditionalFormat', () => {
         shouldThrow(conditionalFormat.setFillPattern, {}, xl.FILLPATTERN_SOLID);
         shouldThrow(conditionalFormat.fillPattern, {});
 
-        expect(conditionalFormat.setFillPattern(xl.FILLPATTERN_SOLID)).toBe(conditionalFormat);
-        expect(conditionalFormat.fillPattern()).toBe(xl.FILLPATTERN_SOLID);
+        assert.strictEqual(conditionalFormat.setFillPattern(xl.FILLPATTERN_SOLID), conditionalFormat);
+        assert.strictEqual(conditionalFormat.fillPattern(), xl.FILLPATTERN_SOLID);
     });
 
     it('patternForegroundColor and setPatternForegroundColor manage pattern foreground color', () => {
         shouldThrow(conditionalFormat.patternForegroundColor, {});
         shouldThrow(conditionalFormat.setPatternForegroundColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setPatternForegroundColor(xl.COLOR_RED)).toBe(conditionalFormat);
-        expect(conditionalFormat.patternForegroundColor()).toBe(xl.COLOR_RED);
+        assert.strictEqual(conditionalFormat.setPatternForegroundColor(xl.COLOR_RED), conditionalFormat);
+        assert.strictEqual(conditionalFormat.patternForegroundColor(), xl.COLOR_RED);
     });
 
     it('patternBackgroundColor and setPatternBackgroundColor manage pattern background color', () => {
         shouldThrow(conditionalFormat.patternBackgroundColor, {});
         shouldThrow(conditionalFormat.setPatternBackgroundColor, conditionalFormat, 'abc');
 
-        expect(conditionalFormat.setPatternBackgroundColor(xl.COLOR_BLUE)).toBe(conditionalFormat);
-        expect(conditionalFormat.patternBackgroundColor()).toBe(xl.COLOR_BLUE);
+        assert.strictEqual(conditionalFormat.setPatternBackgroundColor(xl.COLOR_BLUE), conditionalFormat);
+        assert.strictEqual(conditionalFormat.patternBackgroundColor(), xl.COLOR_BLUE);
     });
 });

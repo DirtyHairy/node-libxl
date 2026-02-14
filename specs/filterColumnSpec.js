@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     testUtils = require('./testUtils'),
     shouldThrow = testUtils.shouldThrow;
@@ -18,35 +20,35 @@ describe('FilterColumn', () => {
     it('index returns the column index', () => {
         shouldThrow(filterColumn.index, {});
 
-        expect(filterColumn.index()).toBe(0);
+        assert.strictEqual(filterColumn.index(), 0);
     });
 
     it('filterType gets the filter type', () => {
         shouldThrow(filterColumn.filterType, {});
 
-        expect(filterColumn.filterType()).toBe(xl.FILTER_NOT_SET);
+        assert.strictEqual(filterColumn.filterType(), xl.FILTER_NOT_SET);
     });
 
     it('addFilter and filter set and get a value filter', () => {
         shouldThrow(filterColumn.addFilter, filterColumn, 1);
         shouldThrow(filterColumn.addFilter, {}, 'a');
 
-        expect(filterColumn.addFilter('a')).toBe(filterColumn);
+        assert.strictEqual(filterColumn.addFilter('a'), filterColumn);
 
         shouldThrow(filterColumn.filter, filterColumn, 'a');
         shouldThrow(filterColumn.filter, {}, 0);
 
-        expect(filterColumn.filter(0)).toBe('a');
+        assert.strictEqual(filterColumn.filter(0), 'a');
     });
 
     it('filterSize returns the number of filter values', () => {
         shouldThrow(filterColumn.filterSize, {});
 
-        expect(filterColumn.filterSize()).toBe(0);
+        assert.strictEqual(filterColumn.filterSize(), 0);
 
         filterColumn.addFilter('a');
 
-        expect(filterColumn.filterSize()).toBe(1);
+        assert.strictEqual(filterColumn.filterSize(), 1);
     });
 
     it('setTop10 and getTop10 get and set the number of top or bottom items', () => {
@@ -57,25 +59,28 @@ describe('FilterColumn', () => {
         shouldThrow(filterColumn.setTop10, {}, 1, false);
         shouldThrow(filterColumn.setTop10, {}, 1, false, false);
 
-        expect(filterColumn.setTop10(1)).toBe(filterColumn);
-        expect(filterColumn.setTop10(1, false)).toBe(filterColumn);
-        expect(filterColumn.setTop10(1, false, false)).toBe(filterColumn);
+        assert.strictEqual(filterColumn.setTop10(1), filterColumn);
+        assert.strictEqual(filterColumn.setTop10(1, false), filterColumn);
+        assert.strictEqual(filterColumn.setTop10(1, false, false), filterColumn);
 
         shouldThrow(filterColumn.getTop10, {});
 
-        expect(filterColumn.getTop10()).toEqual({ value: 1, top: false, percent: false });
+        assert.deepStrictEqual(filterColumn.getTop10(), { value: 1, top: false, percent: false });
     });
 
     it('setCustomFilter and getCustomFilter get and set a custom filter', () => {
         shouldThrow(filterColumn.setCustomFilter, filterColumn, xl.OPERATOR_EQUAL, 1);
         shouldThrow(filterColumn.setCustomFilter, filterColumn, xl.OPERATOR_EQUAL, 'a', xl.OPERATOR_EQUAL, 'b', 1);
 
-        expect(filterColumn.setCustomFilter(xl.OPERATOR_EQUAL, 'a')).toBe(filterColumn);
-        expect(filterColumn.setCustomFilter(xl.OPERATOR_EQUAL, 'a', xl.OPERATOR_EQUAL, 'b', true)).toBe(filterColumn);
+        assert.strictEqual(filterColumn.setCustomFilter(xl.OPERATOR_EQUAL, 'a'), filterColumn);
+        assert.strictEqual(
+            filterColumn.setCustomFilter(xl.OPERATOR_EQUAL, 'a', xl.OPERATOR_EQUAL, 'b', true),
+            filterColumn,
+        );
 
         shouldThrow(filterColumn.getCustomFilter, {});
 
-        expect(filterColumn.getCustomFilter()).toEqual({
+        assert.deepStrictEqual(filterColumn.getCustomFilter(), {
             op1: xl.OPERATOR_EQUAL,
             v1: 'a',
             op2: xl.OPERATOR_EQUAL,

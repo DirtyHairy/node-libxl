@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     testUtils = require('./testUtils'),
     shouldThrow = testUtils.shouldThrow;
@@ -20,8 +22,8 @@ describe('RichString', () => {
         shouldThrow(richString.addFont, richString, 1);
         shouldThrow(richString.addFont, richString, anotherFont);
 
-        expect(richString.addFont()).toBeInstanceOf(xl.Font);
-        expect(richString.addFont(font)).toBeInstanceOf(xl.Font);
+        assert.ok(richString.addFont() instanceof xl.Font);
+        assert.ok(richString.addFont(font) instanceof xl.Font);
     });
 
     it('addText and getText add end get text content', () => {
@@ -32,24 +34,24 @@ describe('RichString', () => {
         shouldThrow(richString.getText, richString, 'a');
         shouldThrow(richString.getText, {}, 0);
 
-        expect(richString.addText('asd')).toBe(richString);
-        expect(richString.addText('asd', font)).toBe(richString);
+        assert.strictEqual(richString.addText('asd'), richString);
+        assert.strictEqual(richString.addText('asd', font), richString);
 
         shouldThrow(richString.getText, richString, 'a');
         shouldThrow(richString.getText, {}, 0);
 
         const result = richString.getText(0);
-        expect(result.text).toBe('asd');
-        expect(result.font).toBeInstanceOf(xl.Font);
+        assert.strictEqual(result.text, 'asd');
+        assert.ok(result.font instanceof xl.Font);
     });
 
     it('textSize returns the number of text elements"', () => {
         shouldThrow(richString.textSize, {});
 
-        expect(richString.textSize()).toBe(0);
+        assert.strictEqual(richString.textSize(), 0);
 
         richString.addText('asd');
 
-        expect(richString.textSize()).toBe(1);
+        assert.strictEqual(richString.textSize(), 1);
     });
 });

@@ -1,3 +1,5 @@
+const { describe, it, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 var xl = require('../lib/libxl'),
     testUtils = require('./testUtils'),
     shouldThrow = testUtils.shouldThrow;
@@ -16,16 +18,23 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addRange, conditionalFormatting, 1, 2, 3, 'a');
         shouldThrow(conditionalFormatting.addRange, {}, 1, 2, 3, 4);
 
-        expect(conditionalFormatting.addRange(1, 2, 3, 4)).toBe(conditionalFormatting);
+        assert.strictEqual(conditionalFormatting.addRange(1, 2, 3, 4), conditionalFormatting);
     });
 
     it('addRule adds a rule', () => {
         shouldThrow(conditionalFormatting.addRule, conditionalFormatting, xl.CFORMAT_BEGINWITH, 'a');
         shouldThrow(conditionalFormatting.addRule, {}, xl.CFORMAT_BEGINWITH, conditionalFormat);
 
-        expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a')).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a', false)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat),
+            conditionalFormatting,
+        );
+        assert.strictEqual(
+            conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a'),
+            conditionalFormatting,
+        );
+        assert.strictEqual(
+            conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a', false),
             conditionalFormatting,
         );
     });
@@ -34,23 +43,29 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addTopRule, conditionalFormatting, 'invalid', 10);
         shouldThrow(conditionalFormatting.addTopRule, {}, conditionalFormat, 10);
 
-        expect(conditionalFormatting.addTopRule(conditionalFormat, 10)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addTopRule(conditionalFormat, 10, true)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addTopRule(conditionalFormat, 10, true, true)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addTopRule(conditionalFormat, 10, true, true, true)).toBe(conditionalFormatting);
+        assert.strictEqual(conditionalFormatting.addTopRule(conditionalFormat, 10), conditionalFormatting);
+        assert.strictEqual(conditionalFormatting.addTopRule(conditionalFormat, 10, true), conditionalFormatting);
+        assert.strictEqual(conditionalFormatting.addTopRule(conditionalFormat, 10, true, true), conditionalFormatting);
+        assert.strictEqual(
+            conditionalFormatting.addTopRule(conditionalFormat, 10, true, true, true),
+            conditionalFormatting,
+        );
     });
 
     it('addOpNumRule adds a numeric operator rule', () => {
         shouldThrow(conditionalFormatting.addOpNumRule, conditionalFormatting, xl.CFOPERATOR_LESSTHAN, 'invalid', 10);
         shouldThrow(conditionalFormatting.addOpNumRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10);
 
-        expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 20)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 20),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 0, true)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 0, true),
             conditionalFormatting,
         );
     });
@@ -65,13 +80,16 @@ describe('ConditionalFormatting', () => {
         );
         shouldThrow(conditionalFormatting.addOpStrRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test');
 
-        expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test')).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test'),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'a', 'z')).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'a', 'z'),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test', '', true)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test', '', true),
             conditionalFormatting,
         );
     });
@@ -80,13 +98,18 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addAboveAverageRule, conditionalFormatting, 'invalid');
         shouldThrow(conditionalFormatting.addAboveAverageRule, {}, conditionalFormat);
 
-        expect(conditionalFormatting.addAboveAverageRule(conditionalFormat)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, false)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, true)).toBe(conditionalFormatting);
-        expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1)).toBe(
+        assert.strictEqual(conditionalFormatting.addAboveAverageRule(conditionalFormat), conditionalFormatting);
+        assert.strictEqual(conditionalFormatting.addAboveAverageRule(conditionalFormat, false), conditionalFormatting);
+        assert.strictEqual(
+            conditionalFormatting.addAboveAverageRule(conditionalFormat, true, true),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1, true)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1),
+            conditionalFormatting,
+        );
+        assert.strictEqual(
+            conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1, true),
             conditionalFormatting,
         );
     });
@@ -95,10 +118,12 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addTimePeriodRule, conditionalFormatting, 'invalid', xl.CFTP_LAST7DAYS);
         shouldThrow(conditionalFormatting.addTimePeriodRule, {}, conditionalFormat, xl.CFTP_LAST7DAYS);
 
-        expect(conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS),
             conditionalFormatting,
         );
-        expect(conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS, true)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS, true),
             conditionalFormatting,
         );
     });
@@ -107,8 +132,11 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.add2ColorScaleRule, conditionalFormatting, 'invalid', xl.COLOR_RED);
         shouldThrow(conditionalFormatting.add2ColorScaleRule, {}, xl.COLOR_GREEN, xl.COLOR_RED);
 
-        expect(conditionalFormatting.add2ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_RED)).toBe(conditionalFormatting);
-        expect(
+        assert.strictEqual(
+            conditionalFormatting.add2ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_RED),
+            conditionalFormatting,
+        );
+        assert.strictEqual(
             conditionalFormatting.add2ColorScaleRule(
                 xl.COLOR_GREEN,
                 xl.COLOR_RED,
@@ -118,17 +146,19 @@ describe('ConditionalFormatting', () => {
                 100,
                 true,
             ),
-        ).toBe(conditionalFormatting);
+            conditionalFormatting,
+        );
     });
 
     it('add2ColorScaleFormulaRule adds a 2-color scale formula rule', () => {
         shouldThrow(conditionalFormatting.add2ColorScaleFormulaRule, conditionalFormatting, 'invalid', xl.COLOR_RED);
         shouldThrow(conditionalFormatting.add2ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_RED);
 
-        expect(conditionalFormatting.add2ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_RED)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.add2ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_RED),
             conditionalFormatting,
         );
-        expect(
+        assert.strictEqual(
             conditionalFormatting.add2ColorScaleFormulaRule(
                 xl.COLOR_GREEN,
                 xl.COLOR_RED,
@@ -138,7 +168,8 @@ describe('ConditionalFormatting', () => {
                 'B1',
                 true,
             ),
-        ).toBe(conditionalFormatting);
+            conditionalFormatting,
+        );
     });
 
     it('add3ColorScaleRule adds a 3-color scale rule', () => {
@@ -151,10 +182,11 @@ describe('ConditionalFormatting', () => {
         );
         shouldThrow(conditionalFormatting.add3ColorScaleRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
 
-        expect(conditionalFormatting.add3ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.add3ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
             conditionalFormatting,
         );
-        expect(
+        assert.strictEqual(
             conditionalFormatting.add3ColorScaleRule(
                 xl.COLOR_GREEN,
                 xl.COLOR_YELLOW,
@@ -167,7 +199,8 @@ describe('ConditionalFormatting', () => {
                 100,
                 true,
             ),
-        ).toBe(conditionalFormatting);
+            conditionalFormatting,
+        );
     });
 
     it('add3ColorScaleFormulaRule adds a 3-color scale formula rule', () => {
@@ -180,10 +213,11 @@ describe('ConditionalFormatting', () => {
         );
         shouldThrow(conditionalFormatting.add3ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
 
-        expect(conditionalFormatting.add3ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED)).toBe(
+        assert.strictEqual(
+            conditionalFormatting.add3ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
             conditionalFormatting,
         );
-        expect(
+        assert.strictEqual(
             conditionalFormatting.add3ColorScaleFormulaRule(
                 xl.COLOR_GREEN,
                 xl.COLOR_YELLOW,
@@ -196,6 +230,7 @@ describe('ConditionalFormatting', () => {
                 'C1',
                 true,
             ),
-        ).toBe(conditionalFormatting);
+            conditionalFormatting,
+        );
     });
 });
