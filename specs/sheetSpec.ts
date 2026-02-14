@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import util from 'util';
-import xl from '../lib/libxl.js';
+import * as xl from '../lib/libxl.js';
 import {
     getTestPicturePath,
     testPictureWidth,
@@ -9,7 +9,7 @@ import {
     getXlsxTableFile,
     getXlsmFormControlFile,
     epsilon,
-} from './testUtils.js';
+} from './testUtils.ts';
 
 describe('The sheet class', () => {
     let book = new xl.Book(xl.BOOK_TYPE_XLS),
@@ -31,10 +31,10 @@ describe('The sheet class', () => {
         sheet.writeStr(row, 0, 'foo').writeNum(row, 1, 10);
 
         assert.throws(() => {
-            sheet.cellType();
+            (sheet.cellType as any)();
         });
         assert.throws(() => {
-            sheet.cellType.call({}, row, 0);
+            (sheet.cellType as any).call({}, row, 0);
         });
 
         assert.strictEqual(sheet.cellType(row, 0), xl.CELLTYPE_STRING);
@@ -47,10 +47,10 @@ describe('The sheet class', () => {
         sheet.writeStr(row, 0, 'foo').writeFormula(row, 1, '=1');
 
         assert.throws(() => {
-            sheet.isFormula();
+            (sheet.isFormula as any)();
         });
         assert.throws(() => {
-            sheet.isFormula.call({}, row, 0);
+            (sheet.isFormula as any).call({}, row, 0);
         });
 
         assert.strictEqual(sheet.isFormula(row, 0), false);
@@ -61,10 +61,10 @@ describe('The sheet class', () => {
 
     it('sheet.cellFormat retrieves the cell format', () => {
         assert.throws(() => {
-            sheet.cellFormat();
+            (sheet.cellFormat as any)();
         });
         assert.throws(() => {
-            sheet.cellFormat.call({}, row, 0);
+            (sheet.cellFormat as any).call({}, row, 0);
         });
 
         const cellFormat = sheet.cellFormat(row, 0);
@@ -73,10 +73,10 @@ describe('The sheet class', () => {
 
     it('sheet.setCellFormat sets the cell format', () => {
         assert.throws(() => {
-            sheet.setCellFormat();
+            (sheet.setCellFormat as any)();
         });
         assert.throws(() => {
-            sheet.setCellFormat.call({}, row, 0, format);
+            (sheet.setCellFormat as any).call({}, row, 0, format);
         });
 
         assert.throws(() => {
@@ -90,13 +90,13 @@ describe('The sheet class', () => {
         sheet.writeNum(row, 1, 10);
 
         assert.throws(() => {
-            sheet.readStr();
+            (sheet.readStr as any)();
         });
         assert.throws(() => {
-            sheet.readStr.call({}, row, 0);
+            (sheet.readStr as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.strictEqual(sheet.readStr(row, 0), 'foo');
         assert.strictEqual(sheet.readStr(row, 0, formatRef), 'foo');
         assert.strictEqual(formatRef.format instanceof xl.Format, true);
@@ -106,10 +106,10 @@ describe('The sheet class', () => {
 
     it('sheet.writeStr writes a string', () => {
         assert.throws(() => {
-            sheet.writeStr();
+            (sheet.writeStr as any)();
         });
         assert.throws(() => {
-            sheet.writeStr.call({}, row, 0, 'foo');
+            (sheet.writeStr as any).call({}, row, 0, 'foo');
         });
 
         assert.throws(() => {
@@ -130,18 +130,18 @@ describe('The sheet class', () => {
         const richString = book.addRichString();
         const anotherRichString = anotherBook.addRichString();
 
-        assert.throws(() => sheet.writeRichStr.call(sheet, row, 'a', richString));
-        assert.throws(() => sheet.writeRichStr.call({}, row, 0, richString));
-        assert.throws(() => sheet.writeRichStr.call(sheet, row, 0, anotherRichString));
-        assert.throws(() => sheet.writeRichStr.call(sheet, row, 0, richString, anotherFormat));
+        assert.throws(() => (sheet.writeRichStr as any).call(sheet, row, 'a', richString));
+        assert.throws(() => (sheet.writeRichStr as any).call({}, row, 0, richString));
+        assert.throws(() => (sheet.writeRichStr as any).call(sheet, row, 0, anotherRichString));
+        assert.throws(() => (sheet.writeRichStr as any).call(sheet, row, 0, richString, anotherFormat));
 
         assert.strictEqual(sheet.writeRichStr(row, 0, richString), sheet);
         assert.strictEqual(sheet.writeRichStr(row, 1, richString, format), sheet);
 
-        assert.throws(() => sheet.readRichStr.call(sheet, row, 'a'));
-        assert.throws(() => sheet.readRichStr.call({}, row, 0));
+        assert.throws(() => (sheet.readRichStr as any).call(sheet, row, 'a'));
+        assert.throws(() => (sheet.readRichStr as any).call({}, row, 0));
 
-        let formatRef = {};
+        let formatRef: any = {};
         assert.ok(sheet.readRichStr(row, 0) instanceof xl.RichString);
         assert.ok(sheet.readRichStr(row, 0, formatRef) instanceof xl.RichString);
         assert.ok(formatRef.format instanceof xl.Format);
@@ -155,13 +155,13 @@ describe('The sheet class', () => {
         sheet.writeNum(row, 0, 10);
 
         assert.throws(() => {
-            sheet.readNum();
+            (sheet.readNum as any)();
         });
         assert.throws(() => {
-            sheet.readNum.call({}, row, 0);
+            (sheet.readNum as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.deepStrictEqual(sheet.readNum(row, 0), 10);
         assert.deepStrictEqual(sheet.readNum(row, 0, formatRef), 10);
         assert.strictEqual(formatRef.format instanceof xl.Format, true);
@@ -171,10 +171,10 @@ describe('The sheet class', () => {
 
     it('sheet.writeNum writes a Number', () => {
         assert.throws(() => {
-            sheet.writeNum();
+            (sheet.writeNum as any)();
         });
         assert.throws(() => {
-            sheet.writeNum.call({}, row, 0, 10);
+            (sheet.writeNum as any).call({}, row, 0, 10);
         });
 
         assert.throws(() => {
@@ -190,13 +190,13 @@ describe('The sheet class', () => {
         sheet.writeBool(row, 0, true);
 
         assert.throws(() => {
-            sheet.readBool();
+            (sheet.readBool as any)();
         });
         assert.throws(() => {
-            sheet.readBool.call({}, row, 0);
+            (sheet.readBool as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.deepStrictEqual(sheet.readBool(row, 0), true);
         assert.deepStrictEqual(sheet.readBool(row, 0, formatRef), true);
         assert.strictEqual(formatRef.format instanceof xl.Format, true);
@@ -206,10 +206,10 @@ describe('The sheet class', () => {
 
     it('sheet.writeBool writes a bool', () => {
         assert.throws(() => {
-            sheet.writeBool();
+            (sheet.writeBool as any)();
         });
         assert.throws(() => {
-            sheet.writeBool.call({}, row, 0, true);
+            (sheet.writeBool as any).call({}, row, 0, true);
         });
 
         assert.throws(() => {
@@ -226,13 +226,13 @@ describe('The sheet class', () => {
         sheet.writeNum(row, 1, 10);
 
         assert.throws(() => {
-            sheet.readBlank();
+            (sheet.readBlank as any)();
         });
         assert.throws(() => {
-            sheet.readBlank.call({}, row, 0);
+            (sheet.readBlank as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.strictEqual(sheet.readBlank(row, 0) instanceof xl.Format, true);
         assert.strictEqual(sheet.readBlank(row, 0, formatRef) instanceof xl.Format, true);
         assert.strictEqual(formatRef.format instanceof xl.Format, true);
@@ -245,17 +245,17 @@ describe('The sheet class', () => {
 
     it('sheet.writeBlank writes a blank cell', () => {
         assert.throws(() => {
-            sheet.writeBlank();
+            (sheet.writeBlank as any)();
         });
         assert.throws(() => {
-            sheet.writeBlank.call({}, row, 0, format);
+            (sheet.writeBlank as any).call({}, row, 0, format);
         });
 
         assert.throws(() => {
             sheet.writeBlank(row, 0, wrongFormat);
         });
         assert.throws(() => {
-            sheet.writeBlank(row, 0);
+            (sheet.writeBlank as any)(row, 0);
         });
         assert.strictEqual(sheet.writeBlank(row, 0, format), sheet);
 
@@ -263,20 +263,20 @@ describe('The sheet class', () => {
     });
 
     it('sheet.readFormula and sheet.writeFormula read and write a formula', () => {
-        assert.throws(() => sheet.writeFormula.call(sheet, row, 'a', '=SUM(A1:A10)'));
-        assert.throws(() => sheet.writeFormula.call({}, row, 0, '=SUM(A1:A10)'));
+        assert.throws(() => (sheet.writeFormula as any).call(sheet, row, 'a', '=SUM(A1:A10)'));
+        assert.throws(() => (sheet.writeFormula as any).call({}, row, 0, '=SUM(A1:A10)'));
 
         sheet.writeFormula(row, 0, '=SUM(A1:A10)');
         sheet.writeNum(row, 1, 10);
 
         assert.throws(() => {
-            sheet.readFormula();
+            (sheet.readFormula as any)();
         });
         assert.throws(() => {
-            sheet.readFormula.call({}, row, 0);
+            (sheet.readFormula as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.throws(() => {
             sheet.readFormula(row, 1);
         });
@@ -288,8 +288,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.writeFormulaNum write a formula and a numeric value', () => {
-        assert.throws(() => sheet.writeFormulaNum.call(sheet, row, 'a', '=SUM(A1:A10)', 1));
-        assert.throws(() => sheet.writeFormulaNum.call({}, row, 0, '=SUM(A1:A10)', 1));
+        assert.throws(() => (sheet.writeFormulaNum as any).call(sheet, row, 'a', '=SUM(A1:A10)', 1));
+        assert.throws(() => (sheet.writeFormulaNum as any).call({}, row, 0, '=SUM(A1:A10)', 1));
 
         sheet.writeFormulaNum(row, 0, '=SUM(A1:A10)', 1);
 
@@ -299,8 +299,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.writeFormulaStr write a formula and a numeric value', () => {
-        assert.throws(() => sheet.writeFormulaStr.call(sheet, row, 'a', '=SUM(A1:A10)', 'a'));
-        assert.throws(() => sheet.writeFormulaStr.call({}, row, 0, '=SUM(A1:A10)', 'a'));
+        assert.throws(() => (sheet.writeFormulaStr as any).call(sheet, row, 'a', '=SUM(A1:A10)', 'a'));
+        assert.throws(() => (sheet.writeFormulaStr as any).call({}, row, 0, '=SUM(A1:A10)', 'a'));
 
         sheet.writeFormulaStr(row, 0, '=SUM(A1:A10)', 'a');
 
@@ -310,8 +310,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.writeFormulaBool write a formula and a numeric value', () => {
-        assert.throws(() => sheet.writeFormulaBool.call(sheet, row, 'a', '=A1>A2', false));
-        assert.throws(() => sheet.writeFormulaBool.call({}, row, 0, '=A1>A2', false));
+        assert.throws(() => (sheet.writeFormulaBool as any).call(sheet, row, 'a', '=A1>A2', false));
+        assert.throws(() => (sheet.writeFormulaBool as any).call({}, row, 0, '=A1>A2', false));
 
         sheet.writeFormulaBool(row, 0, '=A1>A2', false);
 
@@ -322,10 +322,10 @@ describe('The sheet class', () => {
 
     it('sheet.writeComment writes a comment', () => {
         assert.throws(() => {
-            sheet.writeComment();
+            (sheet.writeComment as any)();
         });
         assert.throws(() => {
-            sheet.writeComment.call({}, row, 0, 'comment');
+            (sheet.writeComment as any).call({}, row, 0, 'comment');
         });
 
         assert.strictEqual(sheet.writeComment(row, 0, 'comment'), sheet);
@@ -336,12 +336,12 @@ describe('The sheet class', () => {
     it('sheet.removeComment removes a comment', () => {
         sheet.writeComment(row, 0, 'comment');
 
-        assert.throws(() => sheet.removeComment.call(sheet, row, '1'));
-        assert.throws(() => sheet.removeComment.call({}, row, 0));
+        assert.throws(() => (sheet.removeComment as any).call(sheet, row, '1'));
+        assert.throws(() => (sheet.removeComment as any).call({}, row, 0));
 
         sheet.removeComment(row, 0);
 
-        assert.throws(() => sheet.readComment.call(sheet, row, 0));
+        assert.throws(() => (sheet.readComment as any).call(sheet, row, 0));
 
         row++;
     });
@@ -351,13 +351,13 @@ describe('The sheet class', () => {
         sheet.writeComment(row, 0, 'comment');
 
         assert.throws(() => {
-            sheet.readComment();
+            (sheet.readComment as any)();
         });
         assert.throws(() => {
-            sheet.readComment.call({}, row, 0);
+            (sheet.readComment as any).call({}, row, 0);
         });
 
-        const formatRef = {};
+        const formatRef: any = {};
         assert.throws(() => {
             sheet.readComment(row, 1);
         });
@@ -369,8 +369,8 @@ describe('The sheet class', () => {
     it('sheet.isDate checks whether a cell contains a date', () => {
         sheet.writeNum(row, 0, book.datePack(1980, 8, 19), book.addFormat().setNumFormat(xl.NUMFORMAT_DATE));
 
-        assert.throws(() => sheet.isDate.call(sheet, row, 'a'));
-        assert.throws(() => sheet.isDate.call({}, row, 0));
+        assert.throws(() => (sheet.isDate as any).call(sheet, row, 'a'));
+        assert.throws(() => (sheet.isDate as any).call({}, row, 0));
 
         assert.strictEqual(sheet.isDate(row - 1, 0), false);
         assert.strictEqual(sheet.isDate(row, 0), true);
@@ -379,8 +379,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.isRichStr checks whether a cell contains a richt string', () => {
-        assert.throws(() => sheet.isRichStr.call(sheet, row, 'a'));
-        assert.throws(() => sheet.isRichStr.call({}, row, 0));
+        assert.throws(() => (sheet.isRichStr as any).call(sheet, row, 'a'));
+        assert.throws(() => (sheet.isRichStr as any).call({}, row, 0));
 
         // TODO: add a positive test once rich strings are supported
         assert.strictEqual(sheet.isRichStr(row, 0), false);
@@ -390,10 +390,10 @@ describe('The sheet class', () => {
         sheet.writeStr(row, 0, '');
 
         assert.throws(() => {
-            sheet.readError();
+            (sheet.readError as any)();
         });
         assert.throws(() => {
-            sheet.readError.call({}, row, 0);
+            (sheet.readError as any).call({}, row, 0);
         });
 
         assert.strictEqual(sheet.readError(row, 0), xl.ERRORTYPE_NOERROR);
@@ -402,8 +402,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.writeError writes an error', () => {
-        assert.throws(() => sheet.writeError.call(sheet, row, '0', xl.ERRORTYPE_DIV_0));
-        assert.throws(() => sheet.writeError.call({}, row, 0, xl.ERRORTYPE_DIV_0));
+        assert.throws(() => (sheet.writeError as any).call(sheet, row, '0', xl.ERRORTYPE_DIV_0));
+        assert.throws(() => (sheet.writeError as any).call({}, row, 0, xl.ERRORTYPE_DIV_0));
 
         sheet.writeError(row, 0, xl.ERRORTYPE_DIV_0);
 
@@ -415,8 +415,8 @@ describe('The sheet class', () => {
     it('sheet.writeError accepts a format', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.writeError.call(sheet, row, 0, xl.ERRORTYPE_DIV_0, 10));
-        assert.throws(() => sheet.writeError.call({}, row, 0, xl.ERRORTYPE_DIV_0, format));
+        assert.throws(() => (sheet.writeError as any).call(sheet, row, 0, xl.ERRORTYPE_DIV_0, 10));
+        assert.throws(() => (sheet.writeError as any).call({}, row, 0, xl.ERRORTYPE_DIV_0, format));
 
         sheet.writeError(row, 0, xl.ERRORTYPE_DIV_0, format);
 
@@ -429,10 +429,10 @@ describe('The sheet class', () => {
         sheet.setCol(0, 0, 42);
 
         assert.throws(() => {
-            sheet.colWidth();
+            (sheet.colWidth as any)();
         });
         assert.throws(() => {
-            sheet.colWidth.call({}, 0);
+            (sheet.colWidth as any).call({}, 0);
         });
 
         assert.deepStrictEqual(sheet.colWidth(0), 42);
@@ -442,35 +442,35 @@ describe('The sheet class', () => {
         sheet.setRow(1, 42);
 
         assert.throws(() => {
-            sheet.rowHeight();
+            (sheet.rowHeight as any)();
         });
         assert.throws(() => {
-            sheet.rowHeight.call({}, 1);
+            (sheet.rowHeight as any).call({}, 1);
         });
 
         assert.deepStrictEqual(sheet.rowHeight(1), 42);
     });
 
     it('sheet.colWidthPx reads column width in pixels', () => {
-        assert.throws(() => sheet.colWidthPx.call(sheet, '1'));
-        assert.throws(() => sheet.colWidthPx.call({}, 1));
+        assert.throws(() => (sheet.colWidthPx as any).call(sheet, '1'));
+        assert.throws(() => (sheet.colWidthPx as any).call({}, 1));
 
         assert.strictEqual(typeof sheet.colWidthPx(1), 'number');
     });
 
     it('sheet.colWidthPx reads column width in pixels', () => {
-        assert.throws(() => sheet.rowHeightPx.call(sheet, '1'));
-        assert.throws(() => sheet.rowHeightPx.call({}, 1));
+        assert.throws(() => (sheet.rowHeightPx as any).call(sheet, '1'));
+        assert.throws(() => (sheet.rowHeightPx as any).call({}, 1));
 
         assert.strictEqual(typeof sheet.rowHeightPx(1), 'number');
     });
 
     it('sheet.setCol configures columns', () => {
         assert.throws(() => {
-            sheet.setCol();
+            (sheet.setCol as any)();
         });
         assert.throws(() => {
-            sheet.setCol.call({}, 0, 0, 42);
+            (sheet.setCol as any).call({}, 0, 0, 42);
         });
 
         assert.throws(() => {
@@ -482,8 +482,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.setColPx configures columms in pixels', () => {
-        assert.throws(() => sheet.setColPx.call(sheet, 0, 0, '10'));
-        assert.throws(() => sheet.setColPx.call({}, 0, 0, 10));
+        assert.throws(() => (sheet.setColPx as any).call(sheet, 0, 0, '10'));
+        assert.throws(() => (sheet.setColPx as any).call({}, 0, 0, 10));
 
         sheet.setColPx(0, 0, 10);
 
@@ -493,7 +493,7 @@ describe('The sheet class', () => {
     it('sheet.setColPx accepts format and hidden flag', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.setColPx.call(sheet, 0, 0, 10, format, '1'));
+        assert.throws(() => (sheet.setColPx as any).call(sheet, 0, 0, 10, format, '1'));
 
         sheet.setColPx(0, 0, 12, format, false);
 
@@ -501,8 +501,8 @@ describe('The sheet class', () => {
     });
 
     it('sheet.setRowPx configures rows in pixels', () => {
-        assert.throws(() => sheet.setRowPx.call(sheet, 1, '10'));
-        assert.throws(() => sheet.setRowPx.call({}, 1, 10));
+        assert.throws(() => (sheet.setRowPx as any).call(sheet, 1, '10'));
+        assert.throws(() => (sheet.setRowPx as any).call({}, 1, 10));
 
         sheet.setRowPx(1, 20);
 
@@ -512,7 +512,7 @@ describe('The sheet class', () => {
     it('sheet.setRowPx accepts format and hidden flag', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.setRowPx.call(sheet, 1, 10, format, '1'));
+        assert.throws(() => (sheet.setRowPx as any).call(sheet, 1, 10, format, '1'));
 
         sheet.setRowPx(1, 12, format, false);
 
@@ -522,7 +522,7 @@ describe('The sheet class', () => {
     it('sheet.setColPx accepts format and hidden flag', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.setColPx.call({}, 0, 0, 10, format, '1'));
+        assert.throws(() => (sheet.setColPx as any).call({}, 0, 0, 10, format, '1'));
 
         sheet.setColPx(0, 0, 12, format, false);
 
@@ -531,10 +531,10 @@ describe('The sheet class', () => {
 
     it('sheet.setRow configures rows', () => {
         assert.throws(() => {
-            sheet.setRow();
+            (sheet.setRow as any)();
         });
         assert.throws(() => {
-            sheet.setRow.call({}, 1, 42);
+            (sheet.setRow as any).call({}, 1, 42);
         });
 
         assert.throws(() => {
@@ -548,8 +548,8 @@ describe('The sheet class', () => {
     it('sheet.colFormat retrieves a column format', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.colFormat.call(sheet, '0'));
-        assert.throws(() => sheet.colFormat.call({}, 0));
+        assert.throws(() => (sheet.colFormat as any).call(sheet, '0'));
+        assert.throws(() => (sheet.colFormat as any).call({}, 0));
 
         assert.strictEqual(sheet.colFormat(0) instanceof xl.Format, true);
     });
@@ -557,18 +557,18 @@ describe('The sheet class', () => {
     it('sheet.rowFormat retrieves a row format', () => {
         const format = book.addFormat();
 
-        assert.throws(() => sheet.rowFormat.call(sheet, '1'));
-        assert.throws(() => sheet.rowFormat.call({}, 1));
+        assert.throws(() => (sheet.rowFormat as any).call(sheet, '1'));
+        assert.throws(() => (sheet.rowFormat as any).call({}, 1));
 
         assert.strictEqual(sheet.rowFormat(1) instanceof xl.Format, true);
     });
 
     it('sheet.rowHidden checks whether a row is hidden', () => {
         assert.throws(() => {
-            sheet.rowHidden();
+            (sheet.rowHidden as any)();
         });
         assert.throws(() => {
-            sheet.rowHidden.call({}, row);
+            (sheet.rowHidden as any).call({}, row);
         });
 
         assert.strictEqual(sheet.rowHidden(row), false);
@@ -576,10 +576,10 @@ describe('The sheet class', () => {
 
     it('sheet.setRowHidden hides or shows a row', () => {
         assert.throws(() => {
-            sheet.setRowHidden();
+            (sheet.setRowHidden as any)();
         });
         assert.throws(() => {
-            sheet.setRowHidden.call({}, row, true);
+            (sheet.setRowHidden as any).call({}, row, true);
         });
 
         assert.strictEqual(sheet.setRowHidden(row, true), sheet);
@@ -590,10 +590,10 @@ describe('The sheet class', () => {
 
     it('sheet.colHidden checks whether a column is hidden', () => {
         assert.throws(() => {
-            sheet.colHidden();
+            (sheet.colHidden as any)();
         });
         assert.throws(() => {
-            sheet.colHidden.call({}, 0);
+            (sheet.colHidden as any).call({}, 0);
         });
 
         assert.strictEqual(sheet.colHidden(0), false);
@@ -601,10 +601,10 @@ describe('The sheet class', () => {
 
     it('sheet.setColHidden hides or shows a column', () => {
         assert.throws(() => {
-            sheet.setColHidden();
+            (sheet.setColHidden as any)();
         });
         assert.throws(() => {
-            sheet.setColHidden.call({}, 0, true);
+            (sheet.setColHidden as any).call({}, 0, true);
         });
 
         assert.strictEqual(sheet.setColHidden(0, true), sheet);
@@ -617,37 +617,37 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.setDefaultRowHeight.call(sheet, 'a'));
-        assert.throws(() => sheet.setDefaultRowHeight.call({}, 66.6));
+        assert.throws(() => (sheet.setDefaultRowHeight as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.setDefaultRowHeight as any).call({}, 66.6));
 
         assert.strictEqual(sheet.setDefaultRowHeight(66.6), sheet);
 
-        assert.throws(() => sheet.defaultRowHeight.call({}));
+        assert.throws(() => (sheet.defaultRowHeight as any).call({}));
 
         assert.ok(Math.abs(sheet.defaultRowHeight() - 66.6) < epsilon);
     });
 
     it('sheet.setMerge, sheet.getMerge and sheet.delMerge manage merged cells', () => {
-        assert.throws(() => sheet.getMerge.call(sheet, row, 0));
-        assert.throws(() => sheet.delMerge.call(sheet, row, 0));
+        assert.throws(() => (sheet.getMerge as any).call(sheet, row, 0));
+        assert.throws(() => (sheet.delMerge as any).call(sheet, row, 0));
 
-        assert.throws(() => sheet.setMerge.call(sheet, 'a', row + 2, 0, 3));
-        assert.throws(() => sheet.setMerge.call({}, row, row + 2, 0, 3));
+        assert.throws(() => (sheet.setMerge as any).call(sheet, 'a', row + 2, 0, 3));
+        assert.throws(() => (sheet.setMerge as any).call({}, row, row + 2, 0, 3));
         assert.strictEqual(sheet.setMerge(row, row + 2, 0, 3), sheet);
 
-        assert.throws(() => sheet.getMerge.call(sheet, 'a', 0));
-        assert.throws(() => sheet.getMerge.call({}, row, 0));
+        assert.throws(() => (sheet.getMerge as any).call(sheet, 'a', 0));
+        assert.throws(() => (sheet.getMerge as any).call({}, row, 0));
         const merge = sheet.getMerge(row, 0);
         assert.strictEqual(merge.rowFirst, row);
         assert.strictEqual(merge.rowLast, row + 2);
         assert.strictEqual(merge.colFirst, 0);
         assert.strictEqual(merge.colLast, 3);
 
-        assert.throws(() => sheet.delMerge.call(sheet, 'a', 0));
-        assert.throws(() => sheet.delMerge.call({}, row, 0));
+        assert.throws(() => (sheet.delMerge as any).call(sheet, 'a', 0));
+        assert.throws(() => (sheet.delMerge as any).call({}, row, 0));
         sheet.delMerge(row, 0);
 
-        assert.throws(() => sheet.delMerge.call(sheet, row, 0));
+        assert.throws(() => (sheet.delMerge as any).call(sheet, row, 0));
     });
 
     it('sheet.mergeSize, sheet.merge and sheet.delMergeByIndex manage merged cells by index', () => {
@@ -655,11 +655,11 @@ describe('The sheet class', () => {
         const sheet = book.addSheet('foo');
         const mergeSizeStart = sheet.mergeSize();
 
-        assert.throws(() => sheet.mergeSize.call({}));
-        assert.throws(() => sheet.merge.call(sheet, 'a'));
-        assert.throws(() => sheet.merge.call({}, 1));
-        assert.throws(() => sheet.delMergeByIndex.call(sheet, 'a'));
-        assert.throws(() => sheet.delMergeByIndex.call({}, 1));
+        assert.throws(() => (sheet.mergeSize as any).call({}));
+        assert.throws(() => (sheet.merge as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.merge as any).call({}, 1));
+        assert.throws(() => (sheet.delMergeByIndex as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.delMergeByIndex as any).call({}, 1));
 
         sheet.setMerge(row, row + 2, 0, 3);
 
@@ -677,21 +677,21 @@ describe('The sheet class', () => {
     });
 
     it('sheet.pictureSize returns the number of pictures on a sheet', () => {
-        assert.throws(() => sheet.pictureSize.call({}));
+        assert.throws(() => (sheet.pictureSize as any).call({}));
         assert.strictEqual(sheet.pictureSize(), 0);
     });
 
     it('sheet.setPicture and sheet.getPicture add and inspect pictures', () => {
-        assert.throws(() => sheet.setPicture.call(sheet, row, true));
-        assert.throws(() => sheet.setPicture.call({}, row, 0, 0, 1, 0, 0));
-        assert.throws(() => sheet.setPicture.call(sheet, row, 0, 0, 1, 0, 0, 'a'));
+        assert.throws(() => (sheet.setPicture as any).call(sheet, row, true));
+        assert.throws(() => (sheet.setPicture as any).call({}, row, 0, 0, 1, 0, 0));
+        assert.throws(() => (sheet.setPicture as any).call(sheet, row, 0, 0, 1, 0, 0, 'a'));
 
         assert.strictEqual(sheet.setPicture(row, 0, 0, 1, 0, 0), sheet);
         assert.strictEqual(sheet.setPicture(row, 0, 0, 1, 0, 0, xl.POSITION_ONLY_MOVE), sheet);
 
         let idx = sheet.pictureSize() - 1;
-        assert.throws(() => sheet.getPicture.call(sheet, true));
-        assert.throws(() => sheet.getPicture.call({}, idx));
+        assert.throws(() => (sheet.getPicture as any).call(sheet, true));
+        assert.throws(() => (sheet.getPicture as any).call({}, idx));
 
         let pic = sheet.getPicture(idx);
         assert.strictEqual(pic.rowTop, row);
@@ -720,9 +720,9 @@ describe('The sheet class', () => {
     });
 
     it('sheet.setPicture2 adds pictures by width and height instead of scale', () => {
-        assert.throws(() => sheet.setPicture2.call(sheet, row, true));
-        assert.throws(() => sheet.setPicture2.call({}, row, 0, 0, 100, 100, 0, 0));
-        assert.throws(() => sheet.setPicture2.call(sheet, row, 0, 0, 100, 100, 0, 0, 'a'));
+        assert.throws(() => (sheet.setPicture2 as any).call(sheet, row, true));
+        assert.throws(() => (sheet.setPicture2 as any).call({}, row, 0, 0, 100, 100, 0, 0));
+        assert.throws(() => (sheet.setPicture2 as any).call(sheet, row, 0, 0, 100, 100, 0, 0, 'a'));
 
         assert.strictEqual(sheet.setPicture2(row, 0, 0, 100, 200, 0, 0), sheet);
         assert.strictEqual(sheet.setPicture2(row, 0, 0, 100, 200, 0, 0, xl.POSITION_ONLY_MOVE), sheet);
@@ -744,8 +744,8 @@ describe('The sheet class', () => {
         const pictureSizeOld = sheet.pictureSize();
         sheet.setPicture(row, 0, 0);
 
-        assert.throws(() => sheet.removePicture.call(sheet, row, 'a'));
-        assert.throws(() => sheet.removePicture.call({}, row, 0));
+        assert.throws(() => (sheet.removePicture as any).call(sheet, row, 'a'));
+        assert.throws(() => (sheet.removePicture as any).call({}, row, 0));
 
         assert.strictEqual(sheet.removePicture(row, 0), sheet);
 
@@ -756,8 +756,8 @@ describe('The sheet class', () => {
         const pictureSizeOld = sheet.pictureSize();
         sheet.setPicture(row, 0, 0);
 
-        assert.throws(() => sheet.removePictureByIndex.call(sheet, 'a'));
-        assert.throws(() => sheet.removePictureByIndex.call({}, pictureSizeOld - 1));
+        assert.throws(() => (sheet.removePictureByIndex as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.removePictureByIndex as any).call({}, pictureSizeOld - 1));
 
         assert.strictEqual(sheet.removePictureByIndex(pictureSizeOld - 1), sheet);
 
@@ -767,16 +767,16 @@ describe('The sheet class', () => {
     it(
         'sheet.getHorPageBreak, sheet.setHorPageBreak and sheet.horPageBreakSize' + 'manage horizontal page breaks',
         () => {
-            assert.throws(() => sheet.getHorPageBreakSize.call({}));
+            assert.throws(() => (sheet.getHorPageBreakSize as any).call({}));
             let n = sheet.getHorPageBreakSize();
 
-            assert.throws(() => sheet.setHorPageBreak.call(sheet, 'a'));
-            assert.throws(() => sheet.setHorPageBreak.call({}, row));
+            assert.throws(() => (sheet.setHorPageBreak as any).call(sheet, 'a'));
+            assert.throws(() => (sheet.setHorPageBreak as any).call({}, row));
             assert.strictEqual(sheet.setHorPageBreak(row), sheet);
             assert.strictEqual(sheet.getHorPageBreakSize(), n + 1);
 
-            assert.throws(() => sheet.getHorPageBreak.call(sheet, 'a'));
-            assert.throws(() => sheet.getHorPageBreak.call({}, n + 1));
+            assert.throws(() => (sheet.getHorPageBreak as any).call(sheet, 'a'));
+            assert.throws(() => (sheet.getHorPageBreak as any).call({}, n + 1));
             assert.strictEqual(sheet.getHorPageBreak(n), row);
 
             sheet.setHorPageBreak(row, false);
@@ -787,16 +787,16 @@ describe('The sheet class', () => {
     it(
         'sheet.getVerPageBreak, sheet.setVerPageBreak and sheet.horPageBreakSize' + 'manage vertical page breaks',
         () => {
-            assert.throws(() => sheet.getVerPageBreakSize.call({}));
+            assert.throws(() => (sheet.getVerPageBreakSize as any).call({}));
             let n = sheet.getVerPageBreakSize();
 
-            assert.throws(() => sheet.setVerPageBreak.call(sheet, 'a'));
-            assert.throws(() => sheet.setVerPageBreak.call({}, row));
+            assert.throws(() => (sheet.setVerPageBreak as any).call(sheet, 'a'));
+            assert.throws(() => (sheet.setVerPageBreak as any).call({}, row));
             assert.strictEqual(sheet.setVerPageBreak(10), sheet);
             assert.strictEqual(sheet.getVerPageBreakSize(), n + 1);
 
-            assert.throws(() => sheet.getVerPageBreak.call(sheet, 'a'));
-            assert.throws(() => sheet.getVerPageBreak.call({}, n + 1));
+            assert.throws(() => (sheet.getVerPageBreak as any).call(sheet, 'a'));
+            assert.throws(() => (sheet.getVerPageBreak as any).call({}, n + 1));
             assert.strictEqual(sheet.getVerPageBreak(n), 10);
 
             sheet.setVerPageBreak(10, false);
@@ -808,8 +808,8 @@ describe('The sheet class', () => {
         let book = new xl.Book(xl.BOOK_TYPE_XLS),
             sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.split.call(sheet, 'a', 1));
-        assert.throws(() => sheet.split.call({}, 2, 2));
+        assert.throws(() => (sheet.split as any).call(sheet, 'a', 1));
+        assert.throws(() => (sheet.split as any).call({}, 2, 2));
         assert.strictEqual(sheet.split(2, 2), sheet);
     });
 
@@ -819,7 +819,7 @@ describe('The sheet class', () => {
 
         sheet.split(2, 3);
 
-        assert.throws(() => sheet.splitInfo.call({}));
+        assert.throws(() => (sheet.splitInfo as any).call({}));
 
         const result = sheet.splitInfo();
 
@@ -830,36 +830,36 @@ describe('The sheet class', () => {
     it('sheet.groupRows groups rows', () => {
         let sheet = newSheet();
 
-        assert.throws(() => sheet.groupRows.call(sheet, 1, 'a'));
-        assert.throws(() => sheet.groupRows.call({}, 1, 2));
+        assert.throws(() => (sheet.groupRows as any).call(sheet, 1, 'a'));
+        assert.throws(() => (sheet.groupRows as any).call({}, 1, 2));
         assert.strictEqual(sheet.groupRows(1, 2), sheet);
     });
 
     it('sheet.groupCols groups columns', () => {
         let sheet = newSheet();
 
-        assert.throws(() => sheet.groupCols.call(sheet, 1, 'a'));
-        assert.throws(() => sheet.groupCols.call({}, 1, 2));
+        assert.throws(() => (sheet.groupCols as any).call(sheet, 1, 'a'));
+        assert.throws(() => (sheet.groupCols as any).call({}, 1, 2));
         assert.strictEqual(sheet.groupCols(1, 2), sheet);
     });
 
     it('sheet.setGroupSummaryBelow / sheet.groupSummaryBelow manage vert summary position', () => {
-        assert.throws(() => sheet.setGroupSummaryBelow.call(sheet, 1));
-        assert.throws(() => sheet.setGroupSummaryBelow.call({}, true));
+        assert.throws(() => (sheet.setGroupSummaryBelow as any).call(sheet, 1));
+        assert.throws(() => (sheet.setGroupSummaryBelow as any).call({}, true));
         assert.strictEqual(sheet.setGroupSummaryBelow(true), sheet);
 
-        assert.throws(() => sheet.groupSummaryBelow.call({}));
+        assert.throws(() => (sheet.groupSummaryBelow as any).call({}));
         assert.strictEqual(sheet.groupSummaryBelow(), true);
 
         assert.strictEqual(sheet.setGroupSummaryBelow(false).groupSummaryBelow(), false);
     });
 
     it('sheet.setGroupSummaryRight / sheet.groupSummaryRight manage hor summary position', () => {
-        assert.throws(() => sheet.setGroupSummaryRight.call(sheet, 1));
-        assert.throws(() => sheet.setGroupSummaryRight.call({}, true));
+        assert.throws(() => (sheet.setGroupSummaryRight as any).call(sheet, 1));
+        assert.throws(() => (sheet.setGroupSummaryRight as any).call({}, true));
         assert.strictEqual(sheet.setGroupSummaryRight(true), sheet);
 
-        assert.throws(() => sheet.groupSummaryRight.call({}));
+        assert.throws(() => (sheet.groupSummaryRight as any).call({}));
         assert.strictEqual(sheet.groupSummaryRight(), true);
 
         assert.strictEqual(sheet.setGroupSummaryRight(false).groupSummaryRight(), false);
@@ -870,8 +870,8 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, 'foo').writeStr(2, 1, 'bar');
 
-        assert.throws(() => sheet.clear.call(sheet, 'a'));
-        assert.throws(() => sheet.clear.call({}, 1, 1, 1, 1));
+        assert.throws(() => (sheet.clear as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.clear as any).call({}, 1, 1, 1, 1));
         assert.strictEqual(sheet.clear(1, 1, 1, 1), sheet);
 
         assert.throws(() => {
@@ -885,10 +885,10 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
 
-        assert.throws(() => sheet.insertRow.call(sheet, 'a', 2));
-        assert.throws(() => sheet.insertRow.call({}, 2, 3));
-        assert.throws(() => sheet.insertCol.call(sheet, 'a', 2));
-        assert.throws(() => sheet.insertCol.call({}, 2, 3));
+        assert.throws(() => (sheet.insertRow as any).call(sheet, 'a', 2));
+        assert.throws(() => (sheet.insertRow as any).call({}, 2, 3));
+        assert.throws(() => (sheet.insertCol as any).call(sheet, 'a', 2));
+        assert.throws(() => (sheet.insertCol as any).call({}, 2, 3));
 
         assert.strictEqual(sheet.insertRow(2, 3), sheet);
         assert.strictEqual(sheet.insertCol(2, 3), sheet);
@@ -904,10 +904,10 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
 
-        assert.throws(() => sheet.insertRow.call(sheet, 2, 3, 'a'));
-        assert.throws(() => sheet.insertRow.call({}, 2, 3, true));
-        assert.throws(() => sheet.insertCol.call(sheet, 2, 3, 'a'));
-        assert.throws(() => sheet.insertCol.call({}, 2, 3, true));
+        assert.throws(() => (sheet.insertRow as any).call(sheet, 2, 3, 'a'));
+        assert.throws(() => (sheet.insertRow as any).call({}, 2, 3, true));
+        assert.throws(() => (sheet.insertCol as any).call(sheet, 2, 3, 'a'));
+        assert.throws(() => (sheet.insertCol as any).call({}, 2, 3, true));
 
         assert.strictEqual(sheet.insertRow(2, 3, true), sheet);
         assert.strictEqual(sheet.insertCol(2, 3, true), sheet);
@@ -923,19 +923,19 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
 
-        assert.throws(() => sheet.insertRowAsync.call(sheet, 'a', 2, () => {}));
-        assert.throws(() => sheet.insertRowAsync.call({}, 2, 3, () => {}));
+        assert.throws(() => (sheet.insertRowAsync as any).call(sheet, 'a', 2, () => {}));
+        assert.throws(() => (sheet.insertRowAsync as any).call({}, 2, 3, () => {}));
 
         const insertRowResult = util.promisify(sheet.insertRowAsync.bind(sheet))(2, 3);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertRowResult;
 
-        assert.throws(() => sheet.insertColAsync.call(sheet, 'a', 2, () => {}));
-        assert.throws(() => sheet.insertColAsync.call({}, 2, 3, () => {}));
+        assert.throws(() => (sheet.insertColAsync as any).call(sheet, 'a', 2, () => {}));
+        assert.throws(() => (sheet.insertColAsync as any).call({}, 2, 3, () => {}));
 
         const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertColResult;
 
@@ -950,19 +950,19 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 2, '12').writeStr(2, 1, '21').writeStr(2, 2, '22');
 
-        assert.throws(() => sheet.insertRowAsync.call(sheet, 2, 3, 'a', () => {}));
-        assert.throws(() => sheet.insertRowAsync.call({}, 2, 3, true, () => {}));
+        assert.throws(() => (sheet.insertRowAsync as any).call(sheet, 2, 3, 'a', () => {}));
+        assert.throws(() => (sheet.insertRowAsync as any).call({}, 2, 3, true, () => {}));
 
         const insertRowResult = util.promisify(sheet.insertRowAsync.bind(sheet))(2, 3, true);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertRowResult;
 
-        assert.throws(() => sheet.insertColAsync.call(sheet, 2, 3, 'a', () => {}));
-        assert.throws(() => sheet.insertColAsync.call({}, 2, 3, true, () => {}));
+        assert.throws(() => (sheet.insertColAsync as any).call(sheet, 2, 3, 'a', () => {}));
+        assert.throws(() => (sheet.insertColAsync as any).call({}, 2, 3, true, () => {}));
 
         const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3, true);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertColResult;
 
@@ -977,10 +977,10 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
 
-        assert.throws(() => sheet.removeRow.call(sheet, 'a', 2));
-        assert.throws(() => sheet.removeRow.call({}, 2, 3));
-        assert.throws(() => sheet.removeCol.call(sheet, 'a', 2));
-        assert.throws(() => sheet.removeCol.call({}, 2, 3));
+        assert.throws(() => (sheet.removeRow as any).call(sheet, 'a', 2));
+        assert.throws(() => (sheet.removeRow as any).call({}, 2, 3));
+        assert.throws(() => (sheet.removeCol as any).call(sheet, 'a', 2));
+        assert.throws(() => (sheet.removeCol as any).call({}, 2, 3));
 
         assert.strictEqual(sheet.removeRow(2, 3), sheet);
         assert.strictEqual(sheet.removeCol(2, 3), sheet);
@@ -996,10 +996,10 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
 
-        assert.throws(() => sheet.removeRow.call(sheet, 2, 3, 'a'));
-        assert.throws(() => sheet.removeRow.call({}, 2, 3, true));
-        assert.throws(() => sheet.removeCol.call(sheet, 2, 3, 'a'));
-        assert.throws(() => sheet.removeCol.call({}, 2, 3, true));
+        assert.throws(() => (sheet.removeRow as any).call(sheet, 2, 3, 'a'));
+        assert.throws(() => (sheet.removeRow as any).call({}, 2, 3, true));
+        assert.throws(() => (sheet.removeCol as any).call(sheet, 2, 3, 'a'));
+        assert.throws(() => (sheet.removeCol as any).call({}, 2, 3, true));
 
         assert.strictEqual(sheet.removeRow(2, 3, true), sheet);
         assert.strictEqual(sheet.removeCol(2, 3, true), sheet);
@@ -1015,19 +1015,19 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
 
-        assert.throws(() => sheet.removeRowAsync.call(sheet, 'a', 2, () => undefined));
-        assert.throws(() => sheet.removeRowAsync.call({}, 2, 3, () => undefined));
+        assert.throws(() => (sheet.removeRowAsync as any).call(sheet, 'a', 2, () => undefined));
+        assert.throws(() => (sheet.removeRowAsync as any).call({}, 2, 3, () => undefined));
 
         const removeRowResult = util.promisify(sheet.removeRowAsync.bind(sheet))(2, 3);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeRowResult;
 
-        assert.throws(() => sheet.removeColAsync.call(sheet, 'a', 2, () => undefined));
-        assert.throws(() => sheet.removeColAsync.call({}, 2, 3, () => undefined));
+        assert.throws(() => (sheet.removeColAsync as any).call(sheet, 'a', 2, () => undefined));
+        assert.throws(() => (sheet.removeColAsync as any).call({}, 2, 3, () => undefined));
 
         const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeColResult;
 
@@ -1042,19 +1042,19 @@ describe('The sheet class', () => {
 
         sheet.writeStr(1, 1, '11').writeStr(1, 4, '12').writeStr(4, 1, '21').writeStr(4, 4, '22');
 
-        assert.throws(() => sheet.removeRowAsync.call(sheet, 2, 3, 'a', () => undefined));
-        assert.throws(() => sheet.removeRowAsync.call({}, 2, 3, true, () => undefined));
+        assert.throws(() => (sheet.removeRowAsync as any).call(sheet, 2, 3, 'a', () => undefined));
+        assert.throws(() => (sheet.removeRowAsync as any).call({}, 2, 3, true, () => undefined));
 
         const removeRowResult = util.promisify(sheet.removeRowAsync.bind(sheet))(2, 3, true);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeRowResult;
 
-        assert.throws(() => sheet.removeColAsync.call(sheet, 2, 3, 'a', () => undefined));
-        assert.throws(() => sheet.removeColAsync.call({}, 2, 3, true, () => undefined));
+        assert.throws(() => (sheet.removeColAsync as any).call(sheet, 2, 3, 'a', () => undefined));
+        assert.throws(() => (sheet.removeColAsync as any).call({}, 2, 3, true, () => undefined));
 
         const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3, true);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeColResult;
 
@@ -1067,8 +1067,8 @@ describe('The sheet class', () => {
     it('sheet.copyCell copies a cell', () => {
         sheet.writeStr(row, 0, 'baz');
 
-        assert.throws(() => sheet.copyCell.call(sheet, row, 0, row, 'a'));
-        assert.throws(() => sheet.copyCell.call({}, row, 0, row, 1));
+        assert.throws(() => (sheet.copyCell as any).call(sheet, row, 0, row, 'a'));
+        assert.throws(() => (sheet.copyCell as any).call({}, row, 0, row, 1));
 
         assert.strictEqual(sheet.copyCell(row, 0, row, 1), sheet);
         assert.strictEqual(sheet.readStr(row, 1), 'baz');
@@ -1081,10 +1081,10 @@ describe('The sheet class', () => {
 
         sheet.writeNum(2, 1, 1).writeNum(5, 5, 1);
 
-        assert.throws(() => sheet.firstRow.call({}));
-        assert.throws(() => sheet.firstCol.call({}));
-        assert.throws(() => sheet.lastRow.call({}));
-        assert.throws(() => sheet.lastCol.call({}));
+        assert.throws(() => (sheet.firstRow as any).call({}));
+        assert.throws(() => (sheet.firstCol as any).call({}));
+        assert.throws(() => (sheet.lastRow as any).call({}));
+        assert.throws(() => (sheet.lastCol as any).call({}));
 
         assert.strictEqual(sheet.firstRow(), 2);
         assert.strictEqual(sheet.firstCol(), 1);
@@ -1100,10 +1100,10 @@ describe('The sheet class', () => {
 
             sheet.writeNum(2, 1, 1).writeNum(5, 5, 1);
 
-            assert.throws(() => sheet.firstFilledRow.call({}));
-            assert.throws(() => sheet.firstFilledCol.call({}));
-            assert.throws(() => sheet.lastFilledRow.call({}));
-            assert.throws(() => sheet.lastFilledCol.call({}));
+            assert.throws(() => (sheet.firstFilledRow as any).call({}));
+            assert.throws(() => (sheet.firstFilledCol as any).call({}));
+            assert.throws(() => (sheet.lastFilledRow as any).call({}));
+            assert.throws(() => (sheet.lastFilledCol as any).call({}));
 
             assert.strictEqual(sheet.firstFilledRow(), 0);
             assert.strictEqual(sheet.firstFilledCol(), 0);
@@ -1113,77 +1113,77 @@ describe('The sheet class', () => {
     );
 
     it('sheet.displayGridlines and sheet.setDisplayGridlines manage display of gridlines', () => {
-        assert.throws(() => sheet.setDisplayGridlines.call(sheet, 1));
-        assert.throws(() => sheet.setDisplayGridlines.call({}));
+        assert.throws(() => (sheet.setDisplayGridlines as any).call(sheet, 1));
+        assert.throws(() => (sheet.setDisplayGridlines as any).call({}));
         assert.strictEqual(sheet.setDisplayGridlines(), sheet);
 
-        assert.throws(() => sheet.displayGridlines.call({}));
+        assert.throws(() => (sheet.displayGridlines as any).call({}));
         assert.strictEqual(sheet.displayGridlines(), true);
         assert.strictEqual(sheet.setDisplayGridlines(false).displayGridlines(), false);
     });
 
     it('sheet.printGridlines and sheet.setPrintGridlines manage print of gridlines', () => {
-        assert.throws(() => sheet.setPrintGridlines.call(sheet, 1));
-        assert.throws(() => sheet.setPrintGridlines.call({}));
+        assert.throws(() => (sheet.setPrintGridlines as any).call(sheet, 1));
+        assert.throws(() => (sheet.setPrintGridlines as any).call({}));
         assert.strictEqual(sheet.setPrintGridlines(), sheet);
 
-        assert.throws(() => sheet.printGridlines.call({}));
+        assert.throws(() => (sheet.printGridlines as any).call({}));
         assert.strictEqual(sheet.printGridlines(), true);
         assert.strictEqual(sheet.setPrintGridlines(false).printGridlines(), false);
     });
 
     it('sheet.zoom and sheet.setZoom control sheet zoom', () => {
-        assert.throws(() => sheet.setZoom.call(sheet, true));
-        assert.throws(() => sheet.setZoom.call({}, 10));
+        assert.throws(() => (sheet.setZoom as any).call(sheet, true));
+        assert.throws(() => (sheet.setZoom as any).call({}, 10));
         assert.strictEqual(sheet.setZoom(10), sheet);
 
-        assert.throws(() => sheet.zoom.call({}));
+        assert.throws(() => (sheet.zoom as any).call({}));
         assert.strictEqual(sheet.zoom(), 10);
         assert.strictEqual(sheet.setZoom(1).zoom(), 1);
     });
 
     it('sheet.setLandscape and sheet.landscape control landscape mode', () => {
-        assert.throws(() => sheet.setLandscape.call(sheet, 1));
-        assert.throws(() => sheet.setLandscape.call({}));
+        assert.throws(() => (sheet.setLandscape as any).call(sheet, 1));
+        assert.throws(() => (sheet.setLandscape as any).call({}));
         assert.strictEqual(sheet.setLandscape(), sheet);
 
-        assert.throws(() => sheet.landscape.call({}));
+        assert.throws(() => (sheet.landscape as any).call({}));
         assert.strictEqual(sheet.landscape(), true);
         assert.strictEqual(sheet.setLandscape(false).landscape(), false);
     });
 
     it('sheet.paper and sheet.setPaper control paper format', () => {
-        assert.throws(() => sheet.setPaper.call(sheet, true));
-        assert.throws(() => sheet.setPaper.call({}, xl.PAPER_NOTE));
+        assert.throws(() => (sheet.setPaper as any).call(sheet, true));
+        assert.throws(() => (sheet.setPaper as any).call({}, xl.PAPER_NOTE));
         assert.strictEqual(sheet.setPaper(xl.PAPER_NOTE), sheet);
 
-        assert.throws(() => sheet.paper.call({}));
+        assert.throws(() => (sheet.paper as any).call({}));
         assert.strictEqual(sheet.paper(), xl.PAPER_NOTE);
         assert.strictEqual(sheet.setPaper().paper(), xl.PAPER_DEFAULT);
     });
 
     it('sheet.header, sheet.setHeader and sheet.headerMargin control the header', () => {
-        assert.throws(() => sheet.setHeader.call(sheet, 1));
-        assert.throws(() => sheet.setHeader.call({}, 'fuppe'));
+        assert.throws(() => (sheet.setHeader as any).call(sheet, 1));
+        assert.throws(() => (sheet.setHeader as any).call({}, 'fuppe'));
         assert.strictEqual(sheet.setHeader('fuppe'), sheet);
 
-        assert.throws(() => sheet.header.call({}));
+        assert.throws(() => (sheet.header as any).call({}));
         assert.strictEqual(sheet.header(), 'fuppe');
 
-        assert.throws(() => sheet.headerMargin.call({}));
+        assert.throws(() => (sheet.headerMargin as any).call({}));
         assert.strictEqual(sheet.headerMargin(), 0.5);
         assert.strictEqual(sheet.setHeader('fuppe', 11.11).headerMargin(), 11.11);
     });
 
     it('sheet.footer, sheet.setFooter and sheet.footerMargin control the footer', () => {
-        assert.throws(() => sheet.setFooter.call(sheet, 1));
-        assert.throws(() => sheet.setFooter.call({}, 'foppe'));
+        assert.throws(() => (sheet.setFooter as any).call(sheet, 1));
+        assert.throws(() => (sheet.setFooter as any).call({}, 'foppe'));
         assert.strictEqual(sheet.setFooter('foppe'), sheet);
 
-        assert.throws(() => sheet.footer.call({}));
+        assert.throws(() => (sheet.footer as any).call({}));
         assert.strictEqual(sheet.footer(), 'foppe');
 
-        assert.throws(() => sheet.footerMargin.call({}));
+        assert.throws(() => (sheet.footerMargin as any).call({}));
         assert.strictEqual(sheet.footerMargin(), 0.5);
         assert.strictEqual(sheet.setFooter('foppe', 11.11).footerMargin(), 11.11);
     });
@@ -1193,22 +1193,22 @@ describe('The sheet class', () => {
             setter = 'setMargin' + side;
 
         it(util.format('sheet.%s and sheet.%s control %s margin', getter, setter, side.toLowerCase()), () => {
-            assert.throws(() => sheet[setter].call(sheet, true));
-            assert.throws(() => sheet[setter].call({}, 11.11));
-            assert.strictEqual(sheet[setter](11.11), sheet);
+            assert.throws(() => (sheet as any)[setter].call(sheet, true));
+            assert.throws(() => (sheet as any)[setter].call({}, 11.11));
+            assert.strictEqual((sheet as any)[setter](11.11), sheet);
 
-            assert.throws(() => sheet[getter].call({}));
-            assert.strictEqual(sheet[getter](), 11.11);
-            assert.strictEqual(sheet[setter](12.12)[getter](), 12.12);
+            assert.throws(() => (sheet as any)[getter].call({}));
+            assert.strictEqual((sheet as any)[getter](), 11.11);
+            assert.strictEqual((sheet as any)[setter](12.12)[getter](), 12.12);
         });
     });
 
     it('sheet.printRowCol and sheet.setPrintRowCol control printing of row / col headers', () => {
-        assert.throws(() => sheet.setPrintRowCol.call(sheet, 1));
-        assert.throws(() => sheet.setPrintRowCol.call({}));
+        assert.throws(() => (sheet.setPrintRowCol as any).call(sheet, 1));
+        assert.throws(() => (sheet.setPrintRowCol as any).call({}));
         assert.strictEqual(sheet.setPrintRowCol(), sheet);
 
-        assert.throws(() => sheet.printRowCol.call({}));
+        assert.throws(() => (sheet.printRowCol as any).call({}));
         assert.strictEqual(sheet.printRowCol(), true);
         assert.strictEqual(sheet.setPrintRowCol(false).printRowCol(), false);
     });
@@ -1222,40 +1222,40 @@ describe('The sheet class', () => {
             sheet.writeStr(1, 1, 'foo');
             sheet.writeStr(2, 2, 'foo');
 
-            assert.throws(() => sheet.setPrintRepeatRows.call(sheet, true, 1));
-            assert.throws(() => sheet.setPrintRepeatRows.call({}, 1, 2));
+            assert.throws(() => (sheet.setPrintRepeatRows as any).call(sheet, true, 1));
+            assert.throws(() => (sheet.setPrintRepeatRows as any).call({}, 1, 2));
             assert.strictEqual(sheet.setPrintRepeatRows(1, 2), sheet);
 
-            assert.throws(() => sheet.printRepeatRows.call({}));
+            assert.throws(() => (sheet.printRepeatRows as any).call({}));
             const printRepeatRows = sheet.printRepeatRows();
 
             assert.strictEqual(printRepeatRows.rowFirst, 1);
             assert.strictEqual(printRepeatRows.rowLast, 2);
 
-            assert.throws(() => sheet.setPrintRepeatCols.call(sheet, true, 1));
-            assert.throws(() => sheet.setPrintRepeatCols.call({}, 1, 2));
+            assert.throws(() => (sheet.setPrintRepeatCols as any).call(sheet, true, 1));
+            assert.throws(() => (sheet.setPrintRepeatCols as any).call({}, 1, 2));
             assert.strictEqual(sheet.setPrintRepeatCols(1, 2), sheet);
 
-            assert.throws(() => sheet.printRepeatCols.call({}));
+            assert.throws(() => (sheet.printRepeatCols as any).call({}));
             const printRepeatCols = sheet.printRepeatCols();
 
             assert.strictEqual(printRepeatCols.colFirst, 1);
             assert.strictEqual(printRepeatCols.colLast, 2);
 
-            assert.throws(() => sheet.clearPrintRepeats.call({}));
+            assert.throws(() => (sheet.clearPrintRepeats as any).call({}));
             assert.strictEqual(sheet.clearPrintRepeats(), sheet);
 
-            assert.throws(() => sheet.printRepeatCols.call(sheet));
-            assert.throws(() => sheet.printRepeatRows.call(sheet));
+            assert.throws(() => (sheet.printRepeatCols as any).call(sheet));
+            assert.throws(() => (sheet.printRepeatRows as any).call(sheet));
         },
     );
 
     it('sheet.setPrintArea and sheet.clearPrintArea manage the print area', () => {
-        assert.throws(() => sheet.setPrintArea.call(sheet, true, 1, 5, 5));
-        assert.throws(() => sheet.setPrintArea.call({}, 1, 1, 5, 5));
+        assert.throws(() => (sheet.setPrintArea as any).call(sheet, true, 1, 5, 5));
+        assert.throws(() => (sheet.setPrintArea as any).call({}, 1, 1, 5, 5));
         assert.strictEqual(sheet.setPrintArea(1, 1, 5, 5), sheet);
 
-        assert.throws(() => sheet.clearPrintArea.call({}));
+        assert.throws(() => (sheet.clearPrintArea as any).call({}));
         assert.strictEqual(sheet.clearPrintArea(), sheet);
     });
 
@@ -1265,7 +1265,15 @@ describe('The sheet class', () => {
         () => {
             let sheet2 = newSheet();
 
-            const assertRange = (range, rowFirst, rowLast, colFirst, colLast, name, scope) => {
+            const assertRange = (
+                range: any,
+                rowFirst: number,
+                rowLast: number,
+                colFirst: number,
+                colLast: number,
+                name?: string,
+                scope?: number,
+            ) => {
                 assert.strictEqual(range.rowFirst, rowFirst);
                 assert.strictEqual(range.rowLast, rowLast);
                 assert.strictEqual(range.colFirst, colFirst);
@@ -1278,29 +1286,29 @@ describe('The sheet class', () => {
                 }
             };
 
-            assert.throws(() => sheet.setNamedRange.call(sheet, 'range1', 'a', 1, 5, 5));
-            assert.throws(() => sheet.setNamedRange.call({}, 'range1', 1, 1, 5, 5));
+            assert.throws(() => (sheet.setNamedRange as any).call(sheet, 'range1', 'a', 1, 5, 5));
+            assert.throws(() => (sheet.setNamedRange as any).call({}, 'range1', 1, 1, 5, 5));
             assert.strictEqual(sheet.setNamedRange('range1', 1, 1, 5, 5, xl.SCOPE_WORKBOOK), sheet);
             assert.strictEqual(sheet2.setNamedRange('range2', 2, 2, 6, 6), sheet2);
 
-            assert.throws(() => sheet.namedRangeSize.call({}));
+            assert.throws(() => (sheet.namedRangeSize as any).call({}));
             assert.strictEqual(sheet.namedRangeSize(), 1);
             assert.strictEqual(sheet2.namedRangeSize(), 1);
 
             let range1, range2;
-            assert.throws(() => sheet.getNamedRange.call(sheet, 1));
-            assert.throws(() => sheet.getNamedRange.call({}, 'range1'));
-            assert.throws(() => sheet2.getNamedRange.call(sheet, 'range2', xl.SCOPE_WORKBOOK));
+            assert.throws(() => (sheet.getNamedRange as any).call(sheet, 1));
+            assert.throws(() => (sheet.getNamedRange as any).call({}, 'range1'));
+            assert.throws(() => (sheet2.getNamedRange as any).call(sheet, 'range2', xl.SCOPE_WORKBOOK));
             assertRange(sheet.getNamedRange('range1'), 1, 1, 5, 5);
             assertRange(sheet2.getNamedRange('range2'), 2, 2, 6, 6);
 
-            assert.throws(() => sheet.namedRange.call(sheet, true));
-            assert.throws(() => sheet.namedRange.call({}, 0));
+            assert.throws(() => (sheet.namedRange as any).call(sheet, true));
+            assert.throws(() => (sheet.namedRange as any).call({}, 0));
             assertRange(sheet.namedRange(0), 1, 1, 5, 5, 'range1', xl.SCOPE_WORKBOOK);
             assertRange(sheet2.namedRange(0), 2, 2, 6, 6, 'range2');
 
-            assert.throws(() => sheet.delNamedRange.call(sheet, 1));
-            assert.throws(() => sheet.delNamedRange.call({}, 'range1'));
+            assert.throws(() => (sheet.delNamedRange as any).call(sheet, 1));
+            assert.throws(() => (sheet.delNamedRange as any).call({}, 'range1'));
             assert.strictEqual(sheet.delNamedRange('range1'), sheet);
             assert.strictEqual(sheet.namedRangeSize(), 0);
         },
@@ -1312,7 +1320,7 @@ describe('The sheet class', () => {
 
         const sheet = book.getSheet(0);
 
-        assert.throws(() => sheet.tableSize.call({}));
+        assert.throws(() => (sheet.tableSize as any).call({}));
 
         assert.strictEqual(sheet.tableSize(), 1);
     });
@@ -1323,8 +1331,8 @@ describe('The sheet class', () => {
 
         const sheet = book.getSheet(0);
 
-        assert.throws(() => sheet.table.call(sheet, 'a'));
-        assert.throws(() => sheet.table.call({}, 0));
+        assert.throws(() => (sheet.table as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.table as any).call({}, 0));
 
         assert.deepStrictEqual(sheet.table(0), { rowFirst: 1, rowLast: 10, colFirst: 1, colLast: 4, totalRowCount: 1 });
     });
@@ -1335,8 +1343,8 @@ describe('The sheet class', () => {
 
         const sheet = book.getSheet(0);
 
-        assert.throws(() => sheet.getTable.call(sheet, 1));
-        assert.throws(() => sheet.getTable.call({}, 'Table'));
+        assert.throws(() => (sheet.getTable as any).call(sheet, 1));
+        assert.throws(() => (sheet.getTable as any).call({}, 'Table'));
 
         assert.deepStrictEqual(sheet.getTable('Table'), {
             rowFirst: 1,
@@ -1351,8 +1359,8 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.addTable.call({}));
-        assert.throws(() => sheet.addTable.call(sheet, 'T', 0, 5, 0, 'a'));
+        assert.throws(() => (sheet.addTable as any).call({}));
+        assert.throws(() => (sheet.addTable as any).call(sheet, 'T', 0, 5, 0, 'a'));
 
         assert.ok(sheet.addTable('Table1', 0, 5, 0, 3) instanceof xl.Table);
     });
@@ -1362,8 +1370,8 @@ describe('The sheet class', () => {
         const sheet = book.addSheet('foo');
         sheet.addTable('MyTable', 0, 5, 0, 3);
 
-        assert.throws(() => sheet.getTableByName.call(sheet, 1));
-        assert.throws(() => sheet.getTableByName.call({}, 'MyTable'));
+        assert.throws(() => (sheet.getTableByName as any).call(sheet, 1));
+        assert.throws(() => (sheet.getTableByName as any).call({}, 'MyTable'));
 
         assert.ok(sheet.getTableByName('MyTable') instanceof xl.Table);
     });
@@ -1373,8 +1381,8 @@ describe('The sheet class', () => {
         const sheet = book.addSheet('foo');
         sheet.addTable('MyTable', 0, 5, 0, 3);
 
-        assert.throws(() => sheet.getTableByIndex.call(sheet, 'a'));
-        assert.throws(() => sheet.getTableByIndex.call({}, 0));
+        assert.throws(() => (sheet.getTableByIndex as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.getTableByIndex as any).call({}, 0));
 
         assert.ok(sheet.getTableByIndex(0) instanceof xl.Table);
     });
@@ -1382,31 +1390,31 @@ describe('The sheet class', () => {
     it('sheet.name and sheet.setName manage the sheet name', () => {
         let sheet = book.addSheet('bazzaraz');
 
-        assert.throws(() => sheet.name.call({}));
+        assert.throws(() => (sheet.name as any).call({}));
         assert.strictEqual(sheet.name(), 'bazzaraz');
 
-        assert.throws(() => sheet.setName.call(sheet, 1));
-        assert.throws(() => sheet.setName.call({}, 'fooinator'));
+        assert.throws(() => (sheet.setName as any).call(sheet, 1));
+        assert.throws(() => (sheet.setName as any).call({}, 'fooinator'));
         assert.strictEqual(sheet.setName('fooinator'), sheet);
         assert.strictEqual(sheet.name(), 'fooinator');
     });
 
     it('sheet.protect and sheet.setProtect manage the protection flag', () => {
-        assert.throws(() => sheet.setProtect.call(sheet, 1));
-        assert.throws(() => sheet.setProtect.call({}));
+        assert.throws(() => (sheet.setProtect as any).call(sheet, 1));
+        assert.throws(() => (sheet.setProtect as any).call({}));
         assert.strictEqual(sheet.setProtect(), sheet);
 
-        assert.throws(() => sheet.protect.call({}));
+        assert.throws(() => (sheet.protect as any).call({}));
         assert.strictEqual(sheet.protect(), true);
         assert.strictEqual(sheet.setProtect(false).protect(), false);
     });
 
     it('sheet.hidden and sheet.setHidden control wether a sheet is visible', () => {
-        assert.throws(() => sheet.setHidden.call(sheet, true));
-        assert.throws(() => sheet.setHidden.call({}));
+        assert.throws(() => (sheet.setHidden as any).call(sheet, true));
+        assert.throws(() => (sheet.setHidden as any).call({}));
         assert.strictEqual(sheet.setHidden(), sheet);
 
-        assert.throws(() => sheet.hidden.call({}));
+        assert.throws(() => (sheet.hidden as any).call({}));
         assert.strictEqual(sheet.hidden(), xl.SHEETSTATE_HIDDEN);
         assert.strictEqual(sheet.setHidden(xl.SHEETSTATE_VISIBLE).hidden(), xl.SHEETSTATE_VISIBLE);
     });
@@ -1414,19 +1422,19 @@ describe('The sheet class', () => {
     it('sheet.getTopLeftView and sheet.setTopLeftView manage top left visible edge of the sheet', () => {
         let sheet = newSheet();
 
-        assert.throws(() => sheet.setTopLeftView.call(sheet, 5, true));
-        assert.throws(() => sheet.setTopLeftView.call({}, 5, 6));
+        assert.throws(() => (sheet.setTopLeftView as any).call(sheet, 5, true));
+        assert.throws(() => (sheet.setTopLeftView as any).call({}, 5, 6));
         assert.strictEqual(sheet.setTopLeftView(5, 6), sheet);
 
-        assert.throws(() => sheet.getTopLeftView.call({}));
+        assert.throws(() => (sheet.getTopLeftView as any).call({}));
         let result = sheet.getTopLeftView();
         assert.strictEqual(result.row, 5);
         assert.strictEqual(result.col, 6);
     });
 
     it('sheet.addrToRowCol translates a string address to row / col', () => {
-        assert.throws(() => sheet.addrToRowCol.call(sheet, 1));
-        assert.throws(() => sheet.addrToRowCol.call({}, 'A1'));
+        assert.throws(() => (sheet.addrToRowCol as any).call(sheet, 1));
+        assert.throws(() => (sheet.addrToRowCol as any).call({}, 'A1'));
 
         let result = sheet.addrToRowCol('A1');
         assert.strictEqual(result.row, 0);
@@ -1436,30 +1444,30 @@ describe('The sheet class', () => {
     });
 
     it('sheet.rowColToAddr builds an address string', () => {
-        assert.throws(() => sheet.rowColToAddr.call(sheet, 0, 'a'));
-        assert.throws(() => sheet.rowColToAddr.call({}, 0, 0));
+        assert.throws(() => (sheet.rowColToAddr as any).call(sheet, 0, 'a'));
+        assert.throws(() => (sheet.rowColToAddr as any).call({}, 0, 0));
         assert.strictEqual(sheet.rowColToAddr(0, 0), 'A1');
         assert.strictEqual(sheet.rowColToAddr(0, 0, false, false), '$A$1');
     });
 
     it('the hyperlink family of functions manages hyperlinks', () => {
-        assert.throws(() => sheet.hyperlinkSize.call({}));
+        assert.throws(() => (sheet.hyperlinkSize as any).call({}));
         assert.strictEqual(sheet.hyperlinkSize(), 0);
 
-        assert.throws(() => sheet.addHyperlink.call(sheet, 1, row, row + 2, 1, 3));
-        assert.throws(() => sheet.addHyperlink.call({}, 'http://foo.bar', row, 1, row + 2, 3));
+        assert.throws(() => (sheet.addHyperlink as any).call(sheet, 1, row, row + 2, 1, 3));
+        assert.throws(() => (sheet.addHyperlink as any).call({}, 'http://foo.bar', row, 1, row + 2, 3));
 
         assert.strictEqual(sheet.addHyperlink('http://foo.bar', row, row + 2, 1, 3), sheet);
         assert.strictEqual(sheet.hyperlinkSize(), 1);
 
-        assert.throws(() => sheet.hyperlinkIndex.call(sheet, 'a', 1));
-        assert.throws(() => sheet.hyperlinkIndex.call({}, row, 4));
+        assert.throws(() => (sheet.hyperlinkIndex as any).call(sheet, 'a', 1));
+        assert.throws(() => (sheet.hyperlinkIndex as any).call({}, row, 4));
 
         assert.strictEqual(sheet.hyperlinkIndex(row, 4), -1);
         assert.strictEqual(sheet.hyperlinkIndex(row, 1), 1);
 
-        assert.throws(() => sheet.hyperlink.call(sheet, 'a'));
-        assert.throws(() => sheet.hyperlink.call({}, 0));
+        assert.throws(() => (sheet.hyperlink as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.hyperlink as any).call({}, 0));
 
         assert.deepStrictEqual(sheet.hyperlink(0), {
             colFirst: 1,
@@ -1469,8 +1477,8 @@ describe('The sheet class', () => {
             hyperlink: 'http://foo.bar',
         });
 
-        assert.throws(() => sheet.delHyperlink.call(sheet, 'a'));
-        assert.throws(() => sheet.delHyperlink.call({}, 0));
+        assert.throws(() => (sheet.delHyperlink as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.delHyperlink as any).call({}, 0));
 
         assert.strictEqual(sheet.delHyperlink(0), sheet);
         assert.strictEqual(sheet.hyperlinkSize(), 0);
@@ -1482,37 +1490,37 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.isAutoFilter.call({}));
+        assert.throws(() => (sheet.isAutoFilter as any).call({}));
 
         assert.strictEqual(sheet.isAutoFilter(), false);
 
-        assert.throws(() => sheet.autoFilter.call({}));
+        assert.throws(() => (sheet.autoFilter as any).call({}));
 
         assert.ok(sheet.autoFilter() instanceof xl.AutoFilter);
 
-        assert.throws(() => sheet.applyFilter.call({}));
+        assert.throws(() => (sheet.applyFilter as any).call({}));
 
         assert.strictEqual(sheet.applyFilter(), sheet);
         assert.strictEqual(sheet.isAutoFilter(), true);
 
-        assert.throws(() => sheet.removeFilter.call({}));
+        assert.throws(() => (sheet.removeFilter as any).call({}));
 
         assert.strictEqual(sheet.removeFilter(), sheet);
         assert.strictEqual(sheet.isAutoFilter(), false);
     });
 
     it('sheet.setAutoFitArea sets the auto fit area', () => {
-        assert.throws(() => sheet.setAutoFitArea.call(sheet, 1, 1, 10, 'a'));
+        assert.throws(() => (sheet.setAutoFitArea as any).call(sheet, 1, 1, 10, 'a'));
 
         assert.strictEqual(sheet.setAutoFitArea(1, 1, 10, 10), sheet);
     });
 
     it('sheet.setTabColor, sheet.getTabColor and sheet.tabColor manage the tab color', () => {
-        assert.throws(() => sheet.setTabColor.call(sheet, 'a'));
-        assert.throws(() => sheet.setTabColor.call({}, xl.COLOR_BLACK));
-        assert.throws(() => sheet.setTabColor.call(sheet, 255, 200, 'a'));
-        assert.throws(() => sheet.setTabColor.call({}, 255, 200, 180));
-        assert.throws(() => sheet.tabColor.call({}));
+        assert.throws(() => (sheet.setTabColor as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.setTabColor as any).call({}, xl.COLOR_BLACK));
+        assert.throws(() => (sheet.setTabColor as any).call(sheet, 255, 200, 'a'));
+        assert.throws(() => (sheet.setTabColor as any).call({}, 255, 200, 180));
+        assert.throws(() => (sheet.tabColor as any).call({}));
 
         assert.strictEqual(sheet.setTabColor(xl.COLOR_BLACK), sheet);
         assert.strictEqual(sheet.tabColor(), xl.COLOR_BLACK);
@@ -1522,15 +1530,15 @@ describe('The sheet class', () => {
     });
 
     it('sheet.addIgnoredError configures the ignored error class for a range of cells', () => {
-        assert.throws(() => sheet.addIgnoredError.call(sheet, row, 1, row + 2, 3, 'a'));
-        assert.throws(() => sheet.addIgnoredError.call({}, row, 1, row + 2, 3, xl.IERR_EVAL_ERROR));
+        assert.throws(() => (sheet.addIgnoredError as any).call(sheet, row, 1, row + 2, 3, 'a'));
+        assert.throws(() => (sheet.addIgnoredError as any).call({}, row, 1, row + 2, 3, xl.IERR_EVAL_ERROR));
 
         assert.strictEqual(sheet.addIgnoredError(row, 1, row + 2, 3, xl.IERR_TWODIG_TEXTYEAR), sheet);
     });
 
     it('sheet.addDataValidation adds a string data validation for a range of cell', () => {
         assert.throws(() =>
-            sheet.addDataValidation.call(
+            (sheet.addDataValidation as any).call(
                 sheet,
                 xl.VALIDATION_TYPE_WHOLE,
                 xl.VALIDATION_OP_EQUAL,
@@ -1553,7 +1561,7 @@ describe('The sheet class', () => {
         );
 
         assert.throws(() =>
-            sheet.addDataValidation.call(
+            (sheet.addDataValidation as any).call(
                 {},
                 xl.VALIDATION_TYPE_WHOLE,
                 xl.VALIDATION_OP_EQUAL,
@@ -1576,13 +1584,31 @@ describe('The sheet class', () => {
         );
 
         assert.throws(() =>
-            sheet.addDataValidation.call(sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1),
+            (sheet.addDataValidation as any).call(
+                sheet,
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                1,
+            ),
         );
         assert.throws(() =>
-            sheet.addDataValidation.call({}, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 'a'),
+            (sheet.addDataValidation as any).call(
+                {},
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                'a',
+            ),
         );
         assert.throws(() =>
-            sheet.addDataValidation.call(sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5),
+            (sheet.addDataValidation as any).call(sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5),
         );
 
         assert.strictEqual(
@@ -1616,7 +1642,7 @@ describe('The sheet class', () => {
 
     it('sheet.addDataValidationDouble adds a double data validation for a range of cell', () => {
         assert.throws(() =>
-            sheet.addDataValidationDouble.call(
+            (sheet.addDataValidationDouble as any).call(
                 sheet,
                 xl.VALIDATION_TYPE_WHOLE,
                 xl.VALIDATION_OP_EQUAL,
@@ -1639,7 +1665,7 @@ describe('The sheet class', () => {
         );
 
         assert.throws(() =>
-            sheet.addDataValidationDouble.call(
+            (sheet.addDataValidationDouble as any).call(
                 {},
                 xl.VALIDATION_TYPE_WHOLE,
                 xl.VALIDATION_OP_EQUAL,
@@ -1662,7 +1688,7 @@ describe('The sheet class', () => {
         );
 
         assert.throws(() =>
-            sheet.addDataValidationDouble.call(
+            (sheet.addDataValidationDouble as any).call(
                 sheet,
                 xl.VALIDATION_TYPE_WHOLE,
                 xl.VALIDATION_OP_EQUAL,
@@ -1675,10 +1701,29 @@ describe('The sheet class', () => {
             ),
         );
         assert.throws(() =>
-            sheet.addDataValidationDouble.call({}, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1, 2),
+            (sheet.addDataValidationDouble as any).call(
+                {},
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                1,
+                2,
+            ),
         );
         assert.throws(() =>
-            sheet.addDataValidationDouble.call(sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1),
+            (sheet.addDataValidationDouble as any).call(
+                sheet,
+                xl.VALIDATION_TYPE_WHOLE,
+                xl.VALIDATION_OP_EQUAL,
+                1,
+                5,
+                1,
+                5,
+                1,
+            ),
         );
 
         assert.strictEqual(
@@ -1720,7 +1765,7 @@ describe('The sheet class', () => {
 
         const sheet = book.getSheet(0);
 
-        assert.throws(() => sheet.formControlSize.call({}));
+        assert.throws(() => (sheet.formControlSize as any).call({}));
 
         assert.strictEqual(sheet.formControlSize(), 1);
     });
@@ -1731,8 +1776,8 @@ describe('The sheet class', () => {
 
         const sheet = book.getSheet(0);
 
-        assert.throws(() => sheet.formControl.call(sheet, 'a'));
-        assert.throws(() => sheet.formControl.call({}, 0));
+        assert.throws(() => (sheet.formControl as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.formControl as any).call({}, 0));
 
         assert.ok(sheet.formControl(0) instanceof xl.FormControl);
     });
@@ -1741,19 +1786,19 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.addConditionalFormatting.call({}));
-        assert.throws(() => sheet.addConditionalFormatting.call(sheet, 0, 0, 1, 'a'));
+        assert.throws(() => (sheet.addConditionalFormatting as any).call({}));
+        assert.throws(() => (sheet.addConditionalFormatting as any).call(sheet, 0, 0, 1, 'a'));
 
         assert.ok(sheet.addConditionalFormatting(0, 0, 1, 1) instanceof xl.ConditionalFormatting);
     });
 
     it('sheet.getActiveSell and sheet.setActiveCell manage the active cell', () => {
-        assert.throws(() => sheet.setActiveCell.call(sheet, 1, 'a'));
-        assert.throws(() => sheet.setActiveCell.call({}, 1, 1));
+        assert.throws(() => (sheet.setActiveCell as any).call(sheet, 1, 'a'));
+        assert.throws(() => (sheet.setActiveCell as any).call({}, 1, 1));
 
         assert.strictEqual(sheet.setActiveCell(1, 1), sheet);
 
-        assert.throws(() => sheet.getActiveCell.call({}));
+        assert.throws(() => (sheet.getActiveCell as any).call({}));
 
         assert.deepStrictEqual(sheet.getActiveCell(), { row: 1, col: 1 });
     });
@@ -1762,15 +1807,15 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.removeSelection.call({}));
+        assert.throws(() => (sheet.removeSelection as any).call({}));
         assert.strictEqual(sheet.removeSelection(), sheet);
 
-        assert.throws(() => sheet.addSelectionRange.call(sheet, 1));
-        assert.throws(() => sheet.addSelectionRange.call({}, 'A1:A12'));
+        assert.throws(() => (sheet.addSelectionRange as any).call(sheet, 1));
+        assert.throws(() => (sheet.addSelectionRange as any).call({}, 'A1:A12'));
 
         assert.strictEqual(sheet.addSelectionRange('A2:A10'), sheet);
 
-        assert.throws(() => sheet.selectionRange.call({}));
+        assert.throws(() => (sheet.selectionRange as any).call({}));
 
         assert.strictEqual(sheet.selectionRange(), 'A2:A10');
     });
@@ -1779,8 +1824,8 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.setBorder.call(sheet, 0, 0, 0, 0, 'a', 0));
-        assert.throws(() => sheet.setBorder.call({}, 0, 0, 0, 0, xl.BORDERSTYLE_THIN, xl.COLOR_BLACK));
+        assert.throws(() => (sheet.setBorder as any).call(sheet, 0, 0, 0, 0, 'a', 0));
+        assert.throws(() => (sheet.setBorder as any).call({}, 0, 0, 0, 0, xl.BORDERSTYLE_THIN, xl.COLOR_BLACK));
 
         assert.strictEqual(sheet.setBorder(0, 5, 0, 5, xl.BORDERSTYLE_THIN, xl.COLOR_BLACK), sheet);
     });
@@ -1791,8 +1836,8 @@ describe('The sheet class', () => {
 
         const af = sheet.autoFilter();
 
-        assert.throws(() => sheet.applyFilter2.call(sheet, 1));
-        assert.throws(() => sheet.applyFilter2.call({}, af));
+        assert.throws(() => (sheet.applyFilter2 as any).call(sheet, 1));
+        assert.throws(() => (sheet.applyFilter2 as any).call({}, af));
 
         assert.strictEqual(sheet.applyFilter2(af), sheet);
     });
@@ -1801,19 +1846,19 @@ describe('The sheet class', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
         const sheet = book.addSheet('foo');
 
-        assert.throws(() => sheet.conditionalFormattingSize.call({}));
+        assert.throws(() => (sheet.conditionalFormattingSize as any).call({}));
         assert.strictEqual(sheet.conditionalFormattingSize(), 0);
 
         sheet.addConditionalFormatting(0, 0, 1, 1);
         assert.strictEqual(sheet.conditionalFormattingSize(), 1);
 
-        assert.throws(() => sheet.conditionalFormatting.call(sheet, 'a'));
-        assert.throws(() => sheet.conditionalFormatting.call({}, 0));
+        assert.throws(() => (sheet.conditionalFormatting as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.conditionalFormatting as any).call({}, 0));
 
         assert.ok(sheet.conditionalFormatting(0) instanceof xl.ConditionalFormatting);
 
-        assert.throws(() => sheet.removeConditionalFormatting.call(sheet, 'a'));
-        assert.throws(() => sheet.removeConditionalFormatting.call({}, 0));
+        assert.throws(() => (sheet.removeConditionalFormatting as any).call(sheet, 'a'));
+        assert.throws(() => (sheet.removeConditionalFormatting as any).call({}, 0));
 
         assert.strictEqual(sheet.removeConditionalFormatting(0), sheet);
         assert.strictEqual(sheet.conditionalFormattingSize(), 0);

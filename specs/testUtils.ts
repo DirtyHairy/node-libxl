@@ -32,7 +32,7 @@ export const getXlsmFormControlFile = () => xlsmFormControlFile;
 
 export const getTestPicturePath = () => testPicture;
 
-export const compareBuffers = (buf1, buf2) => {
+export const compareBuffers = (buf1: Buffer, buf2: Buffer): boolean => {
     if (buf1.length !== buf2.length) return false;
 
     for (let i = 0; i < buf1.length; i++) {

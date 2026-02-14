@@ -2,13 +2,13 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import util from 'util';
 import fs from 'fs';
-import xl from '../lib/libxl.js';
-import { initFilesystem, getWriteTestFile, getTempFile, getTestPicturePath, compareBuffers } from './testUtils.js';
+import * as xl from '../lib/libxl.js';
+import { initFilesystem, getWriteTestFile, getTempFile, getTestPicturePath, compareBuffers } from './testUtils.ts';
 
 initFilesystem();
 
 describe('The book class', () => {
-    let book;
+    let book: xl.Book;
 
     beforeEach(() => {
         book = new xl.Book(xl.BOOK_TYPE_XLS);
@@ -16,13 +16,13 @@ describe('The book class', () => {
 
     it('Books are created via the book constructor', () => {
         assert.throws(() => {
-            const book = new xl.Book();
+            const book = new (xl.Book as any)();
         });
         assert.throws(() => {
-            const book = new xl.Book(200);
+            const book = new (xl.Book as any)(200);
         });
         assert.throws(() => {
-            const book = new xl.Book('a');
+            const book = new (xl.Book as any)('a');
         });
     });
 
@@ -37,8 +37,8 @@ describe('The book class', () => {
             sheet2.writeStr(2, 0, 'row2');
 
             const file = getWriteTestFile();
-            assert.throws(() => book.writeSync.call(book, 10));
-            assert.throws(() => book.writeSync.call({}, file));
+            assert.throws(() => (book.writeSync as any).call(book, 10));
+            assert.throws(() => (book.writeSync as any).call({}, file));
             assert.strictEqual(book.writeSync(file), book);
         });
 
@@ -52,9 +52,9 @@ describe('The book class', () => {
             sheet2.writeStr(2, 0, 'row2');
 
             const file = getWriteTestFile();
-            assert.throws(() => book.writeSync.call(book, 10));
-            assert.throws(() => book.writeSync.call({}, file));
-            assert.strictEqual(book.writeSync(file), book, true);
+            assert.throws(() => (book.writeSync as any).call(book, 10));
+            assert.throws(() => (book.writeSync as any).call({}, file));
+            assert.strictEqual(book.writeSync(file), book, true as any);
         });
     });
 
@@ -69,11 +69,11 @@ describe('The book class', () => {
             sheet2.writeStr(2, 0, 'row2');
 
             const file = getWriteTestFile();
-            assert.throws(() => book.write.call(book, file, 10));
-            assert.throws(() => book.write.call({}, file, () => {}));
+            assert.throws(() => (book.write as any).call(book, file, 10));
+            assert.throws(() => (book.write as any).call({}, file, () => {}));
 
             const writeResult = util.promisify(book.write.bind(book))(file);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             await writeResult;
         });
@@ -88,12 +88,12 @@ describe('The book class', () => {
             sheet2.writeStr(2, 0, 'row2');
 
             const file = getWriteTestFile();
-            assert.throws(() => book.write.call(book, file, 10));
-            assert.throws(() => book.write.call({}, file, () => {}));
-            assert.throws(() => book.write.call(book, file, undefined, undefined, () => {}));
+            assert.throws(() => (book.write as any).call(book, file, 10));
+            assert.throws(() => (book.write as any).call({}, file, () => {}));
+            assert.throws(() => (book.write as any).call(book, file, undefined, undefined, () => {}));
 
             const writeResult = util.promisify(book.write.bind(book))(file, true);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             await writeResult;
         });
@@ -102,8 +102,8 @@ describe('The book class', () => {
     describe('book.loadSync', () => {
         it('loads a book in sync mode', () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.loadSync.call(book, 10));
-            assert.throws(() => book.loadSync.call({}, file));
+            assert.throws(() => (book.loadSync as any).call(book, 10));
+            assert.throws(() => (book.loadSync as any).call({}, file));
 
             assert.strictEqual(book.loadSync(file), book);
             const sheet = book.getSheet(0);
@@ -120,12 +120,12 @@ describe('The book class', () => {
     describe('book.load', () => {
         it('loads a book in async mode', async () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.load.call(book, file, 10));
-            assert.throws(() => book.load.call({}, file, () => {}));
-            assert.throws(() => book.load.call(book, file, undefined, undefined, () => {}));
+            assert.throws(() => (book.load as any).call(book, file, 10));
+            assert.throws(() => (book.load as any).call({}, file, () => {}));
+            assert.throws(() => (book.load as any).call(book, file, undefined, undefined, () => {}));
 
             const loadResult = util.promisify(book.load.bind(book))(file);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             await loadResult;
 
@@ -142,8 +142,8 @@ describe('The book class', () => {
     describe('book.loadSheetSync', () => {
         it('loads a book in sync mode with a single sheet', () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.loadSyncSheet.call(book, file, 'a'));
-            assert.throws(() => book.loadSyncSheet.call({}, file, 1));
+            assert.throws(() => (book.loadSyncSheet as any).call(book, file, 'a'));
+            assert.throws(() => (book.loadSyncSheet as any).call({}, file, 1));
 
             assert.strictEqual(book.loadSheetSync(file, 1), book);
 
@@ -170,12 +170,14 @@ describe('The book class', () => {
     describe('book.loadSheet', () => {
         it('loads a book in with a single sheet', async () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.loadSheet.call(book, file, 'a', () => undefined));
-            assert.throws(() => book.loadSheet.call({}, file, 1, () => undefined));
-            assert.throws(() => book.loadSheet.call(book, file, 1, undefined, undefined, undefined, () => undefined));
+            assert.throws(() => (book.loadSheet as any).call(book, file, 'a', () => undefined));
+            assert.throws(() => (book.loadSheet as any).call({}, file, 1, () => undefined));
+            assert.throws(() =>
+                (book.loadSheet as any).call(book, file, 1, undefined, undefined, undefined, () => undefined),
+            );
 
             const loadResult = util.promisify(book.loadSheet.bind(book))(file, 1);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             await loadResult;
 
@@ -202,14 +204,14 @@ describe('The book class', () => {
     describe('book.loadPartiallySync', () => {
         it('loads a book in sync mode with a single, partial sheet', () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.loadPartiallySync.call(book, file, 1, 0, 'a'));
-            assert.throws(() => book.loadPartiallySync.call({}, file, 1, 0, 1));
+            assert.throws(() => (book.loadPartiallySync as any).call(book, file, 1, 0, 'a'));
+            assert.throws(() => (book.loadPartiallySync as any).call({}, file, 1, 0, 1));
 
             assert.strictEqual(book.loadPartiallySync(file, 1, 0, 1), book);
 
             const sheet = book.getSheet(0);
             assert.strictEqual(sheet.readStr(1, 0), 'foo');
-            assert.throws(() => sheet.readStr.call(sheet, 2, 0));
+            assert.throws(() => (sheet.readStr as any).call(sheet, 2, 0));
         });
 
         it('supports an optional tempfile', () => {
@@ -232,20 +234,20 @@ describe('The book class', () => {
     describe('book.loadPartially', () => {
         it('loads a book with a single, partial sheet', async () => {
             const file = getWriteTestFile();
-            assert.throws(() => book.loadPartially.call(book, file, 1, 0, 'a', () => undefined));
-            assert.throws(() => book.loadPartially.call({}, file, 1, 0, 1, () => undefined));
+            assert.throws(() => (book.loadPartially as any).call(book, file, 1, 0, 'a', () => undefined));
+            assert.throws(() => (book.loadPartially as any).call({}, file, 1, 0, 1, () => undefined));
             assert.throws(() =>
-                book.loadPartially.call(book, file, 1, 0, 1, undefined, undefined, undefined, () => undefined),
+                (book.loadPartially as any).call(book, file, 1, 0, 1, undefined, undefined, undefined, () => undefined),
             );
 
             const loadResult = util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             await loadResult;
 
             const sheet = book.getSheet(0);
             assert.strictEqual(sheet.readStr(1, 0), 'foo');
-            assert.throws(() => sheet.readStr.call(sheet, 2, 0));
+            assert.throws(() => (sheet.readStr as any).call(sheet, 2, 0));
         });
 
         it('supports an optional tempfile', async () => {
@@ -267,8 +269,8 @@ describe('The book class', () => {
 
     it('book.loadWithoutEmptyCellsSync loads a book in sync mode without empty cells', () => {
         const file = getWriteTestFile();
-        assert.throws(() => book.loadWithoutEmptyCellsSync.call(book, 10));
-        assert.throws(() => book.loadWithoutEmptyCellsSync.call({}, file));
+        assert.throws(() => (book.loadWithoutEmptyCellsSync as any).call(book, 10));
+        assert.throws(() => (book.loadWithoutEmptyCellsSync as any).call({}, file));
 
         assert.strictEqual(book.loadWithoutEmptyCellsSync(file), book);
         const sheet = book.getSheet(0);
@@ -277,12 +279,12 @@ describe('The book class', () => {
 
     it('book.loadWithoutEmptyCells loads a book in async mode without empty cells', async () => {
         const file = getWriteTestFile();
-        assert.throws(() => book.loadWithoutEmptyCells.call(book, file, 10));
-        assert.throws(() => book.loadWithoutEmptyCells.call({}, file, () => {}));
-        assert.throws(() => book.loadWithoutEmptyCells.call(book, file, undefined, () => {}));
+        assert.throws(() => (book.loadWithoutEmptyCells as any).call(book, file, 10));
+        assert.throws(() => (book.loadWithoutEmptyCells as any).call({}, file, () => {}));
+        assert.throws(() => (book.loadWithoutEmptyCells as any).call(book, file, undefined, () => {}));
 
         const loadResult = util.promisify(book.loadWithoutEmptyCells.bind(book))(file);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await loadResult;
 
@@ -291,8 +293,8 @@ describe('The book class', () => {
 
     it('book.loadInfoSync loads a book in sync mode without data', () => {
         const file = getWriteTestFile();
-        assert.throws(() => book.loadInfoSync.call(book, 10));
-        assert.throws(() => book.loadInfoSync.call({}, file));
+        assert.throws(() => (book.loadInfoSync as any).call(book, 10));
+        assert.throws(() => (book.loadInfoSync as any).call({}, file));
 
         assert.strictEqual(book.loadInfoSync(file), book);
         assert.strictEqual(book.sheetCount(), 2);
@@ -300,12 +302,12 @@ describe('The book class', () => {
 
     it('book.loadInfo loads a book in async mode without data', async () => {
         const file = getWriteTestFile();
-        assert.throws(() => book.loadInfo.call(book, file, 10));
-        assert.throws(() => book.loadInfo.call({}, file, () => {}));
-        assert.throws(() => book.loadInfo.call(book, file, undefined, () => {}));
+        assert.throws(() => (book.loadInfo as any).call(book, file, 10));
+        assert.throws(() => (book.loadInfo as any).call({}, file, () => {}));
+        assert.throws(() => (book.loadInfo as any).call(book, file, undefined, () => {}));
 
         const loadResult = util.promisify(book.loadInfo.bind(book))(file);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         await loadResult;
 
@@ -318,12 +320,12 @@ describe('The book class', () => {
 
         sheet.writeStr(1, 0, 'bar');
 
-        assert.throws(() => book1.writeRawSync.call({}));
+        assert.throws(() => (book1.writeRawSync as any).call({}));
         const buffer = book1.writeRawSync();
 
         const book2 = new xl.Book(xl.BOOK_TYPE_XLS);
-        assert.throws(() => book2.loadRawSync.call(book2, 1));
-        assert.throws(() => book2.loadRawSync.call({}, buffer));
+        assert.throws(() => (book2.loadRawSync as any).call(book2, 1));
+        assert.throws(() => (book2.loadRawSync as any).call({}, buffer));
 
         assert.strictEqual(book2.loadRawSync(buffer), book2);
         assert.strictEqual(book2.sheetCount(), 1);
@@ -352,22 +354,22 @@ describe('The book class', () => {
 
         sheet.writeStr(1, 0, 'bar');
 
-        assert.throws(() => book1.writeRaw.call(book1, 1));
-        assert.throws(() => book1.writeRaw.call({}, () => {}));
+        assert.throws(() => (book1.writeRaw as any).call(book1, 1));
+        assert.throws(() => (book1.writeRaw as any).call({}, () => {}));
 
         const writeResult = util.promisify(book1.writeRaw.bind(book1))();
-        assert.throws(() => book1.sheetCount.call(book1));
+        assert.throws(() => (book1.sheetCount as any).call(book1));
 
         const buffer = await writeResult;
 
-        assert.throws(() => book2.loadRaw.call(book2, buffer, 10));
-        assert.throws(() => book2.loadRaw.call({}, buffer, () => {}));
+        assert.throws(() => (book2.loadRaw as any).call(book2, buffer, 10));
+        assert.throws(() => (book2.loadRaw as any).call({}, buffer, () => {}));
         assert.throws(() =>
-            book2.loadRaw.call(book2, buffer, undefined, undefined, undefined, undefined, undefined, () => {}),
+            (book2.loadRaw as any).call(book2, buffer, undefined, undefined, undefined, undefined, undefined, () => {}),
         );
 
         const loadResult = util.promisify(book2.loadRaw.bind(book2))(buffer);
-        assert.throws(() => book2.loadRaw.call(book2));
+        assert.throws(() => (book2.loadRaw as any).call(book2));
         await loadResult;
 
         assert.strictEqual(book2.sheetCount(), 1);
@@ -390,9 +392,9 @@ describe('The book class', () => {
     });
 
     it('book.addSheet adds a sheet to a book', () => {
-        assert.throws(() => book.addSheet.call(book, 10));
-        assert.throws(() => book.addSheet.call(book, 'foo', 10));
-        assert.throws(() => book.addSheet.call({}, 'foo'));
+        assert.throws(() => (book.addSheet as any).call(book, 10));
+        assert.throws(() => (book.addSheet as any).call(book, 'foo', 10));
+        assert.throws(() => (book.addSheet as any).call({}, 'foo'));
         book.addSheet('baz');
 
         const sheet1 = book.addSheet('foo');
@@ -405,9 +407,9 @@ describe('The book class', () => {
         const sheet1 = book.addSheet('foo');
         sheet1.writeStr(1, 0, 'bbb');
 
-        assert.throws(() => book.insertSheet.call(book, 'a', 'bar'));
-        assert.throws(() => book.insertSheet.call(book, 2, 'bar'));
-        assert.throws(() => book.insertSheet.call({}, 0, 'bar'));
+        assert.throws(() => (book.insertSheet as any).call(book, 'a', 'bar'));
+        assert.throws(() => (book.insertSheet as any).call(book, 2, 'bar'));
+        assert.throws(() => (book.insertSheet as any).call({}, 0, 'bar'));
         book.insertSheet(0, 'bar');
         assert.strictEqual(book.sheetCount(), 2);
 
@@ -419,9 +421,9 @@ describe('The book class', () => {
         const sheet = book.addSheet('foo');
         sheet.writeStr(1, 0, 'bar');
 
-        assert.throws(() => book.getSheet.call(book, 'a'));
-        assert.throws(() => book.getSheet.call(book, 1));
-        assert.throws(() => book.getSheet.call({}, 0));
+        assert.throws(() => (book.getSheet as any).call(book, 'a'));
+        assert.throws(() => (book.getSheet as any).call(book, 1));
+        assert.throws(() => (book.getSheet as any).call({}, 0));
 
         const sheet2 = book.getSheet(0);
         assert.strictEqual(sheet2.readStr(1, 0), 'bar');
@@ -430,17 +432,17 @@ describe('The book class', () => {
     it('book.getSheetName retrieves the name of a sheet', () => {
         book.addSheet('foo');
 
-        assert.throws(() => book.getSheetName.call(book, 'a'));
-        assert.throws(() => book.getSheetName.call(book, 1));
-        assert.throws(() => book.getSheetName.call({}, 0));
+        assert.throws(() => (book.getSheetName as any).call(book, 'a'));
+        assert.throws(() => (book.getSheetName as any).call(book, 1));
+        assert.throws(() => (book.getSheetName as any).call({}, 0));
 
         assert.strictEqual(book.getSheetName(0), 'foo');
     });
 
     it('book.sheetType determines sheet type', () => {
         const sheet = book.addSheet('foo');
-        assert.throws(() => book.sheetType.call(book, 'a'));
-        assert.throws(() => book.sheetType.call({}, 0));
+        assert.throws(() => (book.sheetType as any).call(book, 'a'));
+        assert.throws(() => (book.sheetType as any).call({}, 0));
         assert.strictEqual(book.sheetType(0), xl.SHEETTYPE_SHEET);
         assert.strictEqual(book.sheetType(1), xl.SHEETTYPE_UNKNOWN);
     });
@@ -452,8 +454,8 @@ describe('The book class', () => {
         book.addSheet('bar');
         book.addSheet('baz');
 
-        assert.throws(() => book.moveSheet.call(book, 'a', 0));
-        assert.throws(() => book.moveSheet.call({}, 1, 0));
+        assert.throws(() => (book.moveSheet as any).call(book, 'a', 0));
+        assert.throws(() => (book.moveSheet as any).call({}, 1, 0));
 
         assert.strictEqual(book.moveSheet(2, 0), book);
         assert.strictEqual(book.getSheetName(0), 'baz');
@@ -462,23 +464,23 @@ describe('The book class', () => {
     it('book.delSheet removes a sheet', () => {
         book.addSheet('foo');
         book.addSheet('bar');
-        assert.throws(() => book.delSheet.call(book, 'a'));
-        assert.throws(() => book.delSheet.call(book, 3));
-        assert.throws(() => book.delSheet.call({}, 0));
+        assert.throws(() => (book.delSheet as any).call(book, 'a'));
+        assert.throws(() => (book.delSheet as any).call(book, 3));
+        assert.throws(() => (book.delSheet as any).call({}, 0));
         assert.strictEqual(book.delSheet(0), book);
         assert.strictEqual(book.sheetCount(), 1);
     });
 
     it('book.sheetCount counts the number of sheets in a book', () => {
-        assert.throws(() => book.sheetCount.call({}));
+        assert.throws(() => (book.sheetCount as any).call({}));
         assert.strictEqual(book.sheetCount(), 0);
         book.addSheet('foo');
         assert.strictEqual(book.sheetCount(), 1);
     });
 
     it('book.addFormat adds a format', () => {
-        assert.throws(() => book.addFormat.call(book, 10));
-        assert.throws(() => book.addFormat.call({}));
+        assert.throws(() => (book.addFormat as any).call(book, 10));
+        assert.throws(() => (book.addFormat as any).call({}));
 
         book.addFormat();
     });
@@ -493,26 +495,26 @@ describe('The book class', () => {
         const otherBook = new xl.Book(xl.BOOK_TYPE_XLS),
             format1 = otherBook.addFormat();
 
-        otherBook.saveRaw(
+        (otherBook as any).saveRaw(
             () => {},
             () => {},
         );
 
-        assert.throws(() => book.addFormat.call(book, format1));
+        assert.throws(() => (book.addFormat as any).call(book, format1));
     });
 
     it('book.addFormatFromStyle adds a format from a cell style', () => {
         book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.addFormatFromStyle.call(book, 'a'));
-        assert.throws(() => book.addFormatFromStyle.call({}, xl.CELLSTYLE_NORMAL));
+        assert.throws(() => (book.addFormatFromStyle as any).call(book, 'a'));
+        assert.throws(() => (book.addFormatFromStyle as any).call({}, xl.CELLSTYLE_NORMAL));
 
         assert.strictEqual(book.addFormatFromStyle(xl.CELLSTYLE_BAD) instanceof book.addFormat().constructor, true);
     });
 
     it('book.addFont adds a font', () => {
-        assert.throws(() => book.addFont.call(book, 10));
-        assert.throws(() => book.addFont.call({}));
+        assert.throws(() => (book.addFont as any).call(book, 10));
+        assert.throws(() => (book.addFont as any).call({}));
         book.addFont();
 
         const font1 = book.addFont();
@@ -523,41 +525,41 @@ describe('The book class', () => {
     it('book.addConditionalFormat adds a conditional format', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.addConditionalFormat.call({}));
+        assert.throws(() => (book.addConditionalFormat as any).call({}));
 
         assert.ok(book.addConditionalFormat() instanceof xl.ConditionalFormat);
     });
 
     it('book.addRichString adds a rich string', () => {
-        assert.throws(() => book.addRichString.call({}));
+        assert.throws(() => (book.addRichString as any).call({}));
 
         const richString = book.addRichString();
         assert.strictEqual(richString instanceof xl.RichString, true);
     });
 
     it('book.addCusomtNumFormat adds a custom number format', () => {
-        assert.throws(() => book.addCusomtNumFormat.call(book, 10));
-        assert.throws(() => book.addCusomtNumFormat.call({}, '000'));
+        assert.throws(() => (book.addCusomtNumFormat as any).call(book, 10));
+        assert.throws(() => (book.addCusomtNumFormat as any).call({}, '000'));
         book.addCustomNumFormat('000');
     });
 
     it('book.customNumFormat retrieves a custom number format', () => {
         const format = book.addCustomNumFormat('000');
-        assert.throws(() => book.customNumFormat.call(book, 'a'));
-        assert.throws(() => book.customNumFormat.call({}, format));
+        assert.throws(() => (book.customNumFormat as any).call(book, 'a'));
+        assert.throws(() => (book.customNumFormat as any).call({}, format));
 
         assert.strictEqual(book.customNumFormat(format), '000');
     });
 
     it('book.format retrieves a format by index', () => {
         const format = book.addFormat();
-        assert.throws(() => book.format.call(book, 'a'));
-        assert.throws(() => book.format.call({}, 0));
+        assert.throws(() => (book.format as any).call(book, 'a'));
+        assert.throws(() => (book.format as any).call({}, 0));
         assert.strictEqual(book.format(0) instanceof xl.Format, true);
     });
 
     it('book.formatSize counts the number of formats', () => {
-        assert.throws(() => book.formatSize.call({}));
+        assert.throws(() => (book.formatSize as any).call({}));
         const n = book.formatSize();
         book.addFormat();
         assert.strictEqual(book.formatSize(), n + 1);
@@ -565,28 +567,28 @@ describe('The book class', () => {
 
     it('book.font gets a font by index', () => {
         const font = book.addFont();
-        assert.throws(() => book.font.call(book, -1));
-        assert.throws(() => book.font.call({}, 0));
+        assert.throws(() => (book.font as any).call(book, -1));
+        assert.throws(() => (book.font as any).call({}, 0));
         assert.strictEqual(book.font(0) instanceof xl.Font, true);
     });
 
     it('book.fontSize counts the number of fonts', () => {
-        assert.throws(() => book.fontSize.call({}));
+        assert.throws(() => (book.fontSize as any).call({}));
         const n = book.fontSize();
         book.addFont();
         assert.strictEqual(book.fontSize(), n + 1);
     });
 
     it('book.datePack packs a date', () => {
-        assert.throws(() => book.datePack.call(book, 'a', 1, 2));
-        assert.throws(() => book.datePack.call({}, 1, 2, 3));
+        assert.throws(() => (book.datePack as any).call(book, 'a', 1, 2));
+        assert.throws(() => (book.datePack as any).call({}, 1, 2, 3));
         book.datePack(1, 2, 3);
     });
 
     it('book.datePack unpacks a date', () => {
         const date = book.datePack(1999, 2, 3, 4, 5, 6, 7);
-        assert.throws(() => book.dateUnpack.call(book, 'a'));
-        assert.throws(() => book.dateUnpack.call({}, date));
+        assert.throws(() => (book.dateUnpack as any).call(book, 'a'));
+        assert.throws(() => (book.dateUnpack as any).call({}, date));
 
         const unpacked = book.dateUnpack(date);
         assert.strictEqual(unpacked.year, 1999);
@@ -599,15 +601,15 @@ describe('The book class', () => {
     });
 
     it('book.colorPack packs a color', () => {
-        assert.throws(() => book.colorPack.call(book, 'a', 2, 3));
-        assert.throws(() => book.colorPack.call({}, 1, 2, 3));
+        assert.throws(() => (book.colorPack as any).call(book, 'a', 2, 3));
+        assert.throws(() => (book.colorPack as any).call({}, 1, 2, 3));
         book.colorPack(1, 2, 3);
     });
 
     it('book.colorUnpack unpacks a color', () => {
         const color = book.colorPack(1, 2, 3);
-        assert.throws(() => book.colorUnpack.call(book, 'a'));
-        assert.throws(() => book.colorUnpack.call({}, color));
+        assert.throws(() => (book.colorUnpack as any).call(book, 'a'));
+        assert.throws(() => (book.colorUnpack as any).call({}, color));
 
         const unpacked = book.colorUnpack(color);
         assert.strictEqual(unpacked.red, 1);
@@ -619,7 +621,7 @@ describe('The book class', () => {
         book.addSheet('foo');
         book.addSheet('bar');
         book.setActiveSheet(0);
-        assert.throws(() => book.activeSheet.call({}));
+        assert.throws(() => (book.activeSheet as any).call({}));
         assert.strictEqual(book.activeSheet(), 0);
         book.setActiveSheet(1);
         assert.strictEqual(book.activeSheet(), 1);
@@ -627,8 +629,8 @@ describe('The book class', () => {
 
     it('book.setActiveSheet sets the active sheet', () => {
         book.addSheet('foo');
-        assert.throws(() => book.setActiveSheet.call(book, 'a'));
-        assert.throws(() => book.setActiveSheet.call({}, 0));
+        assert.throws(() => (book.setActiveSheet as any).call(book, 'a'));
+        assert.throws(() => (book.setActiveSheet as any).call({}, 0));
         assert.strictEqual(book.setActiveSheet(0), book);
     });
 
@@ -637,16 +639,16 @@ describe('The book class', () => {
             file = getTestPicturePath(),
             fileBuffer = fs.readFileSync(file);
 
-        assert.throws(() => book.pictureSize.call({}));
+        assert.throws(() => (book.pictureSize as any).call({}));
         assert.strictEqual(book.pictureSize(), 0);
 
-        assert.throws(() => book.addPicture.call(book, 1));
-        assert.throws(() => book.addPicture.call({}, file));
+        assert.throws(() => (book.addPicture as any).call(book, 1));
+        assert.throws(() => (book.addPicture as any).call({}, file));
         assert.strictEqual(book.addPicture(file), 0);
         assert.strictEqual(book.pictureSize(), 1);
 
-        assert.throws(() => book.getPicture.call(book, true));
-        assert.throws(() => book.getPicture.call({}, 0));
+        assert.throws(() => (book.getPicture as any).call(book, true));
+        assert.throws(() => (book.getPicture as any).call({}, 0));
         const pic0 = book.getPicture(0);
 
         assert.strictEqual(pic0.type, xl.PICTURETYPE_JPEG);
@@ -665,13 +667,13 @@ describe('The book class', () => {
             file = getTestPicturePath(),
             fileBuffer = fs.readFileSync(file);
 
-        assert.throws(() => book.addPictureAsync.call(book, file, 1));
-        assert.throws(() => book.addPictureAsync.call({}, file, () => {}));
+        assert.throws(() => (book.addPictureAsync as any).call(book, file, 1));
+        assert.throws(() => (book.addPictureAsync as any).call({}, file, () => {}));
 
         const addPictureAsync = util.promisify(book.addPictureAsync.bind(book));
 
         const addResult = addPictureAsync(file);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         assert.strictEqual(await addResult, 0);
         assert.strictEqual(book.pictureSize(), 1);
@@ -679,13 +681,15 @@ describe('The book class', () => {
         assert.strictEqual(await addPictureAsync(fileBuffer), 1);
         assert.strictEqual(book.pictureSize(), 2);
 
-        const getPictureAsync = (id) =>
-            new Promise((resolve, reject) =>
-                book.getPictureAsync(id, (err, type, data) => (err ? reject(err) : resolve([type, data]))),
+        const getPictureAsync = (id: number) =>
+            new Promise<[number, Buffer]>((resolve, reject) =>
+                book.getPictureAsync(id, (err: any, type: number, data: Buffer) =>
+                    err ? reject(err) : resolve([type, data]),
+                ),
             );
 
         const getResult = getPictureAsync(0);
-        assert.throws(() => book.sheetCount.call(book));
+        assert.throws(() => (book.sheetCount as any).call(book));
 
         const [type1, buffer1] = await getResult;
         const [type2, buffer2] = await getPictureAsync(1);
@@ -702,8 +706,8 @@ describe('The book class', () => {
             const book = new xl.Book(xl.BOOK_TYPE_XLSX);
             const file = getTestPicturePath();
 
-            assert.throws(() => book.addPictureAsLinkSync.call(book, 1));
-            assert.throws(() => book.addPictureAsLinkSync.call({}, file));
+            assert.throws(() => (book.addPictureAsLinkSync as any).call(book, 1));
+            assert.throws(() => (book.addPictureAsLinkSync as any).call({}, file));
 
             assert.strictEqual(book.addPictureAsLink(file), 0);
             assert.strictEqual(book.pictureSize(), 1);
@@ -723,11 +727,11 @@ describe('The book class', () => {
             const book = new xl.Book(xl.BOOK_TYPE_XLSX);
             const file = getTestPicturePath();
 
-            assert.throws(() => book.addPictureAsLinkAsync.call(book, 1, () => undefined));
-            assert.throws(() => book.addPictureAsLinkAsync.call({}, file, () => undefined));
+            assert.throws(() => (book.addPictureAsLinkAsync as any).call(book, 1, () => undefined));
+            assert.throws(() => (book.addPictureAsLinkAsync as any).call({}, file, () => undefined));
 
             const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             assert.strictEqual(await result, 0);
             assert.strictEqual(book.pictureSize(), 1);
@@ -738,7 +742,7 @@ describe('The book class', () => {
             const file = getTestPicturePath();
 
             const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file, true);
-            assert.throws(() => book.sheetCount.call(book));
+            assert.throws(() => (book.sheetCount as any).call(book));
 
             assert.strictEqual(await result, 0);
             assert.strictEqual(book.pictureSize(), 1);
@@ -747,7 +751,7 @@ describe('The book class', () => {
 
     it('book.defaultFont returns the default font', () => {
         book.setDefaultFont('times', 13);
-        assert.throws(() => book.defaultFont.call({}));
+        assert.throws(() => (book.defaultFont as any).call({}));
 
         const defaultFont = book.defaultFont();
         assert.strictEqual(defaultFont.name, 'times');
@@ -755,92 +759,92 @@ describe('The book class', () => {
     });
 
     it('book.setDefaultFont sets the default font', () => {
-        assert.throws(() => book.setDefaultFont.call(book, 10, 10));
-        assert.throws(() => book.setDefaultFont.call({}, 'times', 10));
+        assert.throws(() => (book.setDefaultFont as any).call(book, 10, 10));
+        assert.throws(() => (book.setDefaultFont as any).call({}, 'times', 10));
         assert.strictEqual(book.setDefaultFont('times', 10), book);
     });
 
     it('book.refR1C1 checks for R1C1 mode', () => {
         book.setRefR1C1();
-        assert.throws(() => book.refR1C1.call({}));
+        assert.throws(() => (book.refR1C1 as any).call({}));
         assert.strictEqual(book.refR1C1(), true);
         book.setRefR1C1(false);
         assert.strictEqual(book.refR1C1(), false);
     });
 
     it('book.setRefR1C1 switches R1C1 mode', () => {
-        assert.throws(() => book.setRefR1C1.call(book, 1));
-        assert.throws(() => book.setRefR1C1.call({}));
+        assert.throws(() => (book.setRefR1C1 as any).call(book, 1));
+        assert.throws(() => (book.setRefR1C1 as any).call({}));
         assert.strictEqual(book.setRefR1C1(true), book);
     });
 
     it('book.rgbMode checks for RGB mode', () => {
         book.setRgbMode();
-        assert.throws(() => book.rgbMode.call({}));
+        assert.throws(() => (book.rgbMode as any).call({}));
         assert.strictEqual(book.rgbMode(), true);
         book.setRgbMode(false);
         assert.strictEqual(book.rgbMode(), false);
     });
 
     it('book.setRgbMode switches RGB mode', () => {
-        assert.throws(() => book.setRgbMode.call(book, 1));
-        assert.throws(() => book.setRgbMode.call({}));
+        assert.throws(() => (book.setRgbMode as any).call(book, 1));
+        assert.throws(() => (book.setRgbMode as any).call({}));
         assert.strictEqual(book.setRgbMode(true), book);
     });
 
     it('book.version returns the libxl version', () => {
-        assert.throws(() => book.version.call({}));
+        assert.throws(() => (book.version as any).call({}));
         assert.strictEqual(typeof book.version(), 'number');
     });
 
     it('book.biffVersion returns the BIFF format version', () => {
-        assert.throws(() => book.biffVersion.call({}));
+        assert.throws(() => (book.biffVersion as any).call({}));
         assert.strictEqual(book.biffVersion(), 1536);
     });
 
     it('book.isDate1904 checks which date system is active', () => {
         book.setDate1904();
-        assert.throws(() => book.isDate1904.call({}));
+        assert.throws(() => (book.isDate1904 as any).call({}));
         assert.strictEqual(book.isDate1904(), true);
         book.setDate1904(false);
         assert.strictEqual(book.isDate1904(), false);
     });
 
     it('book.setDate1904 sets the active date system', () => {
-        assert.throws(() => book.setDate1904.call(book, 1));
-        assert.throws(() => book.setDate1904.call({}, true));
+        assert.throws(() => (book.setDate1904 as any).call(book, 1));
+        assert.throws(() => (book.setDate1904 as any).call({}, true));
         assert.strictEqual(book.setDate1904(true), book);
     });
 
     it('book.isTemplate checks whether the document is a template', () => {
         book.setTemplate();
-        assert.throws(() => book.isTemplate.call({}));
+        assert.throws(() => (book.isTemplate as any).call({}));
         assert.strictEqual(book.isTemplate(), true);
         book.setTemplate(false);
         assert.strictEqual(book.isTemplate(), false);
     });
 
     it('book.setTemplate toggles whether a document is a template', () => {
-        assert.throws(() => book.setTemplate.call(book, 1));
-        assert.throws(() => book.setTemplate.call({}));
+        assert.throws(() => (book.setTemplate as any).call(book, 1));
+        assert.throws(() => (book.setTemplate as any).call({}));
         assert.strictEqual(book.setTemplate(true), book);
     });
 
     it('book.setKey sets the API key', () => {
-        assert.throws(() => book.setKey.call(book, 1, 'a'));
-        assert.throws(() => book.setKey.call({}, 'a', 'b'));
+        assert.throws(() => (book.setKey as any).call(book, 1, 'a'));
+        assert.throws(() => (book.setKey as any).call({}, 'a', 'b'));
         assert.strictEqual(book.setKey('a', 'b'), book);
     });
 
     it('book.isWriteProtected checks for write protection', () => {
-        assert.throws(() => book.isWriteProtected.call({}));
+        assert.throws(() => (book.isWriteProtected as any).call({}));
         assert.strictEqual(book.isWriteProtected(), false);
     });
 
     it('book.getCoreProperty retrieves core properties', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.coreProperties.call({}));
+        assert.throws(() => (book.coreProperties as any).call({}));
 
         assert.ok(book.coreProperties() instanceof xl.CoreProperties);
     });
@@ -848,26 +852,26 @@ describe('The book class', () => {
     it('book.setLocale sets the locale', () => {
         const locale = process.env['LANG'] ?? 'en_GB';
 
-        assert.throws(() => book.setLocale.call(book, 1));
-        assert.throws(() => book.setLocale.call({}, locale));
+        assert.throws(() => (book.setLocale as any).call(book, 1));
+        assert.throws(() => (book.setLocale as any).call({}, locale));
 
         assert.strictEqual(book.setLocale(locale), book);
     });
 
     it('book.remveVBA removes all VBA macros', () => {
-        assert.throws(() => book.removeVBA.call({}));
+        assert.throws(() => (book.removeVBA as any).call({}));
 
         assert.strictEqual(book.removeVBA(), book);
     });
 
     it('book.removePrinterSettings removes printer settings', () => {
-        assert.throws(() => book.removePrinterSettings.call({}));
+        assert.throws(() => (book.removePrinterSettings as any).call({}));
 
         assert.strictEqual(book.removePrinterSettings(), book);
     });
 
     it('book.removeAllPhonetics removes all phonetics', () => {
-        assert.throws(() => book.removeAllPhonetics.call({}));
+        assert.throws(() => (book.removeAllPhonetics as any).call({}));
 
         assert.strictEqual(book.removeAllPhonetics(), book);
     });
@@ -875,9 +879,9 @@ describe('The book class', () => {
     it('book.dpiAwareness and book.setDpiAwareness mange DPI awareness', () => {
         book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.dpiAwareness.call({}));
-        assert.throws(() => book.setDpiAwareness.call(book, 1));
-        assert.throws(() => book.setDpiAwareness.call({}, false));
+        assert.throws(() => (book.dpiAwareness as any).call({}));
+        assert.throws(() => (book.setDpiAwareness as any).call(book, 1));
+        assert.throws(() => (book.setDpiAwareness as any).call({}, false));
 
         assert.strictEqual(book.setDpiAwareness(false), book);
         assert.strictEqual(book.dpiAwareness(), false);
@@ -888,8 +892,8 @@ describe('The book class', () => {
     it('book.setPassword sets a password for encrypted XLSX files', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.setPassword.call(book, 1));
-        assert.throws(() => book.setPassword.call({}, 'secret'));
+        assert.throws(() => (book.setPassword as any).call(book, 1));
+        assert.throws(() => (book.setPassword as any).call({}, 'secret'));
 
         assert.strictEqual(book.setPassword('secret'), book);
     });
@@ -901,8 +905,8 @@ describe('The book class', () => {
         const buffer = book1.writeRawSync();
 
         const book2 = new xl.Book(xl.BOOK_TYPE_XLS);
-        assert.throws(() => book2.loadInfoRawSync.call(book2, 1));
-        assert.throws(() => book2.loadInfoRawSync.call({}, buffer));
+        assert.throws(() => (book2.loadInfoRawSync as any).call(book2, 1));
+        assert.throws(() => (book2.loadInfoRawSync as any).call({}, buffer));
 
         assert.strictEqual(book2.loadInfoRawSync(buffer), book2);
         assert.strictEqual(book2.sheetCount(), 1);
@@ -916,11 +920,11 @@ describe('The book class', () => {
         const buffer = book1.writeRawSync();
 
         const book2 = new xl.Book(xl.BOOK_TYPE_XLS);
-        assert.throws(() => book2.loadInfoRaw.call(book2, buffer, 10));
-        assert.throws(() => book2.loadInfoRaw.call({}, buffer, () => {}));
+        assert.throws(() => (book2.loadInfoRaw as any).call(book2, buffer, 10));
+        assert.throws(() => (book2.loadInfoRaw as any).call({}, buffer, () => {}));
 
         const loadResult = util.promisify(book2.loadInfoRaw.bind(book2))(buffer);
-        assert.throws(() => book2.loadInfoRaw.call(book2));
+        assert.throws(() => (book2.loadInfoRaw as any).call(book2));
         await loadResult;
 
         assert.strictEqual(book2.sheetCount(), 1);
@@ -928,7 +932,7 @@ describe('The book class', () => {
     });
 
     it('book.errorCode returns an error code number', () => {
-        assert.throws(() => book.errorCode.call({}));
+        assert.throws(() => (book.errorCode as any).call({}));
         assert.strictEqual(typeof book.errorCode(), 'number');
         assert.strictEqual(book.errorCode(), xl.ERRCODE_OK);
     });
@@ -936,14 +940,14 @@ describe('The book class', () => {
     it('book.conditionalFormatSize and book.conditionalFormat manage conditional formats', () => {
         const book = new xl.Book(xl.BOOK_TYPE_XLSX);
 
-        assert.throws(() => book.conditionalFormatSize.call({}));
+        assert.throws(() => (book.conditionalFormatSize as any).call({}));
         assert.strictEqual(book.conditionalFormatSize(), 0);
 
         const cf = book.addConditionalFormat();
         assert.strictEqual(book.conditionalFormatSize(), 1);
 
-        assert.throws(() => book.conditionalFormat.call(book, 'a'));
-        assert.throws(() => book.conditionalFormat.call({}, 0));
+        assert.throws(() => (book.conditionalFormat as any).call(book, 'a'));
+        assert.throws(() => (book.conditionalFormat as any).call({}, 0));
 
         assert.ok(book.conditionalFormat(0) instanceof xl.ConditionalFormat);
     });
@@ -953,7 +957,7 @@ describe('The book class', () => {
         book.addSheet('sheet1');
         book.addSheet('sheet2');
 
-        assert.throws(() => book.clear.call({}));
+        assert.throws(() => (book.clear as any).call({}));
 
         assert.strictEqual(book.clear(), book);
         assert.strictEqual(book.sheetCount(), 0);

@@ -33,7 +33,7 @@
     "gypfile": true,
     "scripts": {
         "install": "node install-libxl.js && node-gyp rebuild",
-        "prettier": "prettier -w specs/*.js"
+        "prettier": "prettier -w specs/*.ts"
     },
     "dependencies": {
         "@types/node": "^24.1.0",
@@ -47,6 +47,7 @@
     "devDependencies": {
         "jshint": "^2.13.6",
         "prettier": "^3.8.1",
+        "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     }
 }

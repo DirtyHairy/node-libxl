@@ -3,10 +3,10 @@
 SYSTEM=$(uname)
 MACHINE=$(uname -m)
 
-NODE="node"
-test -n "$VALGRIND" && NODE="valgrind node"
+NODE="node --require tsx/cjs"
+test -n "$VALGRIND" && NODE="valgrind node --require tsx/cjs"
 
-TEST="$NODE --test --test-reporter=spec specs/*Spec.js"
+TEST="$NODE --test --test-reporter=spec specs/*Spec.ts"
 
 if [ "$SYSTEM" = Darwin ]; then
     DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$(pwd)/deps/libxl/lib" $TEST
