@@ -11,11 +11,14 @@
     ],
     "files": [
         "install-libxl.js",
+        "run_tests.sh",
         "demo.js",
         "specs",
         "lib",
         "src",
-        "binding.gyp"
+        "binding.gyp",
+        "CHANGELOG.md",
+        "tsconfig.json"
     ],
     "homepage": "https://github.com/DirtyHairy/node-libxl",
     "repository": {
