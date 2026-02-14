@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/node_modules/nan",
-                "${userHome}/Library/Caches/node-gyp/23.6.0/include/node"
+                "${userHome}/Library/Caches/node-gyp/22.13.0/include/node"
             ],
             "defines": [],
             "macFrameworkPath": [
