@@ -889,4 +889,78 @@ describe('The book class', function () {
         expect(book.setDpiAwareness(true)).toBe(book);
         expect(book.dpiAwareness()).toBe(true);
     });
+
+    it('book.setPassword sets a password for encrypted XLSX files', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        shouldThrow(book.setPassword, book, 1);
+        shouldThrow(book.setPassword, {}, 'secret');
+
+        expect(book.setPassword('secret')).toBe(book);
+    });
+
+    it('book.loadInfoRawSync loads info from a buffer in sync mode', () => {
+        const book1 = new xl.Book(xl.BOOK_TYPE_XLS);
+        book1.addSheet('testSheet');
+
+        const buffer = book1.writeRawSync();
+
+        const book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+        shouldThrow(book2.loadInfoRawSync, book2, 1);
+        shouldThrow(book2.loadInfoRawSync, {}, buffer);
+
+        expect(book2.loadInfoRawSync(buffer)).toBe(book2);
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheetName(0)).toBe('testSheet');
+    });
+
+    it('book.loadInfoRaw loads info from a buffer in async mode', async () => {
+        const book1 = new xl.Book(xl.BOOK_TYPE_XLS);
+        book1.addSheet('asyncSheet');
+
+        const buffer = book1.writeRawSync();
+
+        const book2 = new xl.Book(xl.BOOK_TYPE_XLS);
+        shouldThrow(book2.loadInfoRaw, book2, buffer, 10);
+        shouldThrow(book2.loadInfoRaw, {}, buffer, function () {});
+
+        const loadResult = util.promisify(book2.loadInfoRaw.bind(book2))(buffer);
+        shouldThrow(book2.loadInfoRaw, book2);
+        await loadResult;
+
+        expect(book2.sheetCount()).toBe(1);
+        expect(book2.getSheetName(0)).toBe('asyncSheet');
+    });
+
+    it('book.errorCode returns an error code number', () => {
+        shouldThrow(book.errorCode, {});
+        expect(typeof book.errorCode()).toBe('number');
+        expect(book.errorCode()).toBe(xl.ERRCODE_OK);
+    });
+
+    it('book.conditionalFormatSize and book.conditionalFormat manage conditional formats', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+
+        shouldThrow(book.conditionalFormatSize, {});
+        expect(book.conditionalFormatSize()).toBe(0);
+
+        const cf = book.addConditionalFormat();
+        expect(book.conditionalFormatSize()).toBe(1);
+
+        shouldThrow(book.conditionalFormat, book, 'a');
+        shouldThrow(book.conditionalFormat, {}, 0);
+
+        expect(book.conditionalFormat(0)).toBeInstanceOf(xl.ConditionalFormat);
+    });
+
+    it('book.clear clears all workbook data', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        book.addSheet('sheet1');
+        book.addSheet('sheet2');
+
+        shouldThrow(book.clear, {});
+
+        expect(book.clear()).toBe(book);
+        expect(book.sheetCount()).toBe(0);
+    });
 });

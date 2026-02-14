@@ -1738,4 +1738,48 @@ describe('The sheet class', function () {
 
         expect(sheet.selectionRange()).toBe('A2:A10');
     });
+
+    it('sheet.setBorder draws borders in an area of cells', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.setBorder, sheet, 0, 0, 0, 0, 'a', 0);
+        shouldThrow(sheet.setBorder, {}, 0, 0, 0, 0, xl.BORDERSTYLE_THIN, xl.COLOR_BLACK);
+
+        expect(sheet.setBorder(0, 5, 0, 5, xl.BORDERSTYLE_THIN, xl.COLOR_BLACK)).toBe(sheet);
+    });
+
+    it('sheet.applyFilter2 applies a filter using an AutoFilter object', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        const af = sheet.autoFilter();
+
+        shouldThrow(sheet.applyFilter2, sheet, 1);
+        shouldThrow(sheet.applyFilter2, {}, af);
+
+        expect(sheet.applyFilter2(af)).toBe(sheet);
+    });
+
+    it('sheet.conditionalFormattingSize, sheet.conditionalFormatting and sheet.removeConditionalFormatting manage conditional formatting', () => {
+        const book = new xl.Book(xl.BOOK_TYPE_XLSX);
+        const sheet = book.addSheet('foo');
+
+        shouldThrow(sheet.conditionalFormattingSize, {});
+        expect(sheet.conditionalFormattingSize()).toBe(0);
+
+        sheet.addConditionalFormatting(0, 0, 1, 1);
+        expect(sheet.conditionalFormattingSize()).toBe(1);
+
+        shouldThrow(sheet.conditionalFormatting, sheet, 'a');
+        shouldThrow(sheet.conditionalFormatting, {}, 0);
+
+        expect(sheet.conditionalFormatting(0)).toBeInstanceOf(xl.ConditionalFormatting);
+
+        shouldThrow(sheet.removeConditionalFormatting, sheet, 'a');
+        shouldThrow(sheet.removeConditionalFormatting, {}, 0);
+
+        expect(sheet.removeConditionalFormatting(0)).toBe(sheet);
+        expect(sheet.conditionalFormattingSize()).toBe(0);
+    });
 });

@@ -119,6 +119,13 @@ namespace node_libxl {
         static NAN_METHOD(RemoveAllPhonetics);
         static NAN_METHOD(DpiAwareness);
         static NAN_METHOD(SetDpiAwareness);
+        static NAN_METHOD(SetPassword);
+        static NAN_METHOD(LoadInfoRawSync);
+        static NAN_METHOD(LoadInfoRaw);
+        static NAN_METHOD(ErrorCode);
+        static NAN_METHOD(ConditionalFormat);
+        static NAN_METHOD(ConditionalFormatSize);
+        static NAN_METHOD(Clear);
 
        private:
         std::unordered_set<const libxl::Sheet*> validSheetHandles;

@@ -1684,6 +1684,132 @@ namespace node_libxl {
         info.GetReturnValue().Set(info.This());
     }
 
+    NAN_METHOD(Book::SetPassword) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        CSNanUtf8Value(password, arguments.GetString(0));
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->setPassword(*password);
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadInfoRawSync) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        Local<Value> buffer = arguments.GetBuffer(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        if (!that->GetWrapped()->loadInfoRaw(node::Buffer::Data(buffer),
+                                              node::Buffer::Length(buffer))) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::LoadInfoRaw) {
+        class Worker : public AsyncWorker<Book> {
+           public:
+            Worker(Nan::Callback* callback, Local<Object> that, Local<Value> buffer)
+                : AsyncWorker<Book>(callback, that, "node-libxl-book-load-info-raw"),
+                  buffer(buffer) {}
+
+            virtual void Execute() {
+                if (!that->GetWrapped()->loadInfoRaw(*buffer, buffer.GetSize())) {
+                    RaiseLibxlError();
+                }
+            }
+
+           private:
+            BufferCopy buffer;
+        };
+
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        Local<Value> buffer = arguments.GetBuffer(0);
+        Local<Function> callback = arguments.GetFunction(1);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        Nan::AsyncQueueWorker(new Worker(new Nan::Callback(callback), info.This(), buffer));
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Book::ErrorCode) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->errorCode()));
+    }
+
+    NAN_METHOD(Book::ConditionalFormat) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        libxl::ConditionalFormat* conditionalFormat = that->GetWrapped()->conditionalFormat(index);
+        if (!conditionalFormat) {
+            return util::ThrowLibxlError(that);
+        }
+
+        return info.GetReturnValue().Set(
+            ConditionalFormat::NewInstance(conditionalFormat, info.This()));
+    }
+
+    NAN_METHOD(Book::ConditionalFormatSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        info.GetReturnValue().Set(Nan::New<Integer>(that->GetWrapped()->conditionalFormatSize()));
+    }
+
+    NAN_METHOD(Book::Clear) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Book* that = FromJS(info.This());
+        ASSERT_THIS(that);
+
+        that->GetWrapped()->clear();
+
+        info.GetReturnValue().Set(info.This());
+    }
+
     // Init
 
     void Book::Initialize(Local<Object> exports) {
@@ -1781,6 +1907,14 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "removeAllPhonetics", RemoveAllPhonetics);
         Nan::SetPrototypeMethod(t, "dpiAwareness", DpiAwareness);
         Nan::SetPrototypeMethod(t, "setDpiAwareness", SetDpiAwareness);
+        Nan::SetPrototypeMethod(t, "setPassword", SetPassword);
+        Nan::SetPrototypeMethod(t, "loadInfoRawSync", LoadInfoRawSync);
+        Nan::SetPrototypeMethod(t, "loadInfoRawAsync", LoadInfoRaw);
+        Nan::SetPrototypeMethod(t, "loadInfoRaw", LoadInfoRaw);
+        Nan::SetPrototypeMethod(t, "errorCode", ErrorCode);
+        Nan::SetPrototypeMethod(t, "conditionalFormat", ConditionalFormat);
+        Nan::SetPrototypeMethod(t, "conditionalFormatSize", ConditionalFormatSize);
+        Nan::SetPrototypeMethod(t, "clear", Clear);
 
 #ifdef INCLUDE_API_KEY
         CSNanObjectSetWithAttributes(exports, Nan::New<String>("apiKeyCompiledIn").ToLocalChecked(),

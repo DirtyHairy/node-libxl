@@ -3206,6 +3206,98 @@ namespace node_libxl {
             ConditionalFormatting::NewInstance(conditionalFormatting, that->GetBookHandle()));
     }
 
+    NAN_METHOD(Sheet::SetBorder) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int rowFirst = arguments.GetInt(0);
+        int rowLast = arguments.GetInt(1);
+        int colFirst = arguments.GetInt(2);
+        int colLast = arguments.GetInt(3);
+        auto borderStyle = static_cast<libxl::BorderStyle>(arguments.GetInt(4));
+        auto borderColor = static_cast<libxl::Color>(arguments.GetInt(5));
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->setBorder(rowFirst, rowLast, colFirst, colLast, borderStyle,
+                                            borderColor)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::ApplyFilter2) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        class AutoFilter* autoFilter = arguments.GetWrapped<class AutoFilter>(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        that->GetWrapped()->applyFilter2(autoFilter->GetWrapped());
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::ConditionalFormattingByIndex) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        libxl::ConditionalFormatting* conditionalFormatting =
+            that->GetWrapped()->conditionalFormatting(index);
+        if (!conditionalFormatting) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(
+            ConditionalFormatting::NewInstance(conditionalFormatting, that->GetBookHandle()));
+    }
+
+    NAN_METHOD(Sheet::RemoveConditionalFormatting) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+
+        int index = arguments.GetInt(0);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        if (!that->GetWrapped()->removeConditionalFormatting(index)) {
+            return util::ThrowLibxlError(that);
+        }
+
+        info.GetReturnValue().Set(info.This());
+    }
+
+    NAN_METHOD(Sheet::ConditionalFormattingSize) {
+        Nan::HandleScope scope;
+
+        ArgumentHelper arguments(info);
+        ASSERT_ARGUMENTS(arguments);
+
+        Sheet* that = FromJS(info.This());
+        ASSERT_SHEET(that);
+
+        info.GetReturnValue().Set(
+            Nan::New<Integer>(that->GetWrapped()->conditionalFormattingSize()));
+    }
+
     NAN_METHOD(Sheet::GetActiveCell) {
         Nan::HandleScope scope;
 
@@ -3473,6 +3565,11 @@ namespace node_libxl {
         Nan::SetPrototypeMethod(t, "formControlSize", FormControlSize);
         Nan::SetPrototypeMethod(t, "formControl", FormControl);
         Nan::SetPrototypeMethod(t, "addConditionalFormatting", AddConditionalFormatting);
+        Nan::SetPrototypeMethod(t, "setBorder", SetBorder);
+        Nan::SetPrototypeMethod(t, "applyFilter2", ApplyFilter2);
+        Nan::SetPrototypeMethod(t, "conditionalFormatting", ConditionalFormattingByIndex);
+        Nan::SetPrototypeMethod(t, "removeConditionalFormatting", RemoveConditionalFormatting);
+        Nan::SetPrototypeMethod(t, "conditionalFormattingSize", ConditionalFormattingSize);
         Nan::SetPrototypeMethod(t, "getActiveCell", GetActiveCell);
         Nan::SetPrototypeMethod(t, "setActiveCell", SetActiveCell);
         Nan::SetPrototypeMethod(t, "selectionRange", SelectionRange);

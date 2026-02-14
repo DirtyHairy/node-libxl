@@ -216,6 +216,11 @@ namespace node_libxl {
         static NAN_METHOD(SelectionRange);
         static NAN_METHOD(AddSelectionRange);
         static NAN_METHOD(RemoveSelection);
+        static NAN_METHOD(SetBorder);
+        static NAN_METHOD(ApplyFilter2);
+        static NAN_METHOD(ConditionalFormattingByIndex);
+        static NAN_METHOD(RemoveConditionalFormatting);
+        static NAN_METHOD(ConditionalFormattingSize);
 
        private:
         const libxl::Sheet* wrappedSheet;
