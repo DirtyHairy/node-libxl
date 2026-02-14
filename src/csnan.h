@@ -27,15 +27,13 @@
 
 #define CSNanNewExternal(Value) v8::External::New(v8::Isolate::GetCurrent(), Value)
 
-#define CSNanObjectSetWithAttributes(Object, Key, Value, Attribs)             \
-    do {                                                                      \
-        v8::Isolate* isolate = (Object)->GetIsolate();                        \
-        v8::Local<v8::Context> context = isolate->GetCurrentContext();        \
-        (Object)->DefineOwnProperty(context, Key, Value, Attribs).FromJust(); \
-    } while (0)
+#define CSNanObjectSetWithAttributes(Object, Key, Value, Attribs)                            \
+    (Object)                                                                                 \
+        ->DefineOwnProperty(Isolate::GetCurrent()->GetCurrentContext(), Key, Value, Attribs) \
+        .FromJust();
 
 #define CSNanNewInstance(handle, argv, argc) \
-    (handle)->NewInstance((handle)->GetIsolate()->GetCurrentContext(), argv, argc).ToLocalChecked()
+    (handle)->NewInstance(Isolate::GetCurrent()->GetCurrentContext(), argv, argc).ToLocalChecked()
 
 #define CSNanUtf8Value(name, value) String::Utf8Value name(v8::Isolate::GetCurrent(), value)
 
