@@ -59,7 +59,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         return object->IsObject() &&
-               object.As<v8::Object>()->GetPrototypeV2()->StrictEquals(
+               object.As<v8::Object>()->GetPrototype()->StrictEquals(
                    Nan::Get(Nan::New(constructor),
                             Nan::New<v8::String>("prototype").ToLocalChecked())
                        .ToLocalChecked());
