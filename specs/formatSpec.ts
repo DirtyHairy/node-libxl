@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import util from 'util';
-import * as xl from '../lib/libxl.js';
+import * as xl from '../lib/libxl';
 
 describe('The format class', () => {
     const book = new xl.Book(xl.BOOK_TYPE_XLS),

@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import util from 'util';
-import * as xl from '../lib/libxl.js';
+import * as xl from '../lib/libxl';
 import {
     getTestPicturePath,
     testPictureWidth,
@@ -9,7 +9,7 @@ import {
     getXlsxTableFile,
     getXlsmFormControlFile,
     epsilon,
-} from './testUtils.ts';
+} from './testUtils';
 
 describe('The sheet class', () => {
     let book = new xl.Book(xl.BOOK_TYPE_XLS),

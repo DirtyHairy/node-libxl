@@ -1,6 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import * as xl from '../lib/libxl.js';
+import * as xl from '../lib/libxl';
 
 describe('AutoFilter', () => {
     let book: xl.Book, sheet: xl.Sheet, autoFilter: xl.AutoFilter;

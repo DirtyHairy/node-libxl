@@ -1,8 +1,8 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'fs';
-import * as xl from '../lib/libxl.js';
-import { getXlsmFormControlFile } from './testUtils.ts';
+import * as xl from '../lib/libxl';
+import { getXlsmFormControlFile } from './testUtils';
 
 let fixture = fs.readFileSync(getXlsmFormControlFile());
 

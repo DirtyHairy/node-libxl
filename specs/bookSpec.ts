@@ -2,8 +2,8 @@ import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import util from 'util';
 import fs from 'fs';
-import * as xl from '../lib/libxl.js';
-import { initFilesystem, getWriteTestFile, getTempFile, getTestPicturePath, compareBuffers } from './testUtils.ts';
+import * as xl from '../lib/libxl';
+import { initFilesystem, getWriteTestFile, getTempFile, getTestPicturePath, compareBuffers } from './testUtils';
 
 initFilesystem();
 
@@ -92,7 +92,8 @@ describe('The book class', () => {
             assert.throws(() => (book.write as any).call({}, file, () => {}));
             assert.throws(() => (book.write as any).call(book, file, undefined, undefined, () => {}));
 
-            const writeResult = util.promisify(book.write.bind(book))(file, true);
+            const writeResult = util.promisify((cb) => book.write(file, true, cb));
+            // const writeResult = util.promisify(book.write.bind(book))(file, true);
             assert.throws(() => (book.sheetCount as any).call(book));
 
             await writeResult;

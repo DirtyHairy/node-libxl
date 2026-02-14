@@ -7,3 +7,4 @@ specs/output
 yarn.lock
 .claude
 package-lock.json
+tsc_out

@@ -1,10 +1,10 @@
 /// <reference types="node" />
-import { Sheet } from "./sheet";
-import { Format } from "./format";
-import { Font } from "./font";
-import { RichString } from "./rich_string";
-import { CoreProperties } from "./core_properties";
-import { ConditionalFormat } from "./conditional_format";
+import { Sheet } from './sheet';
+import { Format } from './format';
+import { Font } from './font';
+import { RichString } from './rich_string';
+import { CoreProperties } from './core_properties';
+import { ConditionalFormat } from './conditional_format';
 
 export class Book {
     constructor(type: number);
@@ -20,19 +20,80 @@ export class Book {
     loadSheetSync(filename: string, sheetIndex: number, tempfile?: string, keepAllSheets?: boolean): Book;
     loadSheet(filename: string, sheetIndex: number, callback: (err: Error | null) => void): Book;
     loadSheet(filename: string, sheetIndex: number, tempfile: string, callback: (err: Error | null) => void): Book;
-    loadSheet(filename: string, sheetIndex: number, tempfile: string, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
+    loadSheet(
+        filename: string,
+        sheetIndex: number,
+        tempfile: string,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
     loadSheetAsync(filename: string, sheetIndex: number, callback: (err: Error | null) => void): Book;
     loadSheetAsync(filename: string, sheetIndex: number, tempfile: string, callback: (err: Error | null) => void): Book;
-    loadSheetAsync(filename: string, sheetIndex: number, tempfile: string, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
+    loadSheetAsync(
+        filename: string,
+        sheetIndex: number,
+        tempfile: string,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
 
     // Load partially
-    loadPartiallySync(filename: string, sheetIndex: number, firstRow: number, lastRow: number, tempfile?: string, keepAllSheets?: boolean): Book;
-    loadPartially(filename: string, sheetIndex: number, firstRow: number, lastRow: number, callback: (err: Error | null) => void): Book;
-    loadPartially(filename: string, sheetIndex: number, firstRow: number, lastRow: number, tempfile: string, callback: (err: Error | null) => void): Book;
-    loadPartially(filename: string, sheetIndex: number, firstRow: number, lastRow: number, tempfile: string, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
-    loadPartiallyAsync(filename: string, sheetIndex: number, firstRow: number, lastRow: number, callback: (err: Error | null) => void): Book;
-    loadPartiallyAsync(filename: string, sheetIndex: number, firstRow: number, lastRow: number, tempfile: string, callback: (err: Error | null) => void): Book;
-    loadPartiallyAsync(filename: string, sheetIndex: number, firstRow: number, lastRow: number, tempfile: string, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
+    loadPartiallySync(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        tempfile?: string,
+        keepAllSheets?: boolean,
+    ): Book;
+    loadPartially(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadPartially(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        tempfile: string,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadPartially(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        tempfile: string,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadPartiallyAsync(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadPartiallyAsync(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        tempfile: string,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadPartiallyAsync(
+        filename: string,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        tempfile: string,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
 
     // Load without empty cells
     loadWithoutEmptyCellsSync(filename: string): Book;
@@ -48,7 +109,7 @@ export class Book {
     writeSync(filename: string, useTempFile?: boolean): Book;
     saveSync(filename: string, useTempFile?: boolean): Book;
     write(filename: string, callback: (err: Error | null) => void): Book;
-    write(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
+    write(filename: string, useTempFile: boolean, callback: (err: Error | null, result: void) => void): Book;
     save(filename: string, callback: (err: Error | null) => void): Book;
     save(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
     writeAsync(filename: string, callback: (err: Error | null) => void): Book;
@@ -57,17 +118,49 @@ export class Book {
     saveAsync(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
 
     // Load from buffer
-    loadRawSync(buffer: Buffer, sheetIndex?: number, firstRow?: number, lastRow?: number, keepAllSheets?: boolean): Book;
+    loadRawSync(
+        buffer: Buffer,
+        sheetIndex?: number,
+        firstRow?: number,
+        lastRow?: number,
+        keepAllSheets?: boolean,
+    ): Book;
     loadRaw(buffer: Buffer, callback: (err: Error | null) => void): Book;
     loadRaw(buffer: Buffer, sheetIndex: number, callback: (err: Error | null) => void): Book;
     loadRaw(buffer: Buffer, sheetIndex: number, firstRow: number, callback: (err: Error | null) => void): Book;
-    loadRaw(buffer: Buffer, sheetIndex: number, firstRow: number, lastRow: number, callback: (err: Error | null) => void): Book;
-    loadRaw(buffer: Buffer, sheetIndex: number, firstRow: number, lastRow: number, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
+    loadRaw(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadRaw(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
     loadRawAsync(buffer: Buffer, callback: (err: Error | null) => void): Book;
     loadRawAsync(buffer: Buffer, sheetIndex: number, callback: (err: Error | null) => void): Book;
     loadRawAsync(buffer: Buffer, sheetIndex: number, firstRow: number, callback: (err: Error | null) => void): Book;
-    loadRawAsync(buffer: Buffer, sheetIndex: number, firstRow: number, lastRow: number, callback: (err: Error | null) => void): Book;
-    loadRawAsync(buffer: Buffer, sheetIndex: number, firstRow: number, lastRow: number, keepAllSheets: boolean, callback: (err: Error | null) => void): Book;
+    loadRawAsync(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        callback: (err: Error | null) => void,
+    ): Book;
+    loadRawAsync(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        lastRow: number,
+        keepAllSheets: boolean,
+        callback: (err: Error | null) => void,
+    ): Book;
 
     // Write to buffer
     writeRawSync(): Buffer;
@@ -116,10 +209,24 @@ export class Book {
     customNumFormat(index: number): string;
 
     // Date utilities
-    datePack(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, msecond?: number): number;
-    dateUnpack(
-        value: number,
-    ): { year: number; month: number; day: number; hour: number; minute: number; second: number; msecond: number };
+    datePack(
+        year: number,
+        month: number,
+        day: number,
+        hour?: number,
+        minute?: number,
+        second?: number,
+        msecond?: number,
+    ): number;
+    dateUnpack(value: number): {
+        year: number;
+        month: number;
+        day: number;
+        hour: number;
+        minute: number;
+        second: number;
+        msecond: number;
+    };
 
     // Color utilities
     colorPack(red: number, green: number, blue: number): number;

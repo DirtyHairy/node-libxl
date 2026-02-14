@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es2024",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "outDir": "tsc_out"
+    },
+    "exclude": ["node_modules/**/*"],
+    "include": ["specs/**/*.ts"]
+}

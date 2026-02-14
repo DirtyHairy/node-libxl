@@ -1,4 +1,4 @@
-import { AutoFilter } from "./auto_filter";
+import { AutoFilter } from './auto_filter';
 
 export class Table {
     name(): string;

@@ -1,4 +1,4 @@
-import { Font } from "./font";
+import { Font } from './font';
 
 export class RichString {
     addFont(font?: Font): Font;

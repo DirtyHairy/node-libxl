@@ -1,6 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import * as xl from '../lib/libxl.js';
+import * as xl from '../lib/libxl';
 
 describe('Table', () => {
     let book: xl.Book, sheet: xl.Sheet, table: xl.Table;

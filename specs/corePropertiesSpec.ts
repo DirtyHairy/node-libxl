@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import * as xl from '../lib/libxl.js';
-import { epsilon } from './testUtils.ts';
+import * as xl from '../lib/libxl';
+import { epsilon } from './testUtils';
 
 describe('The CoreProperties class', () => {
     let book: xl.Book;

@@ -1,10 +1,10 @@
-import { Format } from "./format";
-import { Font } from "./font";
-import { RichString } from "./rich_string";
-import { AutoFilter } from "./auto_filter";
-import { FormControl } from "./form_control";
-import { ConditionalFormatting } from "./conditional_formatting";
-import { Table } from "./table";
+import { Format } from './format';
+import { Font } from './font';
+import { RichString } from './rich_string';
+import { AutoFilter } from './auto_filter';
+import { FormControl } from './form_control';
+import { ConditionalFormatting } from './conditional_formatting';
+import { Table } from './table';
 
 export class Sheet {
     // Cell type and format
@@ -105,8 +105,25 @@ export class Sheet {
     };
     removePicture(row: number, col: number): Sheet;
     removePictureByIndex(index: number): Sheet;
-    setPicture(row: number, col: number, id: number, scale?: number, offset_x?: number, offset_y?: number, pos?: number): Sheet;
-    setPicture2(row: number, col: number, id: number, width?: number, height?: number, offset_x?: number, offset_y?: number, pos?: number): Sheet;
+    setPicture(
+        row: number,
+        col: number,
+        id: number,
+        scale?: number,
+        offset_x?: number,
+        offset_y?: number,
+        pos?: number,
+    ): Sheet;
+    setPicture2(
+        row: number,
+        col: number,
+        id: number,
+        width?: number,
+        height?: number,
+        offset_x?: number,
+        offset_y?: number,
+        pos?: number,
+    ): Sheet;
 
     // Page breaks
     getHorPageBreak(index: number): number;
@@ -135,19 +152,39 @@ export class Sheet {
     insertRow(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     insertRowSync(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     insertRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null) => void): Sheet;
-    insertRowAsync(rowFirst: number, rowLast: number, updateNamedRanges: boolean, callback: (err: Error | null) => void): Sheet;
+    insertRowAsync(
+        rowFirst: number,
+        rowLast: number,
+        updateNamedRanges: boolean,
+        callback: (err: Error | null) => void,
+    ): Sheet;
     insertCol(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     insertColSync(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     insertColAsync(colFirst: number, colLast: number, callback: (err: Error | null) => void): Sheet;
-    insertColAsync(colFirst: number, colLast: number, updateNamedRanges: boolean, callback: (err: Error | null) => void): Sheet;
+    insertColAsync(
+        colFirst: number,
+        colLast: number,
+        updateNamedRanges: boolean,
+        callback: (err: Error | null) => void,
+    ): Sheet;
     removeRow(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     removeRowSync(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     removeRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null) => void): Sheet;
-    removeRowAsync(rowFirst: number, rowLast: number, updateNamedRanges: boolean, callback: (err: Error | null) => void): Sheet;
+    removeRowAsync(
+        rowFirst: number,
+        rowLast: number,
+        updateNamedRanges: boolean,
+        callback: (err: Error | null) => void,
+    ): Sheet;
     removeCol(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     removeColSync(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     removeColAsync(colFirst: number, colLast: number, callback: (err: Error | null) => void): Sheet;
-    removeColAsync(colFirst: number, colLast: number, updateNamedRanges: boolean, callback: (err: Error | null) => void): Sheet;
+    removeColAsync(
+        colFirst: number,
+        colLast: number,
+        updateNamedRanges: boolean,
+        callback: (err: Error | null) => void,
+    ): Sheet;
 
     // Copy cell
     copyCell(rowSrc: number, colSrc: number, rowDst: number, colDst: number): Sheet;
@@ -224,24 +261,55 @@ export class Sheet {
         name: string,
         scopeId?: number,
     ): { rowFirst: number; rowLast: number; colFirst: number; colLast: number; hidden: boolean };
-    setNamedRange(name: string, rowFirst: number, rowLast: number, colFirst: number, colLast: number, scopeId?: number): Sheet;
+    setNamedRange(
+        name: string,
+        rowFirst: number,
+        rowLast: number,
+        colFirst: number,
+        colLast: number,
+        scopeId?: number,
+    ): Sheet;
     delNamedRange(name: string, scopeId?: number): Sheet;
     namedRangeSize(): number;
-    namedRange(
-        index: number,
-    ): { name: string; rowFirst: number; rowLast: number; colFirst: number; colLast: number; scopeId: number; hidden: boolean };
+    namedRange(index: number): {
+        name: string;
+        rowFirst: number;
+        rowLast: number;
+        colFirst: number;
+        colLast: number;
+        scopeId: number;
+        hidden: boolean;
+    };
 
     // Tables (legacy)
-    getTable(
-        name: string,
-    ): { rowFirst: number; rowLast: number; colFirst: number; colLast: number; headerRowCount: number; totalRowCount: number };
+    getTable(name: string): {
+        rowFirst: number;
+        rowLast: number;
+        colFirst: number;
+        colLast: number;
+        headerRowCount: number;
+        totalRowCount: number;
+    };
     tableSize(): number;
-    table(
-        index: number,
-    ): { rowFirst: number; rowLast: number; colFirst: number; colLast: number; headerRowCount: number; totalRowCount: number };
+    table(index: number): {
+        rowFirst: number;
+        rowLast: number;
+        colFirst: number;
+        colLast: number;
+        headerRowCount: number;
+        totalRowCount: number;
+    };
 
     // Tables (new API)
-    addTable(name: string, rowFirst: number, rowLast: number, colFirst: number, colLast: number, hasHeaders?: boolean, tableStyle?: number): Table;
+    addTable(
+        name: string,
+        rowFirst: number,
+        rowLast: number,
+        colFirst: number,
+        colLast: number,
+        hasHeaders?: boolean,
+        tableStyle?: number,
+    ): Table;
     getTableByName(name: string): Table;
     getTableByIndex(index: number): Table;
 
@@ -265,9 +333,13 @@ export class Sheet {
 
     // Hyperlinks
     hyperlinkSize(): number;
-    hyperlink(
-        index: number,
-    ): { hyperlink: string; rowFirst: number; rowLast: number; colFirst: number; colLast: number };
+    hyperlink(index: number): {
+        hyperlink: string;
+        rowFirst: number;
+        rowLast: number;
+        colFirst: number;
+        colLast: number;
+    };
     delHyperlink(index: number): Sheet;
     addHyperlink(hyperlink: string, rowFirst: number, rowLast: number, colFirst: number, colLast: number): Sheet;
     hyperlinkIndex(row: number, col: number): number;
@@ -336,13 +408,25 @@ export class Sheet {
     formControl(index: number): FormControl;
 
     // Conditional formatting
-    addConditionalFormatting(rowFirst: number, rowLast: number, colFirst: number, colLast: number): ConditionalFormatting;
+    addConditionalFormatting(
+        rowFirst: number,
+        rowLast: number,
+        colFirst: number,
+        colLast: number,
+    ): ConditionalFormatting;
     conditionalFormatting(index: number): ConditionalFormatting;
     removeConditionalFormatting(index: number): Sheet;
     conditionalFormattingSize(): number;
 
     // Border
-    setBorder(rowFirst: number, rowLast: number, colFirst: number, colLast: number, borderStyle: number, borderColor: number): Sheet;
+    setBorder(
+        rowFirst: number,
+        rowLast: number,
+        colFirst: number,
+        colLast: number,
+        borderStyle: number,
+        borderColor: number,
+    ): Sheet;
 
     // Apply filter with AutoFilter object
     applyFilter2(autoFilter: AutoFilter): Sheet;
