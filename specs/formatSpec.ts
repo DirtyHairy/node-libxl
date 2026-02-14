@@ -212,13 +212,10 @@ describe('The format class', () => {
         const setter = 'setPattern' + layer + 'Color',
             getter = 'pattern' + layer + 'Color';
 
-        if (
-            (util.format('format.%s returns %s pattern color', getter, layer.toLowerCase()),
-            () => {
-                assert.throws(() => (format as any)[getter].call({}));
-                (format as any)[getter]();
-            })
-        );
+        it(util.format('format.%s returns %s pattern color', getter, layer.toLowerCase()), () => {
+            assert.throws(() => (format as any)[getter].call({}));
+            (format as any)[getter]();
+        });
 
         it(util.format('format.%s sets %s pattern color', setter, layer.toLowerCase()), () => {
             assert.throws(() => (format as any)[setter].call(format, 'a'));

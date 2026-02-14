@@ -17,6 +17,7 @@ export class Format {
     setIndent(indent: number): Format;
     shrinkToFit(): boolean;
     setShrinkToFit(shrinkToFit?: boolean): Format;
+    setBorder(style?: number): Format;
     setBorderStyle(style: number): Format;
     borderLeft(): number;
     setBorderLeft(style: number): Format;

@@ -926,7 +926,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.insertRowAsync as any).call(sheet, 'a', 2, () => {}));
         assert.throws(() => (sheet.insertRowAsync as any).call({}, 2, 3, () => {}));
 
-        const insertRowResult = util.promisify(sheet.insertRowAsync.bind(sheet))(2, 3);
+        const insertRowResult = util.promisify((cb) => sheet.insertRowAsync(2, 3, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertRowResult;
@@ -934,7 +934,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.insertColAsync as any).call(sheet, 'a', 2, () => {}));
         assert.throws(() => (sheet.insertColAsync as any).call({}, 2, 3, () => {}));
 
-        const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3);
+        const insertColResult = util.promisify((cb) => sheet.insertColAsync(2, 3, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertColResult;
@@ -953,7 +953,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.insertRowAsync as any).call(sheet, 2, 3, 'a', () => {}));
         assert.throws(() => (sheet.insertRowAsync as any).call({}, 2, 3, true, () => {}));
 
-        const insertRowResult = util.promisify(sheet.insertRowAsync.bind(sheet))(2, 3, true);
+        const insertRowResult = util.promisify((cb) => sheet.insertRowAsync(2, 3, true, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertRowResult;
@@ -961,7 +961,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.insertColAsync as any).call(sheet, 2, 3, 'a', () => {}));
         assert.throws(() => (sheet.insertColAsync as any).call({}, 2, 3, true, () => {}));
 
-        const insertColResult = util.promisify(sheet.insertColAsync.bind(sheet))(2, 3, true);
+        const insertColResult = util.promisify((cb) => sheet.insertColAsync(2, 3, true, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await insertColResult;
@@ -1018,7 +1018,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.removeRowAsync as any).call(sheet, 'a', 2, () => undefined));
         assert.throws(() => (sheet.removeRowAsync as any).call({}, 2, 3, () => undefined));
 
-        const removeRowResult = util.promisify(sheet.removeRowAsync.bind(sheet))(2, 3);
+        const removeRowResult = util.promisify((cb) => sheet.removeRowAsync(2, 3, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeRowResult;
@@ -1026,7 +1026,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.removeColAsync as any).call(sheet, 'a', 2, () => undefined));
         assert.throws(() => (sheet.removeColAsync as any).call({}, 2, 3, () => undefined));
 
-        const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3);
+        const removeColResult = util.promisify((cb) => sheet.removeColAsync(2, 3, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeColResult;
@@ -1045,7 +1045,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.removeRowAsync as any).call(sheet, 2, 3, 'a', () => undefined));
         assert.throws(() => (sheet.removeRowAsync as any).call({}, 2, 3, true, () => undefined));
 
-        const removeRowResult = util.promisify(sheet.removeRowAsync.bind(sheet))(2, 3, true);
+        const removeRowResult = util.promisify((cb) => sheet.removeRowAsync(2, 3, true, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeRowResult;
@@ -1053,7 +1053,7 @@ describe('The sheet class', () => {
         assert.throws(() => (sheet.removeColAsync as any).call(sheet, 2, 3, 'a', () => undefined));
         assert.throws(() => (sheet.removeColAsync as any).call({}, 2, 3, true, () => undefined));
 
-        const removeColResult = util.promisify(sheet.removeColAsync.bind(sheet))(2, 3, true);
+        const removeColResult = util.promisify((cb) => sheet.removeColAsync(2, 3, true, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         await removeColResult;

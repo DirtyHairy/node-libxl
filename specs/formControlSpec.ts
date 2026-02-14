@@ -26,7 +26,7 @@ describe('FormControl', () => {
     it('checked and setChecked control the cell reference in a group box is linked to', () => {
         assert.throws(() => (formControl.checked as any).call({}));
         assert.throws(() => (formControl.setChecked as any).call(formControl, 'a'));
-        assert.throws(() => (formControl.setChecked as any).call(formControl, xl.CHECKED_TYPE_CHECKED));
+        assert.throws(() => (formControl.setChecked as any).call(formControl, (xl as any).CHECKED_TYPE_CHECKED));
 
         assert.strictEqual(formControl.setChecked(xl.CHECKEDTYPE_CHECKED), formControl);
         assert.strictEqual(formControl.checked(), xl.CHECKEDTYPE_CHECKED);

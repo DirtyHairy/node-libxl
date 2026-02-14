@@ -5,7 +5,7 @@ export class ConditionalFormatting {
     addRule(
         type: number,
         conditionalFormat: ConditionalFormat,
-        value: string,
+        value?: string,
         stopIfTrue?: boolean,
     ): ConditionalFormatting;
     addTopRule(
@@ -53,10 +53,10 @@ export class ConditionalFormatting {
     add2ColorScaleFormulaRule(
         minColor: number,
         maxColor: number,
-        minType: number,
-        minValue: string,
-        maxType: number,
-        maxValue: string,
+        minType?: number,
+        minValue?: string,
+        maxType?: number,
+        maxValue?: string,
         stopIfTrue?: boolean,
     ): ConditionalFormatting;
     add3ColorScaleRule(
@@ -75,12 +75,12 @@ export class ConditionalFormatting {
         minColor: number,
         midColor: number,
         maxColor: number,
-        minType: number,
-        minValue: string,
-        midType: number,
-        midValue: string,
-        maxType: number,
-        maxValue: string,
+        minType?: number,
+        minValue?: string,
+        midType?: number,
+        midValue?: string,
+        maxType?: number,
+        maxValue?: string,
         stopIfTrue?: boolean,
     ): ConditionalFormatting;
 }

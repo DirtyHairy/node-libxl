@@ -151,39 +151,39 @@ export class Sheet {
     // Insert/remove rows/cols (sync)
     insertRow(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     insertRowSync(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
-    insertRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null) => void): Sheet;
+    insertRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null, result: void) => void): Sheet;
     insertRowAsync(
         rowFirst: number,
         rowLast: number,
         updateNamedRanges: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Sheet;
     insertCol(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     insertColSync(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
-    insertColAsync(colFirst: number, colLast: number, callback: (err: Error | null) => void): Sheet;
+    insertColAsync(colFirst: number, colLast: number, callback: (err: Error | null, result: void) => void): Sheet;
     insertColAsync(
         colFirst: number,
         colLast: number,
         updateNamedRanges: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Sheet;
     removeRow(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
     removeRowSync(rowFirst: number, rowLast: number, updateNamedRanges?: boolean): Sheet;
-    removeRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null) => void): Sheet;
+    removeRowAsync(rowFirst: number, rowLast: number, callback: (err: Error | null, result: void) => void): Sheet;
     removeRowAsync(
         rowFirst: number,
         rowLast: number,
         updateNamedRanges: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Sheet;
     removeCol(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
     removeColSync(colFirst: number, colLast: number, updateNamedRanges?: boolean): Sheet;
-    removeColAsync(colFirst: number, colLast: number, callback: (err: Error | null) => void): Sheet;
+    removeColAsync(colFirst: number, colLast: number, callback: (err: Error | null, result: void) => void): Sheet;
     removeColAsync(
         colFirst: number,
         colLast: number,
         updateNamedRanges: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Sheet;
 
     // Copy cell

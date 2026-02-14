@@ -1,8 +1,5 @@
-import { dirname, join } from 'path';
+import { join } from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const outputDir = join(__dirname, 'output');
 const writeTestFile = join(outputDir, 'writetest.xls');

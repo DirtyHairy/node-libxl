@@ -92,8 +92,7 @@ describe('The book class', () => {
             assert.throws(() => (book.write as any).call({}, file, () => {}));
             assert.throws(() => (book.write as any).call(book, file, undefined, undefined, () => {}));
 
-            const writeResult = util.promisify((cb) => book.write(file, true, cb));
-            // const writeResult = util.promisify(book.write.bind(book))(file, true);
+            const writeResult = util.promisify((cb) => book.write(file, true, cb))();
             assert.throws(() => (book.sheetCount as any).call(book));
 
             await writeResult;
@@ -134,7 +133,7 @@ describe('The book class', () => {
         });
 
         it('supports an optional tempfile', async () => {
-            await util.promisify(book.load.bind(book))(getWriteTestFile(), getTempFile());
+            await util.promisify((cb) => book.load(getWriteTestFile(), getTempFile(), cb))();
 
             assert.strictEqual(book.getSheet(0).readStr(1, 0), 'bar');
         });
@@ -143,8 +142,8 @@ describe('The book class', () => {
     describe('book.loadSheetSync', () => {
         it('loads a book in sync mode with a single sheet', () => {
             const file = getWriteTestFile();
-            assert.throws(() => (book.loadSyncSheet as any).call(book, file, 'a'));
-            assert.throws(() => (book.loadSyncSheet as any).call({}, file, 1));
+            assert.throws(() => (book.loadSheetSync as any).call(book, file, 'a'));
+            assert.throws(() => (book.loadSheetSync as any).call({}, file, 1));
 
             assert.strictEqual(book.loadSheetSync(file, 1), book);
 
@@ -188,7 +187,7 @@ describe('The book class', () => {
         it('supports an optional tempfile', async () => {
             const file = getWriteTestFile();
 
-            await util.promisify(book.loadSheet.bind(book))(file, 1, getTempFile());
+            await util.promisify((cb) => book.loadSheet(file, 1, getTempFile(), cb))();
 
             assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
@@ -196,7 +195,7 @@ describe('The book class', () => {
         it('supports loading all sheets', async () => {
             const file = getWriteTestFile();
 
-            await util.promisify(book.loadSheet.bind(book))(file, 1, undefined, true);
+            await util.promisify((cb) => book.loadSheet(file, 1, cb))();
 
             assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
@@ -241,7 +240,7 @@ describe('The book class', () => {
                 (book.loadPartially as any).call(book, file, 1, 0, 1, undefined, undefined, undefined, () => undefined),
             );
 
-            const loadResult = util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1);
+            const loadResult = util.promisify((cb) => book.loadPartially(file, 1, 0, 1, cb))();
             assert.throws(() => (book.sheetCount as any).call(book));
 
             await loadResult;
@@ -254,7 +253,7 @@ describe('The book class', () => {
         it('supports an optional tempfile', async () => {
             const file = getWriteTestFile();
 
-            await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, getTempFile());
+            await util.promisify((cb) => book.loadPartially(file, 1, 0, 1, getTempFile(), cb))();
 
             assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
@@ -262,7 +261,7 @@ describe('The book class', () => {
         it('supports loading all sheets', async () => {
             const file = getWriteTestFile();
 
-            await util.promisify(book.loadPartially.bind(book))(file, 1, 0, 1, undefined, true);
+            await util.promisify((cb) => book.loadPartially(file, 1, 0, 1, getTempFile(), true, cb))();
 
             assert.strictEqual(book.getSheet(0).readStr(1, 0), 'foo');
         });
@@ -358,7 +357,9 @@ describe('The book class', () => {
         assert.throws(() => (book1.writeRaw as any).call(book1, 1));
         assert.throws(() => (book1.writeRaw as any).call({}, () => {}));
 
-        const writeResult = util.promisify(book1.writeRaw.bind(book1))();
+        const writeResult = util.promisify((cb: (err: Error | null, buffer: Buffer) => void) => {
+            book1.writeRaw(cb);
+        })();
         assert.throws(() => (book1.sheetCount as any).call(book1));
 
         const buffer = await writeResult;
@@ -369,7 +370,9 @@ describe('The book class', () => {
             (book2.loadRaw as any).call(book2, buffer, undefined, undefined, undefined, undefined, undefined, () => {}),
         );
 
-        const loadResult = util.promisify(book2.loadRaw.bind(book2))(buffer);
+        const loadResult = util.promisify((cb) => {
+            book2.loadRaw(buffer, cb);
+        })();
         assert.throws(() => (book2.loadRaw as any).call(book2));
         await loadResult;
 
@@ -384,9 +387,13 @@ describe('The book class', () => {
 
         sheet.writeStr(1, 0, 'bar');
 
-        const buffer = await util.promisify(book1.writeRaw.bind(book1))();
+        const buffer = await util.promisify((cb: (err: Error | null, buffer: Buffer) => void) => {
+            book1.writeRaw(cb);
+        })();
 
-        await util.promisify(book2.loadRaw.bind(book2))(buffer, 0, 0, 1, true);
+        await util.promisify((cb) => {
+            book2.loadRaw(buffer, 0, 0, 1, true, cb);
+        })();
 
         assert.strictEqual(book2.sheetCount(), 1);
         assert.strictEqual(book2.getSheet(0).readStr(1, 0), 'bar');
@@ -538,9 +545,9 @@ describe('The book class', () => {
         assert.strictEqual(richString instanceof xl.RichString, true);
     });
 
-    it('book.addCusomtNumFormat adds a custom number format', () => {
-        assert.throws(() => (book.addCusomtNumFormat as any).call(book, 10));
-        assert.throws(() => (book.addCusomtNumFormat as any).call({}, '000'));
+    it('book.addCustomNumFormat adds a custom number format', () => {
+        assert.throws(() => (book.addCustomNumFormat as any).call(book, 10));
+        assert.throws(() => (book.addCustomNumFormat as any).call({}, '000'));
         book.addCustomNumFormat('000');
     });
 
@@ -671,15 +678,13 @@ describe('The book class', () => {
         assert.throws(() => (book.addPictureAsync as any).call(book, file, 1));
         assert.throws(() => (book.addPictureAsync as any).call({}, file, () => {}));
 
-        const addPictureAsync = util.promisify(book.addPictureAsync.bind(book));
-
-        const addResult = addPictureAsync(file);
+        const addResult = util.promisify((cb) => book.addPictureAsync(file, cb))();
         assert.throws(() => (book.sheetCount as any).call(book));
 
         assert.strictEqual(await addResult, 0);
         assert.strictEqual(book.pictureSize(), 1);
 
-        assert.strictEqual(await addPictureAsync(fileBuffer), 1);
+        assert.strictEqual(await util.promisify((cb) => book.addPictureAsync(fileBuffer, cb))(), 1);
         assert.strictEqual(book.pictureSize(), 2);
 
         const getPictureAsync = (id: number) =>
@@ -731,7 +736,7 @@ describe('The book class', () => {
             assert.throws(() => (book.addPictureAsLinkAsync as any).call(book, 1, () => undefined));
             assert.throws(() => (book.addPictureAsLinkAsync as any).call({}, file, () => undefined));
 
-            const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file);
+            const result = util.promisify((cb) => book.addPictureAsLinkAsync(file, cb))();
             assert.throws(() => (book.sheetCount as any).call(book));
 
             assert.strictEqual(await result, 0);
@@ -742,7 +747,7 @@ describe('The book class', () => {
             const book = new xl.Book(xl.BOOK_TYPE_XLSX);
             const file = getTestPicturePath();
 
-            const result = util.promisify(book.addPictureAsLinkAsync.bind(book))(file, true);
+            const result = util.promisify((cb) => book.addPictureAsLinkAsync(file, true, cb))();
             assert.throws(() => (book.sheetCount as any).call(book));
 
             assert.strictEqual(await result, 0);

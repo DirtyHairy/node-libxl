@@ -11,30 +11,40 @@ export class Book {
 
     // Load from file
     loadSync(filename: string, tempfile?: string): Book;
-    load(filename: string, callback: (err: Error | null) => void): Book;
-    load(filename: string, tempfile: string, callback: (err: Error | null) => void): Book;
-    loadAsync(filename: string, callback: (err: Error | null) => void): Book;
-    loadAsync(filename: string, tempfile: string, callback: (err: Error | null) => void): Book;
+    load(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    load(filename: string, tempfile: string, callback: (err: Error | null, result: void) => void): Book;
+    loadAsync(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    loadAsync(filename: string, tempfile: string, callback: (err: Error | null, result: void) => void): Book;
 
     // Load specific sheet
     loadSheetSync(filename: string, sheetIndex: number, tempfile?: string, keepAllSheets?: boolean): Book;
-    loadSheet(filename: string, sheetIndex: number, callback: (err: Error | null) => void): Book;
-    loadSheet(filename: string, sheetIndex: number, tempfile: string, callback: (err: Error | null) => void): Book;
+    loadSheet(filename: string, sheetIndex: number, callback: (err: Error | null, result: void) => void): Book;
+    loadSheet(
+        filename: string,
+        sheetIndex: number,
+        tempfile: string,
+        callback: (err: Error | null, result: void) => void,
+    ): Book;
     loadSheet(
         filename: string,
         sheetIndex: number,
         tempfile: string,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
-    loadSheetAsync(filename: string, sheetIndex: number, callback: (err: Error | null) => void): Book;
-    loadSheetAsync(filename: string, sheetIndex: number, tempfile: string, callback: (err: Error | null) => void): Book;
+    loadSheetAsync(filename: string, sheetIndex: number, callback: (err: Error | null, result: void) => void): Book;
+    loadSheetAsync(
+        filename: string,
+        sheetIndex: number,
+        tempfile: string,
+        callback: (err: Error | null, result: void) => void,
+    ): Book;
     loadSheetAsync(
         filename: string,
         sheetIndex: number,
         tempfile: string,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
 
     // Load partially
@@ -51,7 +61,7 @@ export class Book {
         sheetIndex: number,
         firstRow: number,
         lastRow: number,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadPartially(
         filename: string,
@@ -59,7 +69,7 @@ export class Book {
         firstRow: number,
         lastRow: number,
         tempfile: string,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadPartially(
         filename: string,
@@ -68,14 +78,14 @@ export class Book {
         lastRow: number,
         tempfile: string,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadPartiallyAsync(
         filename: string,
         sheetIndex: number,
         firstRow: number,
         lastRow: number,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadPartiallyAsync(
         filename: string,
@@ -83,7 +93,7 @@ export class Book {
         firstRow: number,
         lastRow: number,
         tempfile: string,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadPartiallyAsync(
         filename: string,
@@ -92,30 +102,30 @@ export class Book {
         lastRow: number,
         tempfile: string,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
 
     // Load without empty cells
     loadWithoutEmptyCellsSync(filename: string): Book;
-    loadWithoutEmptyCells(filename: string, callback: (err: Error | null) => void): Book;
-    loadWithoutEmptyCellsAsync(filename: string, callback: (err: Error | null) => void): Book;
+    loadWithoutEmptyCells(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    loadWithoutEmptyCellsAsync(filename: string, callback: (err: Error | null, result: void) => void): Book;
 
     // Load info
     loadInfoSync(filename: string): Book;
-    loadInfo(filename: string, callback: (err: Error | null) => void): Book;
-    loadInfoAsync(filename: string, callback: (err: Error | null) => void): Book;
+    loadInfo(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    loadInfoAsync(filename: string, callback: (err: Error | null, result: void) => void): Book;
 
     // Write/save to file
     writeSync(filename: string, useTempFile?: boolean): Book;
     saveSync(filename: string, useTempFile?: boolean): Book;
-    write(filename: string, callback: (err: Error | null) => void): Book;
+    write(filename: string, callback: (err: Error | null, result: void) => void): Book;
     write(filename: string, useTempFile: boolean, callback: (err: Error | null, result: void) => void): Book;
-    save(filename: string, callback: (err: Error | null) => void): Book;
-    save(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
-    writeAsync(filename: string, callback: (err: Error | null) => void): Book;
-    writeAsync(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
-    saveAsync(filename: string, callback: (err: Error | null) => void): Book;
-    saveAsync(filename: string, useTempFile: boolean, callback: (err: Error | null) => void): Book;
+    save(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    save(filename: string, useTempFile: boolean, callback: (err: Error | null, result: void) => void): Book;
+    writeAsync(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    writeAsync(filename: string, useTempFile: boolean, callback: (err: Error | null, result: void) => void): Book;
+    saveAsync(filename: string, callback: (err: Error | null, result: void) => void): Book;
+    saveAsync(filename: string, useTempFile: boolean, callback: (err: Error | null, result: void) => void): Book;
 
     // Load from buffer
     loadRawSync(
@@ -125,15 +135,20 @@ export class Book {
         lastRow?: number,
         keepAllSheets?: boolean,
     ): Book;
-    loadRaw(buffer: Buffer, callback: (err: Error | null) => void): Book;
-    loadRaw(buffer: Buffer, sheetIndex: number, callback: (err: Error | null) => void): Book;
-    loadRaw(buffer: Buffer, sheetIndex: number, firstRow: number, callback: (err: Error | null) => void): Book;
+    loadRaw(buffer: Buffer, callback: (err: Error | null, result: void) => void): Book;
+    loadRaw(buffer: Buffer, sheetIndex: number, callback: (err: Error | null, result: void) => void): Book;
+    loadRaw(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        callback: (err: Error | null, result: void) => void,
+    ): Book;
     loadRaw(
         buffer: Buffer,
         sheetIndex: number,
         firstRow: number,
         lastRow: number,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadRaw(
         buffer: Buffer,
@@ -141,17 +156,22 @@ export class Book {
         firstRow: number,
         lastRow: number,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
-    loadRawAsync(buffer: Buffer, callback: (err: Error | null) => void): Book;
-    loadRawAsync(buffer: Buffer, sheetIndex: number, callback: (err: Error | null) => void): Book;
-    loadRawAsync(buffer: Buffer, sheetIndex: number, firstRow: number, callback: (err: Error | null) => void): Book;
+    loadRawAsync(buffer: Buffer, callback: (err: Error | null, result: void) => void): Book;
+    loadRawAsync(buffer: Buffer, sheetIndex: number, callback: (err: Error | null, result: void) => void): Book;
+    loadRawAsync(
+        buffer: Buffer,
+        sheetIndex: number,
+        firstRow: number,
+        callback: (err: Error | null, result: void) => void,
+    ): Book;
     loadRawAsync(
         buffer: Buffer,
         sheetIndex: number,
         firstRow: number,
         lastRow: number,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
     loadRawAsync(
         buffer: Buffer,
@@ -159,21 +179,21 @@ export class Book {
         firstRow: number,
         lastRow: number,
         keepAllSheets: boolean,
-        callback: (err: Error | null) => void,
+        callback: (err: Error | null, result: void) => void,
     ): Book;
 
     // Write to buffer
     writeRawSync(): Buffer;
     saveRawSync(): Buffer;
-    writeRaw(callback: (err: Error | null, buffer?: Buffer) => void): Book;
-    writeRawAsync(callback: (err: Error | null, buffer?: Buffer) => void): Book;
-    saveRaw(callback: (err: Error | null, buffer?: Buffer) => void): Book;
-    saveRawAsync(callback: (err: Error | null, buffer?: Buffer) => void): Book;
+    writeRaw(callback: (err: Error | null, buffer: Buffer) => void): Book;
+    writeRawAsync(callback: (err: Error | null, buffer: Buffer) => void): Book;
+    saveRaw(callback: (err: Error | null, buffer: Buffer) => void): Book;
+    saveRawAsync(callback: (err: Error | null, buffer: Buffer) => void): Book;
 
     // Load info from buffer
     loadInfoRawSync(buffer: Buffer): Book;
-    loadInfoRaw(buffer: Buffer, callback: (err: Error | null) => void): Book;
-    loadInfoRawAsync(buffer: Buffer, callback: (err: Error | null) => void): Book;
+    loadInfoRaw(buffer: Buffer, callback: (err: Error | null, result: void) => void): Book;
+    loadInfoRawAsync(buffer: Buffer, callback: (err: Error | null, result: void) => void): Book;
 
     // Sheet management
     addSheet(name: string, parentSheet?: Sheet): Sheet;
@@ -240,7 +260,7 @@ export class Book {
     pictureSize(): number;
     getPicture(index: number): { type: number; data: Buffer };
     getPictureSync(index: number): { type: number; data: Buffer };
-    getPictureAsync(index: number, callback: (err: Error | null, type?: number, data?: Buffer) => void): Book;
+    getPictureAsync(index: number, callback: (err: Error | null, type: number, data: Buffer) => void): Book;
     addPicture(filename: string): number;
     addPicture(buffer: Buffer): number;
     addPictureSync(filename: string): number;
