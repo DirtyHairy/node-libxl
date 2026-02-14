@@ -775,7 +775,7 @@ describe('The sheet class', function () {
 
             sheet.setHorPageBreak(row, false);
             expect(sheet.getHorPageBreakSize()).toBe(n);
-        }
+        },
     );
 
     it(
@@ -795,7 +795,7 @@ describe('The sheet class', function () {
 
             sheet.setVerPageBreak(10, false);
             expect(sheet.getVerPageBreakSize()).toBe(n);
-        }
+        },
     );
 
     it('sheet.split splits a sheet', function () {
@@ -1103,7 +1103,7 @@ describe('The sheet class', function () {
             expect(sheet.firstFilledCol()).toBe(0);
             expect(sheet.lastFilledRow()).toBe(6);
             expect(sheet.lastFilledCol()).toBe(6);
-        }
+        },
     );
 
     it('sheet.displayGridlines and sheet.setDisplayGridlines manage display of gridlines', function () {
@@ -1241,7 +1241,7 @@ describe('The sheet class', function () {
 
             shouldThrow(sheet.printRepeatCols, sheet);
             shouldThrow(sheet.printRepeatRows, sheet);
-        }
+        },
     );
 
     it('sheet.setPrintArea and sheet.clearPrintArea manage the print area', function () {
@@ -1297,7 +1297,7 @@ describe('The sheet class', function () {
             shouldThrow(sheet.delNamedRange, {}, 'range1');
             expect(sheet.delNamedRange('range1')).toBe(sheet);
             expect(sheet.namedRangeSize()).toBe(0);
-        }
+        },
     );
 
     it('sheet.tableSize gets the number of tables on the sheet', () => {
@@ -1510,7 +1510,7 @@ describe('The sheet class', function () {
             'nanni',
             'fanni',
             'wanni',
-            'a'
+            'a',
         );
 
         shouldThrow(
@@ -1532,7 +1532,7 @@ describe('The sheet class', function () {
             'nanni',
             'fanni',
             'wanni',
-            xl.VALIDATION_ERRSTYLE_STOP
+            xl.VALIDATION_ERRSTYLE_STOP,
         );
 
         shouldThrow(sheet.addDataValidation, sheet, xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1);
@@ -1557,12 +1557,12 @@ describe('The sheet class', function () {
                 'nanni',
                 'fanni',
                 'wanni',
-                xl.VALIDATION_ERRSTYLE_STOP
-            )
+                xl.VALIDATION_ERRSTYLE_STOP,
+            ),
         ).toBe(sheet);
 
         expect(sheet.addDataValidation(xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 'a', 'b')).toBe(
-            sheet
+            sheet,
         );
     });
 
@@ -1586,7 +1586,7 @@ describe('The sheet class', function () {
             'nanni',
             'fanni',
             'wanni',
-            'a'
+            'a',
         );
 
         shouldThrow(
@@ -1608,7 +1608,7 @@ describe('The sheet class', function () {
             'nanni',
             'fanni',
             'wanni',
-            xl.VALIDATION_ERRSTYLE_STOP
+            xl.VALIDATION_ERRSTYLE_STOP,
         );
 
         shouldThrow(
@@ -1621,7 +1621,7 @@ describe('The sheet class', function () {
             1,
             5,
             1,
-            'a'
+            'a',
         );
         shouldThrow(
             sheet.addDataValidationDouble,
@@ -1633,7 +1633,7 @@ describe('The sheet class', function () {
             1,
             5,
             1,
-            2
+            2,
         );
         shouldThrow(
             sheet.addDataValidationDouble,
@@ -1644,7 +1644,7 @@ describe('The sheet class', function () {
             5,
             1,
             5,
-            1
+            1,
         );
 
         expect(
@@ -1665,12 +1665,12 @@ describe('The sheet class', function () {
                 'nanni',
                 'fanni',
                 'wanni',
-                xl.VALIDATION_ERRSTYLE_STOP
-            )
+                xl.VALIDATION_ERRSTYLE_STOP,
+            ),
         ).toBe(sheet);
 
         expect(sheet.addDataValidationDouble(xl.VALIDATION_TYPE_WHOLE, xl.VALIDATION_OP_EQUAL, 1, 5, 1, 5, 1, 2)).toBe(
-            sheet
+            sheet,
         );
     });
 
@@ -1706,8 +1706,9 @@ describe('The sheet class', function () {
         const sheet = book.addSheet('foo');
 
         shouldThrow(sheet.addConditionalFormatting, {});
+        shouldThrow(sheet.addConditionalFormatting, sheet, 0, 0, 1, 'a');
 
-        expect(sheet.addConditionalFormatting()).toBeInstanceOf(xl.ConditionalFormatting);
+        expect(sheet.addConditionalFormatting(0, 0, 1, 1)).toBeInstanceOf(xl.ConditionalFormatting);
     });
 
     it('sheet.getActiveSell and sheet.setActiveCell manage the active cell', () => {

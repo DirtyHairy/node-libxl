@@ -8,7 +8,7 @@ describe('ConditionalFormatting', () => {
     beforeEach(() => {
         book = new xl.Book(xl.BOOK_TYPE_XLSX);
         sheet = book.addSheet('Sheet1');
-        conditionalFormatting = sheet.addConditionalFormatting();
+        conditionalFormatting = sheet.addConditionalFormatting(0, 0, 1, 1);
         conditionalFormat = book.addConditionalFormat();
     });
 
@@ -26,7 +26,7 @@ describe('ConditionalFormatting', () => {
         expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat)).toBe(conditionalFormatting);
         expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a')).toBe(conditionalFormatting);
         expect(conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat, 'a', false)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
     });
 
@@ -45,13 +45,13 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addOpNumRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10);
 
         expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 20)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10, 0, true)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
     });
 
@@ -61,18 +61,18 @@ describe('ConditionalFormatting', () => {
             conditionalFormatting,
             xl.CFOPERATOR_LESSTHAN,
             'invalid',
-            'test'
+            'test',
         );
         shouldThrow(conditionalFormatting.addOpStrRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test');
 
         expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test')).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'a', 'z')).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test', '', true)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
     });
 
@@ -84,10 +84,10 @@ describe('ConditionalFormatting', () => {
         expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, false)).toBe(conditionalFormatting);
         expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, true)).toBe(conditionalFormatting);
         expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addAboveAverageRule(conditionalFormat, true, false, 1, true)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
     });
 
@@ -96,10 +96,10 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.addTimePeriodRule, {}, conditionalFormat, xl.CFTP_LAST7DAYS);
 
         expect(conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS, true)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
     });
 
@@ -116,8 +116,8 @@ describe('ConditionalFormatting', () => {
                 0,
                 xl.CFVO_MAX,
                 100,
-                true
-            )
+                true,
+            ),
         ).toBe(conditionalFormatting);
     });
 
@@ -126,7 +126,7 @@ describe('ConditionalFormatting', () => {
         shouldThrow(conditionalFormatting.add2ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_RED);
 
         expect(conditionalFormatting.add2ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_RED)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(
             conditionalFormatting.add2ColorScaleFormulaRule(
@@ -136,8 +136,8 @@ describe('ConditionalFormatting', () => {
                 'A1',
                 xl.CFVO_FORMULA,
                 'B1',
-                true
-            )
+                true,
+            ),
         ).toBe(conditionalFormatting);
     });
 
@@ -147,12 +147,12 @@ describe('ConditionalFormatting', () => {
             conditionalFormatting,
             'invalid',
             xl.COLOR_YELLOW,
-            xl.COLOR_RED
+            xl.COLOR_RED,
         );
         shouldThrow(conditionalFormatting.add3ColorScaleRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
 
         expect(conditionalFormatting.add3ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(
             conditionalFormatting.add3ColorScaleRule(
@@ -165,8 +165,8 @@ describe('ConditionalFormatting', () => {
                 50,
                 xl.CFVO_MAX,
                 100,
-                true
-            )
+                true,
+            ),
         ).toBe(conditionalFormatting);
     });
 
@@ -176,12 +176,12 @@ describe('ConditionalFormatting', () => {
             conditionalFormatting,
             'invalid',
             xl.COLOR_YELLOW,
-            xl.COLOR_RED
+            xl.COLOR_RED,
         );
         shouldThrow(conditionalFormatting.add3ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
 
         expect(conditionalFormatting.add3ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED)).toBe(
-            conditionalFormatting
+            conditionalFormatting,
         );
         expect(
             conditionalFormatting.add3ColorScaleFormulaRule(
@@ -194,8 +194,8 @@ describe('ConditionalFormatting', () => {
                 'B1',
                 xl.CFVO_FORMULA,
                 'C1',
-                true
-            )
+                true,
+            ),
         ).toBe(conditionalFormatting);
     });
 });

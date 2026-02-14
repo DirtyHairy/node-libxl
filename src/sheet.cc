@@ -3185,13 +3185,19 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
+
+        int rowFirst = arguments.GetInt(0);
+        int rowLast = arguments.GetInt(1);
+        int colFirst = arguments.GetInt(2);
+        int colLast = arguments.GetInt(3);
+
         ASSERT_ARGUMENTS(arguments);
 
         Sheet* that = FromJS(info.This());
         ASSERT_SHEET(that);
 
         libxl::ConditionalFormatting* conditionalFormatting =
-            that->GetWrapped()->addConditionalFormatting();
+            that->GetWrapped()->addConditionalFormatting(rowFirst, rowLast, colFirst, colLast);
         if (!conditionalFormatting) {
             return util::ThrowLibxlError(that);
         }
