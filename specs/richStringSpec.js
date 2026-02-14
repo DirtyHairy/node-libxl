@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('RichString', () => {
     let book, richString, font;
@@ -19,26 +17,26 @@ describe('RichString', () => {
     });
 
     it('addFont adds a font', () => {
-        shouldThrow(richString.addFont, richString, 1);
-        shouldThrow(richString.addFont, richString, anotherFont);
+        assert.throws(() => richString.addFont.call(richString, 1));
+        assert.throws(() => richString.addFont.call(richString, anotherFont));
 
         assert.ok(richString.addFont() instanceof xl.Font);
         assert.ok(richString.addFont(font) instanceof xl.Font);
     });
 
     it('addText and getText add end get text content', () => {
-        shouldThrow(richString.addText, richString, 1);
-        shouldThrow(richString.addText, {}, 'asd');
-        shouldThrow(richString.addText, richString, anotherFont);
+        assert.throws(() => richString.addText.call(richString, 1));
+        assert.throws(() => richString.addText.call({}, 'asd'));
+        assert.throws(() => richString.addText.call(richString, anotherFont));
 
-        shouldThrow(richString.getText, richString, 'a');
-        shouldThrow(richString.getText, {}, 0);
+        assert.throws(() => richString.getText.call(richString, 'a'));
+        assert.throws(() => richString.getText.call({}, 0));
 
         assert.strictEqual(richString.addText('asd'), richString);
         assert.strictEqual(richString.addText('asd', font), richString);
 
-        shouldThrow(richString.getText, richString, 'a');
-        shouldThrow(richString.getText, {}, 0);
+        assert.throws(() => richString.getText.call(richString, 'a'));
+        assert.throws(() => richString.getText.call({}, 0));
 
         const result = richString.getText(0);
         assert.strictEqual(result.text, 'asd');
@@ -46,7 +44,7 @@ describe('RichString', () => {
     });
 
     it('textSize returns the number of text elements"', () => {
-        shouldThrow(richString.textSize, {});
+        assert.throws(() => richString.textSize.call({}));
 
         assert.strictEqual(richString.textSize(), 0);
 

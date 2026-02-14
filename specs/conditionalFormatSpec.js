@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('ConditionalFormat', () => {
     let book, conditionalFormat;
@@ -13,49 +11,49 @@ describe('ConditionalFormat', () => {
     });
 
     it('font gets the associated font', () => {
-        shouldThrow(conditionalFormat.font, {});
+        assert.throws(() => conditionalFormat.font.call({}));
 
         assert.ok(conditionalFormat.font() instanceof xl.Font);
     });
 
     it('numFormat and setNumFormat manage the number format', () => {
-        shouldThrow(conditionalFormat.setNumFormat, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setNumFormat, {}, xl.NUMFORMAT_GENERAL);
-        shouldThrow(conditionalFormat.numFormat, {});
+        assert.throws(() => conditionalFormat.setNumFormat.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setNumFormat.call({}, xl.NUMFORMAT_GENERAL));
+        assert.throws(() => conditionalFormat.numFormat.call({}));
 
         assert.strictEqual(conditionalFormat.setNumFormat(xl.NUMFORMAT_GENERAL), conditionalFormat);
         assert.strictEqual(conditionalFormat.numFormat(), xl.NUMFORMAT_GENERAL);
     });
 
     it('customNumFormat and setCustomNumFormat manage the number format', () => {
-        shouldThrow(conditionalFormat.setCustomNumFormat, conditionalFormat, 10);
-        shouldThrow(conditionalFormat.setCustomNumFormat, {}, 'abc');
-        shouldThrow(conditionalFormat.customNumFormat, {});
+        assert.throws(() => conditionalFormat.setCustomNumFormat.call(conditionalFormat, 10));
+        assert.throws(() => conditionalFormat.setCustomNumFormat.call({}, 'abc'));
+        assert.throws(() => conditionalFormat.customNumFormat.call({}));
 
         assert.strictEqual(conditionalFormat.setCustomNumFormat('abc'), conditionalFormat);
         assert.strictEqual(conditionalFormat.customNumFormat(), 'abc');
     });
 
     it('setBorder sets the border', () => {
-        shouldThrow(conditionalFormat.setBorder, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorder, {}, xl.BORDERSTYLE_MEDIUM);
-        shouldThrow(conditionalFormat.setBorder, {});
+        assert.throws(() => conditionalFormat.setBorder.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorder.call({}, xl.BORDERSTYLE_MEDIUM));
+        assert.throws(() => conditionalFormat.setBorder.call({}));
 
         assert.strictEqual(conditionalFormat.setBorder(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
         assert.strictEqual(conditionalFormat.setBorder(), conditionalFormat);
     });
 
     it('setBorderColor sets the border color', () => {
-        shouldThrow(conditionalFormat.setBorderColor, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorderColor, {}, xl.COLOR_RED);
+        assert.throws(() => conditionalFormat.setBorderColor.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorderColor.call({}, xl.COLOR_RED));
 
         assert.strictEqual(conditionalFormat.setBorderColor(xl.COLOR_RED), conditionalFormat);
     });
 
     it('borderLeft and setBorderLeft manage left border', () => {
-        shouldThrow(conditionalFormat.setBorderLeft, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorderLeft, {}, xl.BORDERSTYLE_MEDIUM);
-        shouldThrow(conditionalFormat.borderLeft, {});
+        assert.throws(() => conditionalFormat.setBorderLeft.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorderLeft.call({}, xl.BORDERSTYLE_MEDIUM));
+        assert.throws(() => conditionalFormat.borderLeft.call({}));
 
         assert.strictEqual(conditionalFormat.setBorderLeft(), conditionalFormat);
         assert.strictEqual(conditionalFormat.setBorderLeft(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
@@ -63,9 +61,9 @@ describe('ConditionalFormat', () => {
     });
 
     it('borderRight and setBorderRight manage right border', () => {
-        shouldThrow(conditionalFormat.setBorderRight, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorderRight, {}, xl.BORDERSTYLE_MEDIUM);
-        shouldThrow(conditionalFormat.borderRight, {});
+        assert.throws(() => conditionalFormat.setBorderRight.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorderRight.call({}, xl.BORDERSTYLE_MEDIUM));
+        assert.throws(() => conditionalFormat.borderRight.call({}));
 
         assert.strictEqual(conditionalFormat.setBorderRight(), conditionalFormat);
         assert.strictEqual(conditionalFormat.setBorderRight(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
@@ -73,9 +71,9 @@ describe('ConditionalFormat', () => {
     });
 
     it('borderTop and setBorderTop manage top border', () => {
-        shouldThrow(conditionalFormat.setBorderTop, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorderTop, {}, xl.BORDERSTYLE_MEDIUM);
-        shouldThrow(conditionalFormat.borderTop, {});
+        assert.throws(() => conditionalFormat.setBorderTop.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorderTop.call({}, xl.BORDERSTYLE_MEDIUM));
+        assert.throws(() => conditionalFormat.borderTop.call({}));
 
         assert.strictEqual(conditionalFormat.setBorderTop(), conditionalFormat);
         assert.strictEqual(conditionalFormat.setBorderTop(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
@@ -83,9 +81,9 @@ describe('ConditionalFormat', () => {
     });
 
     it('borderBottom and setBorderBottom manage bottom border', () => {
-        shouldThrow(conditionalFormat.setBorderBottom, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setBorderBottom, {}, xl.BORDERSTYLE_MEDIUM);
-        shouldThrow(conditionalFormat.borderBottom, {});
+        assert.throws(() => conditionalFormat.setBorderBottom.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setBorderBottom.call({}, xl.BORDERSTYLE_MEDIUM));
+        assert.throws(() => conditionalFormat.borderBottom.call({}));
 
         assert.strictEqual(conditionalFormat.setBorderBottom(), conditionalFormat);
         assert.strictEqual(conditionalFormat.setBorderBottom(xl.BORDERSTYLE_MEDIUM), conditionalFormat);
@@ -93,57 +91,57 @@ describe('ConditionalFormat', () => {
     });
 
     it('borderLeftColor and setBorderLeftColor manage left border color', () => {
-        shouldThrow(conditionalFormat.borderLeftColor, {});
-        shouldThrow(conditionalFormat.setBorderLeftColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.borderLeftColor.call({}));
+        assert.throws(() => conditionalFormat.setBorderLeftColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setBorderLeftColor(xl.COLOR_RED), conditionalFormat);
         assert.strictEqual(conditionalFormat.borderLeftColor(), xl.COLOR_RED);
     });
 
     it('borderRightColor and setBorderRightColor manage right border color', () => {
-        shouldThrow(conditionalFormat.borderRightColor, {});
-        shouldThrow(conditionalFormat.setBorderRightColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.borderRightColor.call({}));
+        assert.throws(() => conditionalFormat.setBorderRightColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setBorderRightColor(xl.COLOR_GREEN), conditionalFormat);
         assert.strictEqual(conditionalFormat.borderRightColor(), xl.COLOR_GREEN);
     });
 
     it('borderTopColor and setBorderTopColor manage top border color', () => {
-        shouldThrow(conditionalFormat.borderTopColor, {});
-        shouldThrow(conditionalFormat.setBorderTopColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.borderTopColor.call({}));
+        assert.throws(() => conditionalFormat.setBorderTopColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setBorderTopColor(xl.COLOR_BLUE), conditionalFormat);
         assert.strictEqual(conditionalFormat.borderTopColor(), xl.COLOR_BLUE);
     });
 
     it('borderBottomColor and setBorderBottomColor manage bottom border color', () => {
-        shouldThrow(conditionalFormat.borderBottomColor, {});
-        shouldThrow(conditionalFormat.setBorderBottomColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.borderBottomColor.call({}));
+        assert.throws(() => conditionalFormat.setBorderBottomColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setBorderBottomColor(xl.COLOR_BLACK), conditionalFormat);
         assert.strictEqual(conditionalFormat.borderBottomColor(), xl.COLOR_BLACK);
     });
 
     it('fillPattern and setFillPattern manage fill pattern', () => {
-        shouldThrow(conditionalFormat.setFillPattern, conditionalFormat, 'abc');
-        shouldThrow(conditionalFormat.setFillPattern, {}, xl.FILLPATTERN_SOLID);
-        shouldThrow(conditionalFormat.fillPattern, {});
+        assert.throws(() => conditionalFormat.setFillPattern.call(conditionalFormat, 'abc'));
+        assert.throws(() => conditionalFormat.setFillPattern.call({}, xl.FILLPATTERN_SOLID));
+        assert.throws(() => conditionalFormat.fillPattern.call({}));
 
         assert.strictEqual(conditionalFormat.setFillPattern(xl.FILLPATTERN_SOLID), conditionalFormat);
         assert.strictEqual(conditionalFormat.fillPattern(), xl.FILLPATTERN_SOLID);
     });
 
     it('patternForegroundColor and setPatternForegroundColor manage pattern foreground color', () => {
-        shouldThrow(conditionalFormat.patternForegroundColor, {});
-        shouldThrow(conditionalFormat.setPatternForegroundColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.patternForegroundColor.call({}));
+        assert.throws(() => conditionalFormat.setPatternForegroundColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setPatternForegroundColor(xl.COLOR_RED), conditionalFormat);
         assert.strictEqual(conditionalFormat.patternForegroundColor(), xl.COLOR_RED);
     });
 
     it('patternBackgroundColor and setPatternBackgroundColor manage pattern background color', () => {
-        shouldThrow(conditionalFormat.patternBackgroundColor, {});
-        shouldThrow(conditionalFormat.setPatternBackgroundColor, conditionalFormat, 'abc');
+        assert.throws(() => conditionalFormat.patternBackgroundColor.call({}));
+        assert.throws(() => conditionalFormat.setPatternBackgroundColor.call(conditionalFormat, 'abc'));
 
         assert.strictEqual(conditionalFormat.setPatternBackgroundColor(xl.COLOR_BLUE), conditionalFormat);
         assert.strictEqual(conditionalFormat.patternBackgroundColor(), xl.COLOR_BLUE);

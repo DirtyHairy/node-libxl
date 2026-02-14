@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('AutoFilter', () => {
     let book, sheet, autoFilter;
@@ -14,12 +12,12 @@ describe('AutoFilter', () => {
     });
 
     it('setRef and getRef set and get the range of the autofilter', () => {
-        shouldThrow(autoFilter.setRef, autoFilter, 1, 2, 3, 'a');
-        shouldThrow(autoFilter.setRef, {}, 1, 2, 3, 4);
+        assert.throws(() => autoFilter.setRef.call(autoFilter, 1, 2, 3, 'a'));
+        assert.throws(() => autoFilter.setRef.call({}, 1, 2, 3, 4));
 
         assert.strictEqual(autoFilter.setRef(1, 2, 3, 4), autoFilter);
 
-        shouldThrow(autoFilter.getRef, {});
+        assert.throws(() => autoFilter.getRef.call({}));
 
         assert.deepStrictEqual(autoFilter.getRef(), { rowFirst: 1, rowLast: 2, colFirst: 3, colLast: 4 });
     });
@@ -27,8 +25,8 @@ describe('AutoFilter', () => {
     it('column gets a filter column', () => {
         autoFilter.setRef(1, 2, 3, 4);
 
-        shouldThrow(autoFilter.column, autoFilter, 'a');
-        shouldThrow(autoFilter.column, {}, 0);
+        assert.throws(() => autoFilter.column.call(autoFilter, 'a'));
+        assert.throws(() => autoFilter.column.call({}, 0));
 
         assert.ok(autoFilter.column(0) instanceof xl.FilterColumn);
     });
@@ -36,7 +34,7 @@ describe('AutoFilter', () => {
     it('columnSize returns the number of filter columns', () => {
         autoFilter.setRef(1, 2, 3, 4);
 
-        shouldThrow(autoFilter.columnSize, {});
+        assert.throws(() => autoFilter.columnSize.call({}));
 
         assert.strictEqual(autoFilter.columnSize(), 0);
 
@@ -49,7 +47,7 @@ describe('AutoFilter', () => {
         autoFilter.setRef(1, 2, 3, 4);
         autoFilter.setSort(1);
 
-        shouldThrow(autoFilter.getSortRange, {});
+        assert.throws(() => autoFilter.getSortRange.call({}));
 
         assert.deepStrictEqual(autoFilter.getSortRange(), { rowFirst: 2, rowLast: 2, colFirst: 3, colLast: 4 });
     });
@@ -57,16 +55,16 @@ describe('AutoFilter', () => {
     it('getSort and setSort get and set the sort column', () => {
         autoFilter.setRef(1, 2, 3, 4);
 
-        shouldThrow(autoFilter.setSort, autoFilter, 'a');
-        shouldThrow(autoFilter.setSort, autoFilter, 1, 1);
-        shouldThrow(autoFilter.setSort, {}, 1);
-        shouldThrow(autoFilter.setSort, {}, 1, false);
+        assert.throws(() => autoFilter.setSort.call(autoFilter, 'a'));
+        assert.throws(() => autoFilter.setSort.call(autoFilter, 1, 1));
+        assert.throws(() => autoFilter.setSort.call({}, 1));
+        assert.throws(() => autoFilter.setSort.call({}, 1, false));
 
         assert.strictEqual(autoFilter.setSort(1), autoFilter);
         assert.strictEqual(autoFilter.setSort(1, false), autoFilter);
 
-        shouldThrow(autoFilter.getSort, autoFilter, 'a');
-        shouldThrow(autoFilter.getSort, {});
+        assert.throws(() => autoFilter.getSort.call(autoFilter, 'a'));
+        assert.throws(() => autoFilter.getSort.call({}));
 
         assert.deepStrictEqual(autoFilter.getSort(), { columnIndex: 1, descending: false });
         assert.deepStrictEqual(autoFilter.getSort(0), { columnIndex: 1, descending: false });
@@ -75,10 +73,10 @@ describe('AutoFilter', () => {
     it('addSort adds a sort column', () => {
         autoFilter.setRef(1, 2, 3, 4);
 
-        shouldThrow(autoFilter.addSort, autoFilter, 'a');
-        shouldThrow(autoFilter.addSort, autoFilter, 1, 1);
-        shouldThrow(autoFilter.addSort, {}, 1);
-        shouldThrow(autoFilter.addSort, {}, 1, false);
+        assert.throws(() => autoFilter.addSort.call(autoFilter, 'a'));
+        assert.throws(() => autoFilter.addSort.call(autoFilter, 1, 1));
+        assert.throws(() => autoFilter.addSort.call({}, 1));
+        assert.throws(() => autoFilter.addSort.call({}, 1, false));
 
         assert.strictEqual(autoFilter.addSort(1), autoFilter);
         assert.strictEqual(autoFilter.addSort(1, false), autoFilter);

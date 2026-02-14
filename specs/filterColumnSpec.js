@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('FilterColumn', () => {
     let book, sheet, autoFilter, filterColumn;
@@ -18,31 +16,31 @@ describe('FilterColumn', () => {
     });
 
     it('index returns the column index', () => {
-        shouldThrow(filterColumn.index, {});
+        assert.throws(() => filterColumn.index.call({}));
 
         assert.strictEqual(filterColumn.index(), 0);
     });
 
     it('filterType gets the filter type', () => {
-        shouldThrow(filterColumn.filterType, {});
+        assert.throws(() => filterColumn.filterType.call({}));
 
         assert.strictEqual(filterColumn.filterType(), xl.FILTER_NOT_SET);
     });
 
     it('addFilter and filter set and get a value filter', () => {
-        shouldThrow(filterColumn.addFilter, filterColumn, 1);
-        shouldThrow(filterColumn.addFilter, {}, 'a');
+        assert.throws(() => filterColumn.addFilter.call(filterColumn, 1));
+        assert.throws(() => filterColumn.addFilter.call({}, 'a'));
 
         assert.strictEqual(filterColumn.addFilter('a'), filterColumn);
 
-        shouldThrow(filterColumn.filter, filterColumn, 'a');
-        shouldThrow(filterColumn.filter, {}, 0);
+        assert.throws(() => filterColumn.filter.call(filterColumn, 'a'));
+        assert.throws(() => filterColumn.filter.call({}, 0));
 
         assert.strictEqual(filterColumn.filter(0), 'a');
     });
 
     it('filterSize returns the number of filter values', () => {
-        shouldThrow(filterColumn.filterSize, {});
+        assert.throws(() => filterColumn.filterSize.call({}));
 
         assert.strictEqual(filterColumn.filterSize(), 0);
 
@@ -52,25 +50,27 @@ describe('FilterColumn', () => {
     });
 
     it('setTop10 and getTop10 get and set the number of top or bottom items', () => {
-        shouldThrow(filterColumn.setTop10, filterColumn, 'a');
-        shouldThrow(filterColumn.setTop10, filterColumn, 1, 'a');
-        shouldThrow(filterColumn.setTop10, filterColumn, 1, false, 'a');
-        shouldThrow(filterColumn.setTop10, {}, 1);
-        shouldThrow(filterColumn.setTop10, {}, 1, false);
-        shouldThrow(filterColumn.setTop10, {}, 1, false, false);
+        assert.throws(() => filterColumn.setTop10.call(filterColumn, 'a'));
+        assert.throws(() => filterColumn.setTop10.call(filterColumn, 1, 'a'));
+        assert.throws(() => filterColumn.setTop10.call(filterColumn, 1, false, 'a'));
+        assert.throws(() => filterColumn.setTop10.call({}, 1));
+        assert.throws(() => filterColumn.setTop10.call({}, 1, false));
+        assert.throws(() => filterColumn.setTop10.call({}, 1, false, false));
 
         assert.strictEqual(filterColumn.setTop10(1), filterColumn);
         assert.strictEqual(filterColumn.setTop10(1, false), filterColumn);
         assert.strictEqual(filterColumn.setTop10(1, false, false), filterColumn);
 
-        shouldThrow(filterColumn.getTop10, {});
+        assert.throws(() => filterColumn.getTop10.call({}));
 
         assert.deepStrictEqual(filterColumn.getTop10(), { value: 1, top: false, percent: false });
     });
 
     it('setCustomFilter and getCustomFilter get and set a custom filter', () => {
-        shouldThrow(filterColumn.setCustomFilter, filterColumn, xl.OPERATOR_EQUAL, 1);
-        shouldThrow(filterColumn.setCustomFilter, filterColumn, xl.OPERATOR_EQUAL, 'a', xl.OPERATOR_EQUAL, 'b', 1);
+        assert.throws(() => filterColumn.setCustomFilter.call(filterColumn, xl.OPERATOR_EQUAL, 1));
+        assert.throws(() =>
+            filterColumn.setCustomFilter.call(filterColumn, xl.OPERATOR_EQUAL, 'a', xl.OPERATOR_EQUAL, 'b', 1),
+        );
 
         assert.strictEqual(filterColumn.setCustomFilter(xl.OPERATOR_EQUAL, 'a'), filterColumn);
         assert.strictEqual(
@@ -78,7 +78,7 @@ describe('FilterColumn', () => {
             filterColumn,
         );
 
-        shouldThrow(filterColumn.getCustomFilter, {});
+        assert.throws(() => filterColumn.getCustomFilter.call({}));
 
         assert.deepStrictEqual(filterColumn.getCustomFilter(), {
             op1: xl.OPERATOR_EQUAL,

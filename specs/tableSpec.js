@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('Table', () => {
     let book, sheet, table;
@@ -14,53 +12,53 @@ describe('Table', () => {
     });
 
     it('name and setName manage the table name', () => {
-        shouldThrow(table.name, {});
+        assert.throws(() => table.name.call({}));
 
         assert.strictEqual(table.name(), 'Table1');
 
-        shouldThrow(table.setName, table, 1);
-        shouldThrow(table.setName, {}, 'NewName');
+        assert.throws(() => table.setName.call(table, 1));
+        assert.throws(() => table.setName.call({}, 'NewName'));
 
         assert.strictEqual(table.setName('NewName'), table);
         assert.strictEqual(table.name(), 'NewName');
     });
 
     it('ref and setRef manage the table ref', () => {
-        shouldThrow(table.ref, {});
+        assert.throws(() => table.ref.call({}));
 
         assert.strictEqual(typeof table.ref(), 'string');
 
-        shouldThrow(table.setRef, table, 1);
-        shouldThrow(table.setRef, {}, 'A1:D6');
+        assert.throws(() => table.setRef.call(table, 1));
+        assert.throws(() => table.setRef.call({}, 'A1:D6'));
 
         assert.strictEqual(table.setRef('A1:D10'), table);
     });
 
     it('autoFilter returns an AutoFilter instance', () => {
-        shouldThrow(table.autoFilter, {});
+        assert.throws(() => table.autoFilter.call({}));
 
         assert.ok(table.autoFilter() instanceof xl.AutoFilter);
     });
 
     it('style and setStyle manage the table style', () => {
-        shouldThrow(table.style, {});
+        assert.throws(() => table.style.call({}));
 
         assert.strictEqual(typeof table.style(), 'number');
 
-        shouldThrow(table.setStyle, table, 'a');
-        shouldThrow(table.setStyle, {}, xl.TABLESTYLE_LIGHT1);
+        assert.throws(() => table.setStyle.call(table, 'a'));
+        assert.throws(() => table.setStyle.call({}, xl.TABLESTYLE_LIGHT1));
 
         assert.strictEqual(table.setStyle(xl.TABLESTYLE_LIGHT1), table);
         assert.strictEqual(table.style(), xl.TABLESTYLE_LIGHT1);
     });
 
     it('showRowStripes and setShowRowStripes manage row stripes', () => {
-        shouldThrow(table.showRowStripes, {});
+        assert.throws(() => table.showRowStripes.call({}));
 
         assert.strictEqual(typeof table.showRowStripes(), 'boolean');
 
-        shouldThrow(table.setShowRowStripes, table, 'a');
-        shouldThrow(table.setShowRowStripes, {}, true);
+        assert.throws(() => table.setShowRowStripes.call(table, 'a'));
+        assert.throws(() => table.setShowRowStripes.call({}, true));
 
         assert.strictEqual(table.setShowRowStripes(false), table);
         assert.strictEqual(table.showRowStripes(), false);
@@ -70,12 +68,12 @@ describe('Table', () => {
     });
 
     it('showColumnStripes and setShowColumnStripes manage column stripes', () => {
-        shouldThrow(table.showColumnStripes, {});
+        assert.throws(() => table.showColumnStripes.call({}));
 
         assert.strictEqual(typeof table.showColumnStripes(), 'boolean');
 
-        shouldThrow(table.setShowColumnStripes, table, 'a');
-        shouldThrow(table.setShowColumnStripes, {}, true);
+        assert.throws(() => table.setShowColumnStripes.call(table, 'a'));
+        assert.throws(() => table.setShowColumnStripes.call({}, true));
 
         assert.strictEqual(table.setShowColumnStripes(true), table);
         assert.strictEqual(table.showColumnStripes(), true);
@@ -85,12 +83,12 @@ describe('Table', () => {
     });
 
     it('showFirstColumn and setShowFirstColumn manage first column highlighting', () => {
-        shouldThrow(table.showFirstColumn, {});
+        assert.throws(() => table.showFirstColumn.call({}));
 
         assert.strictEqual(typeof table.showFirstColumn(), 'boolean');
 
-        shouldThrow(table.setShowFirstColumn, table, 'a');
-        shouldThrow(table.setShowFirstColumn, {}, true);
+        assert.throws(() => table.setShowFirstColumn.call(table, 'a'));
+        assert.throws(() => table.setShowFirstColumn.call({}, true));
 
         assert.strictEqual(table.setShowFirstColumn(true), table);
         assert.strictEqual(table.showFirstColumn(), true);
@@ -100,12 +98,12 @@ describe('Table', () => {
     });
 
     it('showLastColumn and setShowLastColumn manage last column highlighting', () => {
-        shouldThrow(table.showLastColumn, {});
+        assert.throws(() => table.showLastColumn.call({}));
 
         assert.strictEqual(typeof table.showLastColumn(), 'boolean');
 
-        shouldThrow(table.setShowLastColumn, table, 'a');
-        shouldThrow(table.setShowLastColumn, {}, true);
+        assert.throws(() => table.setShowLastColumn.call(table, 'a'));
+        assert.throws(() => table.setShowLastColumn.call({}, true));
 
         assert.strictEqual(table.setShowLastColumn(true), table);
         assert.strictEqual(table.showLastColumn(), true);
@@ -115,20 +113,20 @@ describe('Table', () => {
     });
 
     it('columnSize returns the number of columns', () => {
-        shouldThrow(table.columnSize, {});
+        assert.throws(() => table.columnSize.call({}));
 
         assert.strictEqual(table.columnSize(), 4);
     });
 
     it('columnName and setColumnName manage column names', () => {
-        shouldThrow(table.columnName, table, 'a');
-        shouldThrow(table.columnName, {}, 0);
+        assert.throws(() => table.columnName.call(table, 'a'));
+        assert.throws(() => table.columnName.call({}, 0));
 
         assert.strictEqual(typeof table.columnName(0), 'string');
 
-        shouldThrow(table.setColumnName, table, 'a', 'Name');
-        shouldThrow(table.setColumnName, table, 0, 1);
-        shouldThrow(table.setColumnName, {}, 0, 'Name');
+        assert.throws(() => table.setColumnName.call(table, 'a', 'Name'));
+        assert.throws(() => table.setColumnName.call(table, 0, 1));
+        assert.throws(() => table.setColumnName.call({}, 0, 'Name'));
 
         assert.strictEqual(table.setColumnName(0, 'MyColumn'), table);
         assert.strictEqual(table.columnName(0), 'MyColumn');

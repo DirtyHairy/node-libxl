@@ -1,8 +1,6 @@
-const { describe, it, beforeEach } = require('node:test');
-const assert = require('node:assert/strict');
-var xl = require('../lib/libxl'),
-    testUtils = require('./testUtils'),
-    shouldThrow = testUtils.shouldThrow;
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
+import xl from '../lib/libxl.js';
 
 describe('ConditionalFormatting', () => {
     let book, sheet, conditionalFormat, conditionalFormatting;
@@ -15,15 +13,15 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addRange adds a range', () => {
-        shouldThrow(conditionalFormatting.addRange, conditionalFormatting, 1, 2, 3, 'a');
-        shouldThrow(conditionalFormatting.addRange, {}, 1, 2, 3, 4);
+        assert.throws(() => conditionalFormatting.addRange.call(conditionalFormatting, 1, 2, 3, 'a'));
+        assert.throws(() => conditionalFormatting.addRange.call({}, 1, 2, 3, 4));
 
         assert.strictEqual(conditionalFormatting.addRange(1, 2, 3, 4), conditionalFormatting);
     });
 
     it('addRule adds a rule', () => {
-        shouldThrow(conditionalFormatting.addRule, conditionalFormatting, xl.CFORMAT_BEGINWITH, 'a');
-        shouldThrow(conditionalFormatting.addRule, {}, xl.CFORMAT_BEGINWITH, conditionalFormat);
+        assert.throws(() => conditionalFormatting.addRule.call(conditionalFormatting, xl.CFORMAT_BEGINWITH, 'a'));
+        assert.throws(() => conditionalFormatting.addRule.call({}, xl.CFORMAT_BEGINWITH, conditionalFormat));
 
         assert.strictEqual(
             conditionalFormatting.addRule(xl.CFORMAT_BEGINWITH, conditionalFormat),
@@ -40,8 +38,8 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addTopRule adds a top rule', () => {
-        shouldThrow(conditionalFormatting.addTopRule, conditionalFormatting, 'invalid', 10);
-        shouldThrow(conditionalFormatting.addTopRule, {}, conditionalFormat, 10);
+        assert.throws(() => conditionalFormatting.addTopRule.call(conditionalFormatting, 'invalid', 10));
+        assert.throws(() => conditionalFormatting.addTopRule.call({}, conditionalFormat, 10));
 
         assert.strictEqual(conditionalFormatting.addTopRule(conditionalFormat, 10), conditionalFormatting);
         assert.strictEqual(conditionalFormatting.addTopRule(conditionalFormat, 10, true), conditionalFormatting);
@@ -53,8 +51,10 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addOpNumRule adds a numeric operator rule', () => {
-        shouldThrow(conditionalFormatting.addOpNumRule, conditionalFormatting, xl.CFOPERATOR_LESSTHAN, 'invalid', 10);
-        shouldThrow(conditionalFormatting.addOpNumRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10);
+        assert.throws(() =>
+            conditionalFormatting.addOpNumRule.call(conditionalFormatting, xl.CFOPERATOR_LESSTHAN, 'invalid', 10),
+        );
+        assert.throws(() => conditionalFormatting.addOpNumRule.call({}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10));
 
         assert.strictEqual(
             conditionalFormatting.addOpNumRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 10),
@@ -71,14 +71,12 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addOpStrRule adds a string operator rule', () => {
-        shouldThrow(
-            conditionalFormatting.addOpStrRule,
-            conditionalFormatting,
-            xl.CFOPERATOR_LESSTHAN,
-            'invalid',
-            'test',
+        assert.throws(() =>
+            conditionalFormatting.addOpStrRule.call(conditionalFormatting, xl.CFOPERATOR_LESSTHAN, 'invalid', 'test'),
         );
-        shouldThrow(conditionalFormatting.addOpStrRule, {}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test');
+        assert.throws(() =>
+            conditionalFormatting.addOpStrRule.call({}, xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test'),
+        );
 
         assert.strictEqual(
             conditionalFormatting.addOpStrRule(xl.CFOPERATOR_LESSTHAN, conditionalFormat, 'test'),
@@ -95,8 +93,8 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addAboveAverageRule adds an above average rule', () => {
-        shouldThrow(conditionalFormatting.addAboveAverageRule, conditionalFormatting, 'invalid');
-        shouldThrow(conditionalFormatting.addAboveAverageRule, {}, conditionalFormat);
+        assert.throws(() => conditionalFormatting.addAboveAverageRule.call(conditionalFormatting, 'invalid'));
+        assert.throws(() => conditionalFormatting.addAboveAverageRule.call({}, conditionalFormat));
 
         assert.strictEqual(conditionalFormatting.addAboveAverageRule(conditionalFormat), conditionalFormatting);
         assert.strictEqual(conditionalFormatting.addAboveAverageRule(conditionalFormat, false), conditionalFormatting);
@@ -115,8 +113,10 @@ describe('ConditionalFormatting', () => {
     });
 
     it('addTimePeriodRule adds a time period rule', () => {
-        shouldThrow(conditionalFormatting.addTimePeriodRule, conditionalFormatting, 'invalid', xl.CFTP_LAST7DAYS);
-        shouldThrow(conditionalFormatting.addTimePeriodRule, {}, conditionalFormat, xl.CFTP_LAST7DAYS);
+        assert.throws(() =>
+            conditionalFormatting.addTimePeriodRule.call(conditionalFormatting, 'invalid', xl.CFTP_LAST7DAYS),
+        );
+        assert.throws(() => conditionalFormatting.addTimePeriodRule.call({}, conditionalFormat, xl.CFTP_LAST7DAYS));
 
         assert.strictEqual(
             conditionalFormatting.addTimePeriodRule(conditionalFormat, xl.CFTP_LAST7DAYS),
@@ -129,8 +129,10 @@ describe('ConditionalFormatting', () => {
     });
 
     it('add2ColorScaleRule adds a 2-color scale rule', () => {
-        shouldThrow(conditionalFormatting.add2ColorScaleRule, conditionalFormatting, 'invalid', xl.COLOR_RED);
-        shouldThrow(conditionalFormatting.add2ColorScaleRule, {}, xl.COLOR_GREEN, xl.COLOR_RED);
+        assert.throws(() =>
+            conditionalFormatting.add2ColorScaleRule.call(conditionalFormatting, 'invalid', xl.COLOR_RED),
+        );
+        assert.throws(() => conditionalFormatting.add2ColorScaleRule.call({}, xl.COLOR_GREEN, xl.COLOR_RED));
 
         assert.strictEqual(
             conditionalFormatting.add2ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_RED),
@@ -151,8 +153,10 @@ describe('ConditionalFormatting', () => {
     });
 
     it('add2ColorScaleFormulaRule adds a 2-color scale formula rule', () => {
-        shouldThrow(conditionalFormatting.add2ColorScaleFormulaRule, conditionalFormatting, 'invalid', xl.COLOR_RED);
-        shouldThrow(conditionalFormatting.add2ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_RED);
+        assert.throws(() =>
+            conditionalFormatting.add2ColorScaleFormulaRule.call(conditionalFormatting, 'invalid', xl.COLOR_RED),
+        );
+        assert.throws(() => conditionalFormatting.add2ColorScaleFormulaRule.call({}, xl.COLOR_GREEN, xl.COLOR_RED));
 
         assert.strictEqual(
             conditionalFormatting.add2ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_RED),
@@ -173,14 +177,17 @@ describe('ConditionalFormatting', () => {
     });
 
     it('add3ColorScaleRule adds a 3-color scale rule', () => {
-        shouldThrow(
-            conditionalFormatting.add3ColorScaleRule,
-            conditionalFormatting,
-            'invalid',
-            xl.COLOR_YELLOW,
-            xl.COLOR_RED,
+        assert.throws(() =>
+            conditionalFormatting.add3ColorScaleRule.call(
+                conditionalFormatting,
+                'invalid',
+                xl.COLOR_YELLOW,
+                xl.COLOR_RED,
+            ),
         );
-        shouldThrow(conditionalFormatting.add3ColorScaleRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
+        assert.throws(() =>
+            conditionalFormatting.add3ColorScaleRule.call({}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
+        );
 
         assert.strictEqual(
             conditionalFormatting.add3ColorScaleRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
@@ -204,14 +211,17 @@ describe('ConditionalFormatting', () => {
     });
 
     it('add3ColorScaleFormulaRule adds a 3-color scale formula rule', () => {
-        shouldThrow(
-            conditionalFormatting.add3ColorScaleFormulaRule,
-            conditionalFormatting,
-            'invalid',
-            xl.COLOR_YELLOW,
-            xl.COLOR_RED,
+        assert.throws(() =>
+            conditionalFormatting.add3ColorScaleFormulaRule.call(
+                conditionalFormatting,
+                'invalid',
+                xl.COLOR_YELLOW,
+                xl.COLOR_RED,
+            ),
         );
-        shouldThrow(conditionalFormatting.add3ColorScaleFormulaRule, {}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED);
+        assert.throws(() =>
+            conditionalFormatting.add3ColorScaleFormulaRule.call({}, xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
+        );
 
         assert.strictEqual(
             conditionalFormatting.add3ColorScaleFormulaRule(xl.COLOR_GREEN, xl.COLOR_YELLOW, xl.COLOR_RED),
