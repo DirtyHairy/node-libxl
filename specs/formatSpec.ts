@@ -70,6 +70,7 @@ describe('The format class', () => {
         assert.strictEqual(format.setWrap(true), format);
         assert.strictEqual(format.wrap(), true);
         assert.strictEqual(format.setWrap(false).wrap(), false);
+        assert.strictEqual(format.setWrap().wrap(), true);
     });
 
     it('format.rotation gets text rotation', () => {
@@ -237,6 +238,7 @@ describe('The format class', () => {
         assert.strictEqual(format.setLocked(true), format);
         assert.strictEqual(format.locked(), true);
         assert.strictEqual(format.setLocked(false).locked(), false);
+        assert.strictEqual(format.setLocked().locked(), true);
     });
 
     it('format.hidden checks whether the format is hidden', () => {
@@ -250,5 +252,6 @@ describe('The format class', () => {
         assert.strictEqual(format.setHidden(true), format);
         assert.strictEqual(format.hidden(), true);
         assert.strictEqual(format.setHidden(false).hidden(), false);
+        assert.strictEqual(format.setHidden().hidden(), true);
     });
 });

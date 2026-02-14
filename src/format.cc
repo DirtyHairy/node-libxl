@@ -172,7 +172,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
-        bool wrap = arguments.GetBoolean(0);
+        bool wrap = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
@@ -520,7 +520,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        int border = arguments.GetInt(0, libxl::BORDERSTYLE_THIN);
+        int border = arguments.GetInt(0);
         ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
@@ -659,7 +659,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        bool locked = arguments.GetBoolean(0);
+        bool locked = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());
@@ -687,7 +687,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        bool hidden = arguments.GetBoolean(0);
+        bool hidden = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Format* that = FromJS(info.This());

@@ -90,7 +90,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        bool italic = arguments.GetBoolean(0);
+        bool italic = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Font* that = FromJS(info.This());
@@ -115,7 +115,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        bool strikeOut = arguments.GetBoolean(0);
+        bool strikeOut = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Font* that = FromJS(info.This());
@@ -165,7 +165,7 @@ namespace node_libxl {
 
         ArgumentHelper arguments(info);
 
-        bool bold = arguments.GetBoolean(0);
+        bool bold = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Font* that = FromJS(info.This());

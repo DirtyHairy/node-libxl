@@ -38,6 +38,7 @@ describe('The font class', () => {
         assert.throws(() => (font.setItalic as any).call(font, 10));
         assert.throws(() => (font.setItalic as any).call(book, true));
         assert.strictEqual(font.setItalic(true), font);
+        assert.strictEqual(font.setItalic().italic(), true);
     });
 
     it('font.strikeOut checks wether a font is striked out', () => {
@@ -52,6 +53,7 @@ describe('The font class', () => {
         assert.throws(() => (font.setStrikeOut as any).call(font, 10));
         assert.throws(() => (font.setStrikeOut as any).call(book, true));
         assert.strictEqual(font.setStrikeOut(true), font);
+        assert.strictEqual(font.setStrikeOut().strikeOut(), true);
     });
 
     it('font.color gets font color', () => {
@@ -80,6 +82,7 @@ describe('The font class', () => {
         assert.throws(() => (font.setBold as any).call(font, 10));
         assert.throws(() => (font.setBold as any).call(book, true));
         assert.strictEqual(font.setBold(true), font);
+        assert.strictEqual(font.setBold().bold(), true);
     });
 
     it('font.script gets a fonts script style', () => {

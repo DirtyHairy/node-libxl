@@ -65,6 +65,9 @@ describe('Table', () => {
 
         table.setShowRowStripes(true);
         assert.strictEqual(table.showRowStripes(), true);
+
+        table.setShowRowStripes(false);
+        assert.strictEqual(table.setShowRowStripes().showRowStripes(), true);
     });
 
     it('showColumnStripes and setShowColumnStripes manage column stripes', () => {
@@ -80,6 +83,8 @@ describe('Table', () => {
 
         table.setShowColumnStripes(false);
         assert.strictEqual(table.showColumnStripes(), false);
+
+        assert.strictEqual(table.setShowColumnStripes().showColumnStripes(), true);
     });
 
     it('showFirstColumn and setShowFirstColumn manage first column highlighting', () => {
@@ -95,6 +100,8 @@ describe('Table', () => {
 
         table.setShowFirstColumn(false);
         assert.strictEqual(table.showFirstColumn(), false);
+
+        assert.strictEqual(table.setShowFirstColumn().showFirstColumn(), true);
     });
 
     it('showLastColumn and setShowLastColumn manage last column highlighting', () => {
@@ -110,6 +117,8 @@ describe('Table', () => {
 
         table.setShowLastColumn(false);
         assert.strictEqual(table.showLastColumn(), false);
+
+        assert.strictEqual(table.setShowLastColumn().showLastColumn(), true);
     });
 
     it('columnSize returns the number of columns', () => {

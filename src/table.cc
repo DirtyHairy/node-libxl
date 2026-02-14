@@ -167,7 +167,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
-        bool showRowStripes = arguments.GetBoolean(0);
+        bool showRowStripes = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Table* that = FromJS(info.This());
@@ -194,7 +194,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
-        bool showColumnStripes = arguments.GetBoolean(0);
+        bool showColumnStripes = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Table* that = FromJS(info.This());
@@ -221,7 +221,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
-        bool showFirstColumn = arguments.GetBoolean(0);
+        bool showFirstColumn = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Table* that = FromJS(info.This());
@@ -248,7 +248,7 @@ namespace node_libxl {
         Nan::HandleScope scope;
 
         ArgumentHelper arguments(info);
-        bool showLastColumn = arguments.GetBoolean(0);
+        bool showLastColumn = arguments.GetBoolean(0, true);
         ASSERT_ARGUMENTS(arguments);
 
         Table* that = FromJS(info.This());
