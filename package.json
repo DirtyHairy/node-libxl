@@ -29,21 +29,24 @@
         "node": ">=18.0.0"
     },
     "main": "./lib/libxl.js",
+    "types": "./lib/libxl.d.ts",
     "gypfile": true,
     "scripts": {
         "install": "node install-libxl.js && node-gyp rebuild",
         "prettier": "prettier -w specs/*.js"
     },
     "dependencies": {
-        "adm-zip": "~0.5.16",
-        "md5": "~2.3.0",
-        "nan": "~2.25.0",
-        "plist": "~3.1.0",
-        "tar": "7.5.7",
-        "tmp": "~0.2.3"
+        "@types/node": "^24.1.0",
+        "adm-zip": "^0.5.16",
+        "md5": "^2.3.0",
+        "nan": "^2.25.0",
+        "plist": "^3.1.0",
+        "tar": "^7.5.7",
+        "tmp": "^0.2.3"
     },
     "devDependencies": {
-        "jshint": "~2.13.6",
-        "prettier": "^3.8.1"
+        "jshint": "^2.13.6",
+        "prettier": "^3.8.1",
+        "typescript": "^5.9.3"
     }
 }
